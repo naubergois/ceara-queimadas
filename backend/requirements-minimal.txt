@@ -1,0 +1,20 @@
+# Dependências mínimas para rodar sem banco de dados
+# Suficiente para dados reais: NASA FIRMS + Open-Meteo + agente explicador
+
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# Pydantic e configuração
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# HTTP client
+httpx==0.28.1
+
+# LangChain + OpenAI (para agente explicador)
+langchain==0.3.9
+langchain-core==0.3.21
+langchain-openai==0.2.11
+
+# Utilitários
+python-dotenv==1.0.1

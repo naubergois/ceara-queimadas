@@ -1,18 +1,20 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
-import { Flame, Map, BarChart3, Bell, MessageSquare, FileText } from 'lucide-react'
+import { Flame, Map, BarChart3, Bell, MessageSquare, FileText, Satellite } from 'lucide-react'
 import DashboardPage from './pages/DashboardPage'
 import MapaPage from './pages/MapaPage'
+import MapaRealPage from './pages/MapaRealPage'
 import AlertasPage from './pages/AlertasPage'
 import ChatPage from './pages/ChatPage'
 import BoletimPage from './pages/BoletimPage'
 import { clsx } from 'clsx'
 
 const navItems = [
-  { to: '/', label: 'Dashboard', icon: BarChart3 },
-  { to: '/mapa', label: 'Mapa', icon: Map },
-  { to: '/alertas', label: 'Alertas', icon: Bell },
-  { to: '/chat', label: 'Chat IA', icon: MessageSquare },
-  { to: '/boletim', label: 'Boletim', icon: FileText },
+  { to: '/',          label: 'Dashboard',    icon: BarChart3 },
+  { to: '/mapa-real', label: 'Mapa Real',    icon: Satellite },
+  { to: '/mapa',      label: 'Mapa',         icon: Map },
+  { to: '/alertas',   label: 'Alertas',      icon: Bell },
+  { to: '/chat',      label: 'Chat IA',      icon: MessageSquare },
+  { to: '/boletim',   label: 'Boletim',      icon: FileText },
 ]
 
 export default function App() {
@@ -52,6 +54,14 @@ export default function App() {
             ))}
           </nav>
 
+          {/* Badge "Dados Reais" */}
+          <div className="px-3 pb-2">
+            <div className="hidden lg:flex items-center gap-1.5 bg-green-950 border border-green-800 rounded-lg px-2 py-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shrink-0" />
+              <span className="text-xs text-green-400 font-medium">Dados Reais</span>
+            </div>
+          </div>
+
           {/* Status */}
           <div className="px-4 py-3 border-t border-gray-800">
             <div className="flex items-center gap-2">
@@ -64,11 +74,12 @@ export default function App() {
         {/* Main content */}
         <main className="flex-1 overflow-auto bg-gray-950">
           <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/mapa" element={<MapaPage />} />
-            <Route path="/alertas" element={<AlertasPage />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/boletim" element={<BoletimPage />} />
+            <Route path="/"          element={<DashboardPage />} />
+            <Route path="/mapa-real" element={<MapaRealPage />} />
+            <Route path="/mapa"      element={<MapaPage />} />
+            <Route path="/alertas"   element={<AlertasPage />} />
+            <Route path="/chat"      element={<ChatPage />} />
+            <Route path="/boletim"   element={<BoletimPage />} />
           </Routes>
         </main>
       </div>

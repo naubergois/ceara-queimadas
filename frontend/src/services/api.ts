@@ -116,3 +116,88 @@ export const getBoletim = (municipio?: string) =>
 
 export const getDetalheEvento = (eventoId: string) =>
   api.get(`/eventos/${eventoId}`).then(r => r.data)
+
+// ---------------------------------------------------------------------------
+// Dados REAIS (sem banco — direto das fontes NASA FIRMS + Open-Meteo)
+// ---------------------------------------------------------------------------
+
+export interface FocoReal {
+  id: string
+  fonte: string
+  satelite: string
+  sensor: string
+  lat: number
+  lon: number
+  latitude: number
+  longitude: number
+  data_hora: string
+  municipio: string | null
+  confianca: number
+  frp: number | null
+  temperatura_k: number | null
+  severidade: 'baixa' | 'media' | 'alta' | 'critica'
+  daynight: string
+  scan: number | null
+  track: number | null
+}
+
+export interface ClimaReal {
+  nome?: string
+  lat?: number
+  lon?: number
+  temperatura_c: number | null
+  umidade_relativa: number | null
+  velocidade_vento_ms: number | null
+  direcao_vento_graus: number | null
+  precipitacao_mm: number | null
+  dias_sem_chuva: number
+  weather_code: number | null
+}
+
+export interface ExplicacaoAgente {
+  foco_id: string
+  explicacao: string
+  clima: Partial<ClimaReal>
+  ferramentas_usadas: string[]
+  evidencias: string[]
+  passos_raciocinio: string[]
+  nivel_confianca: number
+  gerado_em: string
+}
+
+export interface FocoComExplicacao extends FocoReal {
+  analise_agente: ExplicacaoAgente
+}
+
+export interface StatusFontes {
+  nasa_firms: { status: string; http?: number }
+  open_meteo: { status: string; http?: number }
+  nominatim: { status: string; http?: number }
+  openai_configurado: boolean
+  cache_focos: number
+  cache_atualizado: string | null
+}
+
+export const getFocosReais = (dias = 7, severidade?: string) =>
+  api.get<{ total: number; focos: FocoReal[]; atualizado_em: string | null }>(
+    '/real/focos',
+    { params: { dias, severidade } }
+  ).then(r => r.data)
+
+export const getClimaReal = () =>
+  api.get<{ municipios: ClimaReal[] }>('/real/clima').then(r => r.data)
+
+export const getExplicacaoFoco = (focoId: string) =>
+  api.get<FocoComExplicacao>(`/real/focos/${focoId}/explicacao`).then(r => r.data)
+
+export const explicarFocosLote = (ids: string[]) =>
+  api.post<{ total: number; explicacoes: FocoComExplicacao[] }>(
+    '/real/focos/explicar-lote',
+    { ids }
+  ).then(r => r.data)
+
+export const getClimaFoco = (lat: number, lon: number) =>
+  api.get<{ clima: ClimaReal }>('/real/clima/foco', { params: { lat, lon } }).then(r => r.data)
+
+export const getStatusFontes = () =>
+  api.get<StatusFontes>('/real/status').then(r => r.data)
