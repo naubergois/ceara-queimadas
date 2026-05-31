@@ -23,12 +23,26 @@ logger = logging.getLogger(__name__)
 _cache_focos: list[dict] = []
 _cache_clima: list[dict] = []
 _cache_ts: Optional[datetime] = None
+_geocode_task: Optional[asyncio.Task] = None
 CACHE_TTL_SEGUNDOS = 300  # 5 minutos
+# Nominatim ~1 req/s — geocodificar todos os focos bloqueia a primeira resposta por minutos
+MAX_GEOCODE_FOCOS = 40
+
+
+async def _geocodificar_em_background(focos: list[dict]) -> None:
+    """Completa municípios no cache sem bloquear a primeira resposta HTTP."""
+    global _cache_focos
+    try:
+        focos_geo = await geocodificar_lote(focos, max_concorrente=3)
+        _cache_focos = focos_geo
+        logger.info("Geocoding em background concluído: %d focos", len(focos_geo))
+    except Exception as e:
+        logger.warning("Geocoding em background falhou: %s", e)
 
 
 async def _garantir_cache(dias: int = 7):
     """Atualiza o cache se estiver vazio ou expirado."""
-    global _cache_focos, _cache_clima, _cache_ts
+    global _cache_focos, _cache_clima, _cache_ts, _geocode_task
 
     agora = datetime.utcnow()
     if _cache_ts and (agora - _cache_ts).total_seconds() < CACHE_TTL_SEGUNDOS and _cache_focos:
@@ -42,13 +56,23 @@ async def _garantir_cache(dias: int = 7):
         buscar_clima_municipios_ceara(),
     )
 
-    # Geocodifica municípios (com rate limiting)
-    focos_geo = await geocodificar_lote(focos_raw, max_concorrente=2)
+    # Resposta rápida: geocodifica só uma amostra; o restante roda em background
+    amostra = focos_raw[:MAX_GEOCODE_FOCOS]
+    restante = focos_raw[MAX_GEOCODE_FOCOS:]
+    focos_geo = await geocodificar_lote(amostra, max_concorrente=3)
 
-    _cache_focos = focos_geo
+    _cache_focos = focos_geo + restante
     _cache_clima = clima
     _cache_ts = agora
-    logger.info("Cache atualizado: %d focos, %d municípios com clima", len(focos_geo), len(clima))
+    logger.info(
+        "Cache atualizado: %d focos (%d geocodificados), %d municípios com clima",
+        len(_cache_focos),
+        len(focos_geo),
+        len(clima),
+    )
+
+    if restante and (_geocode_task is None or _geocode_task.done()):
+        _geocode_task = asyncio.create_task(_geocodificar_em_background(_cache_focos))
 
 
 # ---------------------------------------------------------------------------

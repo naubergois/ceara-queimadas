@@ -48,7 +48,11 @@ export default function MapaRealPage() {
       setAtualizadoEm(respFocos.atualizado_em)
       setClima(respClima.municipios)
     } catch (e) {
-      setErro('Erro ao carregar dados reais. Verifique se o backend está rodando em localhost:8000.')
+      const msg =
+        e instanceof Error && e.message.includes('timeout')
+          ? 'A primeira carga dos dados reais pode levar até 2 minutos. Tente atualizar novamente.'
+          : 'Não foi possível carregar os dados reais. Verifique se o backend está ativo (em dev: uvicorn na porta 8000).'
+      setErro(msg)
     } finally {
       setCarregando(false)
     }
@@ -210,7 +214,7 @@ export default function MapaRealPage() {
                 <RefreshCw size={18} className="animate-spin text-orange-400" />
                 <div>
                   <p className="text-sm text-white font-medium">Coletando dados reais...</p>
-                  <p className="text-xs text-gray-400">NASA FIRMS + Open-Meteo + Nominatim</p>
+                  <p className="text-xs text-gray-400">NASA FIRMS + Open-Meteo — a primeira carga pode levar até 1 min</p>
                 </div>
               </div>
             </div>

@@ -4,11 +4,19 @@
 
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000/api/v1'
+/** Em dev o Vite faz proxy de /api → backend; em produção o nginx faz o mesmo. */
+const BASE_URL = import.meta.env.VITE_API_URL ?? '/api/v1'
 
 export const api = axios.create({
   baseURL: BASE_URL,
   timeout: 30_000,
+  headers: { 'Content-Type': 'application/json' },
+})
+
+/** Coleta NASA FIRMS + geocoding pode levar 1–2 min na primeira requisição. */
+export const apiReal = axios.create({
+  baseURL: BASE_URL,
+  timeout: 180_000,
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -179,25 +187,25 @@ export interface StatusFontes {
 }
 
 export const getFocosReais = (dias = 7, severidade?: string) =>
-  api.get<{ total: number; focos: FocoReal[]; atualizado_em: string | null }>(
+  apiReal.get<{ total: number; focos: FocoReal[]; atualizado_em: string | null }>(
     '/real/focos',
     { params: { dias, severidade } }
   ).then(r => r.data)
 
 export const getClimaReal = () =>
-  api.get<{ municipios: ClimaReal[] }>('/real/clima').then(r => r.data)
+  apiReal.get<{ municipios: ClimaReal[] }>('/real/clima').then(r => r.data)
 
 export const getExplicacaoFoco = (focoId: string) =>
-  api.get<FocoComExplicacao>(`/real/focos/${focoId}/explicacao`).then(r => r.data)
+  apiReal.get<FocoComExplicacao>(`/real/focos/${focoId}/explicacao`).then(r => r.data)
 
 export const explicarFocosLote = (ids: string[]) =>
-  api.post<{ total: number; explicacoes: FocoComExplicacao[] }>(
+  apiReal.post<{ total: number; explicacoes: FocoComExplicacao[] }>(
     '/real/focos/explicar-lote',
     { ids }
   ).then(r => r.data)
 
 export const getClimaFoco = (lat: number, lon: number) =>
-  api.get<{ clima: ClimaReal }>('/real/clima/foco', { params: { lat, lon } }).then(r => r.data)
+  apiReal.get<{ clima: ClimaReal }>('/real/clima/foco', { params: { lat, lon } }).then(r => r.data)
 
 export const getStatusFontes = () =>
-  api.get<StatusFontes>('/real/status').then(r => r.data)
+  apiReal.get<StatusFontes>('/real/status').then(r => r.data)

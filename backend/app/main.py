@@ -5,6 +5,7 @@ Suporta dois modos:
   - Sem banco (modo standalone): apenas endpoints de dados reais
 """
 
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -32,6 +33,15 @@ async def lifespan(app: FastAPI):
         logger.info("Banco de dados inicializado")
     except Exception as e:
         logger.warning("Banco indisponível — modo standalone ativo: %s", e)
+
+    # Pré-aquece cache NASA FIRMS para a primeira visita ao mapa não estourar timeout
+    try:
+        from app.api.focos_reais import _garantir_cache
+
+        asyncio.create_task(_garantir_cache())
+        logger.info("Pré-aquecimento do cache de dados reais iniciado em background")
+    except Exception as e:
+        logger.warning("Pré-aquecimento do cache não iniciado: %s", e)
 
     yield
     logger.info("Encerrando aplicação")
