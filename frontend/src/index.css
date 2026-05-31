@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-fire-50: #fff7ed;
+    --color-fire-100: #ffedd5;
+    --color-fire-400: #fb923c;
+    --color-fire-500: #f97316;
+    --color-fire-600: #ea580c;
+    --color-fire-700: #c2410c;
+    --color-fire-900: #7c2d12;
+  }
+
+  body {
+    @apply bg-gray-950 text-gray-100 font-sans antialiased;
+  }
+
+  * {
+    @apply box-border;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-gray-900 border border-gray-800 rounded-xl p-4;
+  }
+
+  .badge-baixo {
+    @apply bg-green-900 text-green-300 text-xs px-2 py-0.5 rounded-full font-medium;
+  }
+  .badge-moderado {
+    @apply bg-yellow-900 text-yellow-300 text-xs px-2 py-0.5 rounded-full font-medium;
+  }
+  .badge-alto {
+    @apply bg-orange-900 text-orange-300 text-xs px-2 py-0.5 rounded-full font-medium;
+  }
+  .badge-critico {
+    @apply bg-red-900 text-red-300 text-xs px-2 py-0.5 rounded-full font-medium animate-pulse;
+  }
+}
+
+/* MapLibre GL */
+.maplibregl-map {
+  font-family: inherit;
+}
