@@ -64,6 +64,7 @@ if [ ! -x backend/.venv/bin/python ]; then
 fi
 backend/.venv/bin/pip install --upgrade pip -q
 backend/.venv/bin/pip install -r backend/requirements-minimal.txt -q
+cd backend && .venv/bin/python scripts/build_faiss_index.py && cd ..
 
 echo "VITE_API_URL=/api/v1" | sudo tee frontend/.env >/dev/null
 

@@ -44,6 +44,9 @@ temp/
 # Docker volumes
 pgdata/
 
+# Índice FAISS gerado localmente (rodar scripts/build_faiss_index.py)
+backend/data/
+
 # Secrets
 *.pem
 *.key

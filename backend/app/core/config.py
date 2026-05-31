@@ -25,6 +25,14 @@ class Settings(BaseSettings):
     DEEPSEEK_API_KEY: str = ""
     DEEPSEEK_API_BASE: str = "https://api.deepseek.com"
     DEEPSEEK_MODEL: str = "deepseek-chat"
+    DEEPSEEK_EMBEDDING_MODEL: str = "deepseek-embedding-v2"
+
+    # RAG / FAISS (chat da pesquisa)
+    FAISS_INDEX_DIR: str = "data/faiss_pesquisa"
+    FAISS_CHUNK_SIZE: int = 900
+    FAISS_CHUNK_OVERLAP: int = 120
+    FAISS_TOP_K: int = 5
+    FAISS_LOCAL_EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
     # Legado (não usado pelos agentes; mantido para compatibilidade de .env antigo)
     OPENAI_API_KEY: str = ""
     OPENAI_MODEL: str = "gpt-4o"

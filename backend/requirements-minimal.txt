@@ -11,10 +11,16 @@ pydantic-settings==2.6.1
 # HTTP client
 httpx==0.28.1
 
-# LangChain + OpenAI (para agente explicador)
+# LangChain + DeepSeek (API OpenAI-compatível)
 langchain==0.3.9
 langchain-core==0.3.21
 langchain-openai==0.2.11
+langchain-community==0.3.8
+langchain-text-splitters==0.3.2
+
+# RAG — índice FAISS do chat da pesquisa (fastembed: leve para EC2)
+faiss-cpu>=1.8.0,<2
+fastembed>=0.4.0,<0.7
 
 # Utilitários
 python-dotenv==1.0.1

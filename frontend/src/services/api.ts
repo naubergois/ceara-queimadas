@@ -212,3 +212,30 @@ export const getClimaFoco = (lat: number, lon: number) =>
 
 export const getStatusFontes = () =>
   apiReal.get<StatusFontes>('/real/status').then(r => r.data)
+
+// ---------------------------------------------------------------------------
+// Chat da pesquisa (RAG + FAISS)
+// ---------------------------------------------------------------------------
+
+export interface RespostaPesquisa {
+  pergunta: string
+  resposta: string
+  fontes: string[]
+  fragmentos_usados: number
+  modo: string
+  gerado_em: string
+}
+
+export interface StatusPesquisa {
+  indice_pronto: boolean
+  caminho: string
+  documentos_fonte: number
+  fragmentos_indexados: number | null
+  deepseek_configurado?: boolean
+}
+
+export const chatPesquisa = (pergunta: string) =>
+  apiReal.post<RespostaPesquisa>('/pesquisa/chat', { pergunta }).then(r => r.data)
+
+export const getStatusPesquisa = () =>
+  api.get<StatusPesquisa>('/pesquisa/status').then(r => r.data)

@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
-import { Flame, Map, BarChart3, Bell, MessageSquare, FileText, Satellite } from 'lucide-react'
+import { Flame, Map, BarChart3, Bell, MessageSquare, FileText, Satellite, BookOpen } from 'lucide-react'
 import DashboardPage from './pages/DashboardPage'
 import MapaPage from './pages/MapaPage'
 import MapaRealPage from './pages/MapaRealPage'
 import AlertasPage from './pages/AlertasPage'
 import ChatPage from './pages/ChatPage'
+import GuiaPage from './pages/GuiaPage'
 import BoletimPage from './pages/BoletimPage'
 import { clsx } from 'clsx'
 
@@ -13,6 +14,7 @@ const navItems = [
   { to: '/mapa-real', label: 'Mapa Real',    icon: Satellite },
   { to: '/mapa',      label: 'Mapa',         icon: Map },
   { to: '/alertas',   label: 'Alertas',      icon: Bell },
+  { to: '/guia',       label: 'Guia',         icon: BookOpen },
   { to: '/chat',      label: 'Chat IA',      icon: MessageSquare },
   { to: '/boletim',   label: 'Boletim',      icon: FileText },
 ]
@@ -78,6 +80,7 @@ export default function App() {
             <Route path="/mapa-real" element={<MapaRealPage />} />
             <Route path="/mapa"      element={<MapaPage />} />
             <Route path="/alertas"   element={<AlertasPage />} />
+            <Route path="/guia"       element={<GuiaPage />} />
             <Route path="/chat"      element={<ChatPage />} />
             <Route path="/boletim"   element={<BoletimPage />} />
           </Routes>

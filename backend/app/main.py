@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.chat_pesquisa import router as router_pesquisa
 from app.api.focos_reais import router as router_real
 from app.core.config import settings
 
@@ -43,6 +44,21 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning("Pré-aquecimento do cache não iniciado: %s", e)
 
+    # Carrega índice FAISS do chat da pesquisa (ou constrói em background)
+    try:
+        from app.rag.faiss_store import build_faiss_index, index_dir
+
+        if (index_dir() / "index.faiss").exists():
+            from app.rag.faiss_store import load_faiss_index
+
+            load_faiss_index()
+            logger.info("Índice FAISS da pesquisa carregado")
+        else:
+            asyncio.create_task(asyncio.to_thread(build_faiss_index))
+            logger.info("Construção do índice FAISS iniciada em background")
+    except Exception as e:
+        logger.warning("FAISS pesquisa não iniciado: %s", e)
+
     yield
     logger.info("Encerrando aplicação")
 
@@ -71,6 +87,7 @@ app.add_middleware(
 
 # ── Endpoints de dados reais (sem banco) ──
 app.include_router(router_real, prefix="/api/v1")
+app.include_router(router_pesquisa, prefix="/api/v1")
 
 # ── Endpoints com banco (opcional) ──
 try:
