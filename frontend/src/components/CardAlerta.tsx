@@ -68,7 +68,7 @@ export default function CardAlerta({ alerta }: Props) {
             {config.label}
           </span>
           {alerta.auditado && (
-            <CheckCircle size={14} className="text-green-400" title="Auditado" aria-label="Alerta auditado" />
+            <CheckCircle size={14} className="text-green-400" aria-label="Alerta auditado" />
           )}
         </div>
       </div>

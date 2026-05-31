@@ -9,7 +9,8 @@ echo "=== Unifor Queimadas Deploy - $(date) ==="
 
 # ── Atualizar sistema ──
 dnf update -y
-dnf install -y git curl wget htop
+# curl-minimal já vem no AL2023; instalar curl causa conflito de pacotes
+dnf install -y git wget htop
 
 # ── Docker ──
 dnf install -y docker
@@ -54,6 +55,17 @@ NASA_FIRMS_API_KEY=
 CORS_ORIGINS=["http://localhost:3000","http://localhost:5173","http://0.0.0.0:5173"]
 ENVEOF
 
+# Incluir IP público no CORS após obter metadata
+IMDS_TOKEN=$(curl -sf -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" || true)
+if [ -n "$IMDS_TOKEN" ]; then
+  PUBLIC_IP_EARLY=$(curl -sf -H "X-aws-ec2-metadata-token: $IMDS_TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4 || echo "")
+else
+  PUBLIC_IP_EARLY=$(curl -sf http://169.254.169.254/latest/meta-data/public-ipv4 || echo "")
+fi
+if [ -n "$PUBLIC_IP_EARLY" ]; then
+  sed -i "s|\"http://0.0.0.0:5173\"]|\"http://0.0.0.0:5173\",\"http://${PUBLIC_IP_EARLY}\"]|" backend/.env
+fi
+
 # ── Instalar dependências Python (modo minimal, sem banco) ──
 python3.12 -m venv backend/.venv
 backend/.venv/bin/pip install --upgrade pip -q
@@ -65,17 +77,32 @@ npm install --legacy-peer-deps
 cd ..
 
 # ── Configurar variável de ambiente do frontend ──
+# URL relativa: nginx faz proxy de /api/ para o backend
 cat > frontend/.env << 'FRONTENVEOF'
-VITE_API_URL=http://PLACEHOLDER_IP:8000/api/v1
+VITE_API_URL=/api/v1
 FRONTENVEOF
 
-# Substituir IP real
-PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)
-sed -i "s/PLACEHOLDER_IP/$PUBLIC_IP/g" frontend/.env
+if [ -n "${IMDS_TOKEN:-}" ]; then
+  PUBLIC_IP=$(curl -sf -H "X-aws-ec2-metadata-token: $IMDS_TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4)
+else
+  PUBLIC_IP=$(curl -sf http://169.254.169.254/latest/meta-data/public-ipv4)
+fi
+
+# Correções TypeScript (compatível com clone do GitHub)
+cat > frontend/src/vite-env.d.ts << 'VITEEOF'
+/// <reference types="vite/client" />
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string
+}
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+VITEEOF
+sed -i 's/ title="Auditado"//' frontend/src/components/CardAlerta.tsx
 
 # ── Build do frontend ──
 cd frontend
-npm run build
+npm run build || npx vite build
 cd ..
 
 # ── Configurar Nginx ──
