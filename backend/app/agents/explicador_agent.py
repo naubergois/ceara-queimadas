@@ -13,10 +13,9 @@ from datetime import datetime
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.prompts import PromptTemplate
 from langchain_core.tools import BaseTool
-from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
-from app.core.config import settings
+from app.agents.llm_factory import create_chat_llm
 from app.services.clima_real import buscar_clima_foco
 
 logger = logging.getLogger(__name__)
@@ -135,11 +134,7 @@ PROMPT_TEMPLATE = PromptTemplate.from_template(EXPLICADOR_PROMPT)
 
 
 def _criar_agente_explicador() -> AgentExecutor:
-    llm = ChatOpenAI(
-        model=settings.OPENAI_MODEL,
-        temperature=0.1,
-        api_key=settings.OPENAI_API_KEY,
-    )
+    llm = create_chat_llm(temperature=0.1)
     tools = [BuscarClimaFocoTool(), AnalisarIntensidadeTool()]
     agent = create_react_agent(llm=llm, tools=tools, prompt=PROMPT_TEMPLATE)
     return AgentExecutor(
@@ -154,58 +149,58 @@ def _criar_agente_explicador() -> AgentExecutor:
 
 async def explicar_foco(foco: dict) -> dict:
     """
-    Usa o agente ReAct para explicar um foco de queimada real.
-    Consulta clima real e analisa intensidade.
-    Retorna dict com explicação, evidências e recomendação.
+    Explica um foco real via DeepSeek (chamada direta + clima Open-Meteo).
+    Mais estável que ReAct para latência e limites do modelo.
     """
-    executor = _criar_agente_explicador()
+    from langchain_core.messages import HumanMessage
 
-    descricao = (
-        f"Foco detectado em {foco.get('municipio') or 'Ceará'} "
-        f"(lat={foco['lat']:.4f}, lon={foco['lon']:.4f})\n"
-        f"Satélite/Sensor: {foco.get('satelite', 'N/A')} / {foco.get('sensor', 'N/A')}\n"
-        f"Data/Hora: {foco.get('data_hora', 'N/A')}\n"
-        f"FRP: {foco.get('frp') or 'N/A'} MW\n"
-        f"Temperatura do pixel: {foco.get('temperatura_k') or 'N/A'} K\n"
-        f"Confiança: {foco.get('confianca') or 'N/A'}%\n"
-        f"Severidade: {foco.get('severidade', 'N/A')}\n\n"
-        f"Explique por que este foco foi detectado, quais condições climáticas "
-        f"favorecem ou desfavorecem o fogo neste local, e qual a recomendação operacional."
+    clima = await buscar_clima_foco(foco["lat"], foco["lon"])
+    contexto = {
+        "foco": {
+            "municipio": foco.get("municipio"),
+            "lat": foco.get("lat"),
+            "lon": foco.get("lon"),
+            "sensor": foco.get("sensor"),
+            "data_hora": foco.get("data_hora"),
+            "frp_mw": foco.get("frp"),
+            "temperatura_k": foco.get("temperatura_k"),
+            "confianca_pct": foco.get("confianca"),
+            "severidade": foco.get("severidade"),
+        },
+        "clima": clima,
+    }
+
+    prompt = (
+        "Você é especialista em queimadas no Ceará, Brasil. "
+        "Com base APENAS nos dados JSON abaixo (NASA FIRMS + Open-Meteo), "
+        "escreva em português uma explicação técnica de 4 a 6 frases sobre:\n"
+        "1) o que o foco indica;\n"
+        "2) como o clima local afeta o risco;\n"
+        "3) uma recomendação operacional objetiva.\n"
+        "Não invente dados além do JSON.\n\n"
+        f"Dados: {json.dumps(contexto, ensure_ascii=False)}"
     )
 
     try:
-        resultado = await executor.ainvoke({"input": descricao})
+        llm = create_chat_llm(temperature=0.2, max_tokens=600)
+        resposta = await llm.ainvoke([HumanMessage(content=prompt)])
+        texto = (resposta.content or "").strip()
+        if not texto or "iteration limit" in texto.lower() or "time limit" in texto.lower():
+            raise ValueError("Resposta inválida do DeepSeek")
+
+        return {
+            "foco_id": foco.get("id"),
+            "explicacao": texto,
+            "clima": clima or {},
+            "ferramentas_usadas": ["buscar_clima_foco", "deepseek_chat"],
+            "evidencias": [f"Clima: {json.dumps(clima, ensure_ascii=False)}"],
+            "passos_raciocinio": ["Clima real consultado", "Análise gerada por DeepSeek"],
+            "nivel_confianca": 0.85,
+            "gerado_em": datetime.utcnow().isoformat(),
+        }
     except Exception as e:
-        logger.error("Erro no agente explicador: %s", e)
-        # Fallback: explicação sem LLM usando apenas dados climáticos
+        logger.warning("DeepSeek explicador falhou, fallback regras: %s", e)
         return await _explicar_sem_llm(foco)
-
-    passos = []
-    ferramentas = []
-    evidencias = []
-    clima_dados = {}
-
-    for step in resultado.get("intermediate_steps", []):
-        action, obs = step
-        passos.append(f"{action.tool}: {str(obs)[:150]}")
-        ferramentas.append(action.tool)
-        if "clima" in action.tool:
-            try:
-                clima_dados = json.loads(obs) if isinstance(obs, str) else obs
-            except Exception:
-                pass
-        evidencias.append(str(obs)[:200])
-
-    return {
-        "foco_id": foco.get("id"),
-        "explicacao": resultado.get("output", ""),
-        "clima": clima_dados,
-        "ferramentas_usadas": list(set(ferramentas)),
-        "evidencias": evidencias,
-        "passos_raciocinio": passos,
-        "nivel_confianca": 0.9 if ferramentas else 0.5,
-        "gerado_em": datetime.utcnow().isoformat(),
-    }
 
 
 async def _explicar_sem_llm(foco: dict) -> dict:
@@ -259,7 +254,7 @@ async def _explicar_sem_llm(foco: dict) -> dict:
         "clima": clima,
         "ferramentas_usadas": ["buscar_clima_foco"],
         "evidencias": [f"Clima: {json.dumps(clima, ensure_ascii=False)}"],
-        "passos_raciocinio": ["Análise baseada em regras (LLM indisponível)"],
+        "passos_raciocinio": ["Análise baseada em regras (DeepSeek indisponível)"],
         "nivel_confianca": 0.7,
         "gerado_em": datetime.utcnow().isoformat(),
     }

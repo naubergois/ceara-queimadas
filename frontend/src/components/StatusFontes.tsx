@@ -1,6 +1,6 @@
 /**
  * StatusFontes — barra de status das fontes de dados reais.
- * Mostra se NASA FIRMS, Open-Meteo, Nominatim e OpenAI estão disponíveis.
+ * Mostra se NASA FIRMS, Open-Meteo, Nominatim e DeepSeek estão disponíveis.
  */
 
 import { useEffect, useState } from 'react'
@@ -26,7 +26,10 @@ export default function StatusFontes() {
     { nome: 'NASA FIRMS', ok: status.nasa_firms?.status === 'ok' },
     { nome: 'Open-Meteo', ok: status.open_meteo?.status === 'ok' },
     { nome: 'Nominatim', ok: status.nominatim?.status === 'ok' },
-    { nome: 'OpenAI', ok: status.openai_configurado },
+    {
+      nome: status.deepseek_model ? `DeepSeek (${status.deepseek_model})` : 'DeepSeek',
+      ok: status.deepseek_configurado ?? status.openai_configurado,
+    },
   ] : []
 
   return (

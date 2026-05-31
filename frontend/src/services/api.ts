@@ -181,6 +181,9 @@ export interface StatusFontes {
   nasa_firms: { status: string; http?: number }
   open_meteo: { status: string; http?: number }
   nominatim: { status: string; http?: number }
+  deepseek_configurado: boolean
+  deepseek_model?: string | null
+  /** @deprecated use deepseek_configurado */
   openai_configurado: boolean
   cache_focos: number
   cache_atualizado: string | null

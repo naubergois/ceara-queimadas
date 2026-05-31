@@ -21,7 +21,11 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://ceara:ceara@localhost:5432/queimadas"
     DATABASE_POOL_SIZE: int = 10
 
-    # LLM
+    # LLM (DeepSeek — API compatível com OpenAI)
+    DEEPSEEK_API_KEY: str = ""
+    DEEPSEEK_API_BASE: str = "https://api.deepseek.com"
+    DEEPSEEK_MODEL: str = "deepseek-chat"
+    # Legado (não usado pelos agentes; mantido para compatibilidade de .env antigo)
     OPENAI_API_KEY: str = ""
     OPENAI_MODEL: str = "gpt-4o"
     ANTHROPIC_API_KEY: str = ""

@@ -52,8 +52,9 @@ DEBUG=false
 SECRET_KEY=unifor-queimadas-2025-secret
 DATABASE_URL=postgresql+asyncpg://ceara:ceara@localhost:5432/queimadas
 REDIS_URL=redis://localhost:6379/0
-OPENAI_API_KEY=
-OPENAI_MODEL=gpt-4o
+DEEPSEEK_API_KEY=
+DEEPSEEK_API_BASE=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-chat
 NASA_FIRMS_API_KEY=
 CORS_ORIGINS=["http://localhost:3000","http://localhost:5173","http://${PUBLIC_IP}","http://${PUBLIC_IP}:5173"]
 ENVEOF

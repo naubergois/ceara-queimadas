@@ -8,7 +8,6 @@ from datetime import datetime
 from typing import Annotated, Any, TypedDict
 from uuid import uuid4
 
-from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
 

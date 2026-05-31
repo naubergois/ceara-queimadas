@@ -9,9 +9,7 @@ from datetime import datetime
 
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
-
-from app.core.config import settings
+from app.agents.llm_factory import create_chat_llm
 from app.models.schemas import AlertaQueimada, AuditoriaAlerta
 from app.tools.queimada_tools import (
     BuscarDadosGOES16Tool,
@@ -53,11 +51,7 @@ AUDITOR_PROMPT_TEMPLATE = PromptTemplate.from_template(AUDITOR_PROMPT)
 
 
 def criar_agente_auditor() -> AgentExecutor:
-    llm = ChatOpenAI(
-        model=settings.OPENAI_MODEL,
-        temperature=0,
-        api_key=settings.OPENAI_API_KEY,
-    )
+    llm = create_chat_llm(temperature=0)
     tools = [
         BuscarFocosRecentesTool(),
         BuscarDadosGOES16Tool(),

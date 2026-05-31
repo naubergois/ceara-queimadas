@@ -11,6 +11,7 @@ from typing import Optional
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
 
 from app.agents.explicador_agent import explicar_foco, _explicar_sem_llm
+from app.agents.llm_factory import get_deepseek_model, llm_is_configured
 from app.core.config import settings
 from app.services.clima_real import buscar_clima_municipios_ceara, buscar_clima_foco
 from app.services.firms_real import coletar_focos_firms_real
@@ -133,9 +134,12 @@ async def get_explicacao_foco(foco_id: str):
             detail="Foco não encontrado. Atualize a lista de focos e tente novamente.",
         )
 
-    # Usa LLM se disponível, senão fallback por regras
-    if settings.OPENAI_API_KEY and settings.OPENAI_API_KEY.startswith("sk-"):
-        explicacao = await explicar_foco(foco)
+    if llm_is_configured():
+        try:
+            explicacao = await explicar_foco(foco)
+        except Exception as e:
+            logger.warning("Agente DeepSeek falhou, usando fallback: %s", e)
+            explicacao = await _explicar_sem_llm(foco)
     else:
         explicacao = await _explicar_sem_llm(foco)
 
@@ -163,8 +167,12 @@ async def explicar_focos_lote(payload: dict):
 
     async def _explicar_com_semaforo(foco):
         async with semaforo:
-            if settings.OPENAI_API_KEY and settings.OPENAI_API_KEY.startswith("sk-"):
-                return await explicar_foco(foco)
+            if llm_is_configured():
+                try:
+                    return await explicar_foco(foco)
+                except Exception as e:
+                    logger.warning("DeepSeek lote falhou para %s: %s", foco.get("id"), e)
+                    return await _explicar_sem_llm(foco)
             return await _explicar_sem_llm(foco)
 
     explicacoes = await asyncio.gather(*[_explicar_com_semaforo(f) for f in focos_alvo])
@@ -229,9 +237,9 @@ async def status_fontes():
     except Exception as e:
         resultados["nominatim"] = {"status": "erro", "detalhe": str(e)}
 
-    resultados["openai_configurado"] = bool(
-        settings.OPENAI_API_KEY and settings.OPENAI_API_KEY.startswith("sk-")
-    )
+    resultados["deepseek_configurado"] = llm_is_configured()
+    resultados["deepseek_model"] = get_deepseek_model() if llm_is_configured() else None
+    resultados["openai_configurado"] = resultados["deepseek_configurado"]  # compat. frontend antigo
     resultados["cache_focos"] = len(_cache_focos)
     resultados["cache_atualizado"] = _cache_ts.isoformat() if _cache_ts else None
 
