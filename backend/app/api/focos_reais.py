@@ -128,7 +128,10 @@ async def get_explicacao_foco(foco_id: str):
 
     foco = next((f for f in _cache_focos if f["id"] == foco_id), None)
     if not foco:
-        raise HTTPException(status_code=404, detail="Foco não encontrado")
+        raise HTTPException(
+            status_code=404,
+            detail="Foco não encontrado. Atualize a lista de focos e tente novamente.",
+        )
 
     # Usa LLM se disponível, senão fallback por regras
     if settings.OPENAI_API_KEY and settings.OPENAI_API_KEY.startswith("sk-"):

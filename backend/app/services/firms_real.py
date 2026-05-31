@@ -8,7 +8,7 @@ import io
 import logging
 from datetime import datetime, timezone
 from typing import Optional
-from uuid import uuid4
+import hashlib
 
 import httpx
 
@@ -29,6 +29,12 @@ FIRMS_SOURCES = {
 }
 
 CONFIANCA_MAP = {"nominal": 65.0, "low": 30.0, "high": 90.0, "n": 30.0, "l": 30.0, "h": 90.0}
+
+
+def _foco_id_estavel(lat: float, lon: float, data_hora: str, sensor: str, satelite: str) -> str:
+    """ID determinístico para o mesmo foco entre atualizações de cache."""
+    raw = f"{lat:.5f}|{lon:.5f}|{data_hora}|{sensor}|{satelite}"
+    return hashlib.sha256(raw.encode()).hexdigest()[:32]
 
 
 def _parse_confianca(v: str) -> float:
@@ -130,7 +136,7 @@ async def coletar_focos_firms_real(dias: int = 7) -> list[dict]:
                     severidade = _classificar_severidade(frp, confianca)
 
                     foco = {
-                        "id": str(uuid4()),
+                        "id": _foco_id_estavel(lat, lon, data_hora.isoformat(), sensor, satelite),
                         "fonte": fonte_label,
                         "satelite": satelite,
                         "sensor": sensor,

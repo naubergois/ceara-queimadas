@@ -13,6 +13,7 @@ import {
 import { clsx } from 'clsx'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import axios from 'axios'
 import { getExplicacaoFoco, type FocoReal, type FocoComExplicacao, type ClimaReal } from '../services/api'
 
 interface Props {
@@ -42,7 +43,19 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
 
     getExplicacaoFoco(foco.id)
       .then(setDados)
-      .catch(() => setErro('Erro ao consultar o agente. Verifique se o backend está rodando.'))
+      .catch((e: unknown) => {
+        if (axios.isAxiosError(e)) {
+          if (e.response?.status === 404) {
+            setErro('Foco não encontrado no servidor. Clique em Atualizar no mapa e selecione o foco novamente.')
+            return
+          }
+          if (e.code === 'ECONNABORTED' || e.message.includes('timeout')) {
+            setErro('A análise demorou demais. Tente novamente em alguns segundos.')
+            return
+          }
+        }
+        setErro('Erro ao consultar o agente. Verifique se o backend está ativo.')
+      })
       .finally(() => setCarregando(false))
   }, [foco?.id])
 
