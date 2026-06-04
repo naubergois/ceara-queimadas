@@ -11,9 +11,10 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{booktabs}
-\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{color}
 \usepackage{xspace}
-%\usepackage{microtype}
+\usepackage{microtype}
 \usepackage{listings}
 \usepackage{caption}
 \usepackage{subcaption}
@@ -114,7 +115,29 @@ A Figura~\ref{fig:architecture} apresenta a arquitetura geral do sistema, organi
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figures/architecture.png}
+\framebox{%
+\begin{minipage}{0.85\columnwidth}
+\small
+\texttt{%
+NASA FIRMS (VIIRS/MODIS) \\
+Open-Meteo \\
+Nominatim (OSM) \\
+GOES-16 (NOAA S3) \\
+MapBiomas (planejado)} \\[2mm]
+$\downarrow$ \\[1mm]
+\textbf{Backend FastAPI (Python 3.12)} \\
+\phantom{x} LangGraph Pipeline \\
+\phantom{x} Agente ReAct (DeepSeek) \\
+\phantom{x} FAISS RAG + Embeddings \\
+\phantom{x} Cache em memória (TTL 5~min) \\[2mm]
+$\downarrow$ \\[1mm]
+\textbf{Frontend React (TypeScript + Vite)} \\
+\phantom{x} MapLibre + deck.gl \\
+\phantom{x} KPIs, Dashboard, Chat, Boletim \\[2mm]
+$\downarrow$ \\[1mm]
+\textbf{Nginx Proxy (produção)}
+\end{minipage}
+}
 \caption{Arquitetura em camadas da plataforma Gêmeo Digital do Ceará.}
 \label{fig:architecture}
 \end{figure}
@@ -162,7 +185,32 @@ O pipeline de agentes é implementado como um grafo de estado (\texttt{StateGrap
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figures/langgraph.png}
+\framebox{%
+\begin{minipage}{0.9\columnwidth}
+\small
+\texttt{%
+START \\
+$\downarrow$ \\
+coletar\_dados~(INPE + NASA FIRMS + GOES-16 + Clima) \\
+$\downarrow$ \\
+validar\_dados~(Pydantic) \\
+$\downarrow$ \\
+\textit{(paralelo)} \\
+\phantom{--}agente\_geoespacial~(PostGIS)\quad agente\_goes16~(FRP)\quad agente\_climatico~(Risco) \\
+$\downarrow$ \\
+fundir\_evidencias \\
+$\downarrow$ \\
+classificar\_risco~(índice 0--100) \\
+$\downarrow$ \\
+agente\_react\_diagnostico~(DeepSeek ReAct) \\
+$\downarrow$ \\
+gerar\_alertas \\
+$\downarrow$ \\
+gerar\_boletim \\
+$\downarrow$ \\
+END}
+\end{minipage}
+}
 \caption{Grafo LangGraph do pipeline de agentes. Os nós de análise (geo, GOES-16, clima) executam em paralelo após a validação.}
 \label{fig:langgraph}
 \end{figure}
@@ -241,20 +289,6 @@ O sistema foi implantado em uma instância EC2 Amazon Linux 2023 (t2.medium --- 
 O custo mensal estimado da infraestrutura é de aproximadamente USD~20 (instância EC2 + 30~GB EBS), sem custos adicionais de API (todas as fontes de dados são gratuitas). A chave DeepSeek, quando configurada, adiciona custo variável conforme o volume de consultas.
 
 %% ===================================================================
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/resultados-experimentais.png}
-\caption{Desempenho do sistema de detecção: precisão, recall, F1-score, tempo médio de resposta e cobertura GOES-16.}
-\label{fig:resultados}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/evolucao-focos.png}
-\caption{Evolução mensal de focos de queimada no Ceará, comparando 2024 e 2025 (dados sintéticos baseados em tendências reais).}
-\label{fig:evolucao}
-\end{figure}
-
 \section{Resultados Experimentais}
 \label{sec:results}
 %% ===================================================================

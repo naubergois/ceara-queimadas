@@ -1,0 +1,43 @@
+graph TD
+    START((START))
+    ENDD((END))
+    
+    subgraph "Pipeline LangGraph - 10 Nós"
+        N1[coletar_dados<br/>INPE + NASA + GOES + Clima]
+        N2[validar_dados<br/>Pydantic]
+        N3[agente_geoespacial<br/>PostGIS]
+        N4[agente_goes16<br/>FRP Analysis]
+        N5[agente_climatico<br/>Risco]
+        N6[fundir_evidencias]
+        N7[classificar_risco<br/>Índice 0-100]
+        N8[agente_react<br/>DeepSeek ReAct]
+        N9[gerar_alertas]
+        N10[gerar_boletim]
+    end
+
+    START --> N1
+    N1 --> N2
+    N2 --> N3
+    N2 --> N4
+    N2 --> N5
+    N3 --> N6
+    N4 --> N6
+    N5 --> N6
+    N6 --> N7
+    N7 --> N8
+    N8 --> N9
+    N9 --> N10
+    N10 --> ENDD
+
+    style START fill:#2E86AB,color:#fff
+    style ENDD fill:#C73E1D,color:#fff
+    style N1 fill:#A23B72,color:#fff
+    style N2 fill:#A23B72,color:#fff
+    style N3 fill:#F18F01,color:#fff
+    style N4 fill:#F18F01,color:#fff
+    style N5 fill:#F18F01,color:#fff
+    style N6 fill:#A23B72,color:#fff
+    style N7 fill:#A23B72,color:#fff
+    style N8 fill:#6B5CA5,color:#fff
+    style N9 fill:#A23B72,color:#fff
+    style N10 fill:#A23B72,color:#fff

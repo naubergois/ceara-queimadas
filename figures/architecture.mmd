@@ -1,0 +1,53 @@
+graph TD
+    subgraph "Fontes de Dados"
+        A1[NASA FIRMS<br/>VIIRS/MODIS]
+        A2[Open-Meteo<br/>Clima]
+        A3[Nominatim OSM<br/>Geocodificação]
+        A4[GOES-16 NOAA S3<br/>ABI-L2-FDCF]
+    end
+
+    subgraph "Backend FastAPI Python 3.12"
+        B1[Cache em Memória<br/>TTL 5min]
+        B2[LangGraph Pipeline<br/>10 nós]
+        B3[Agente ReAct<br/>DeepSeek]
+        B4[FAISS RAG<br/>bge-small-en-v1.5]
+    end
+
+    subgraph "Frontend React TS + Vite"
+        C1[MapLibre + deck.gl<br/>Mapa Interativo]
+        C2[Dashboard<br/>KPIs & Timeline]
+        C3[Chat ReAct<br/>Diagnóstico]
+        C4[Boletim<br/>Relatório Técnico]
+    end
+
+    subgraph "Proxy"
+        D1[Nginx<br/>Produção EC2]
+    end
+
+    A1 --> B1
+    A2 --> B1
+    A3 --> B1
+    A4 --> B1
+    B1 --> B2
+    B2 --> B3
+    B3 --> C2
+    B3 --> C3
+    B4 --> C3
+    C1 --> D1
+    C2 --> D1
+    C3 --> D1
+    C4 --> D1
+
+    style A1 fill:#2E86AB,color:#fff
+    style A2 fill:#2E86AB,color:#fff
+    style A3 fill:#2E86AB,color:#fff
+    style A4 fill:#2E86AB,color:#fff
+    style B1 fill:#A23B72,color:#fff
+    style B2 fill:#A23B72,color:#fff
+    style B3 fill:#A23B72,color:#fff
+    style B4 fill:#A23B72,color:#fff
+    style C1 fill:#F18F01,color:#fff
+    style C2 fill:#F18F01,color:#fff
+    style C3 fill:#F18F01,color:#fff
+    style C4 fill:#F18F01,color:#fff
+    style D1 fill:#6B5CA5,color:#fff
