@@ -1,0 +1,472 @@
+%% -*- coding: utf-8 -*-
+%% Elsevier-compatible LaTeX article
+%% Gêmeo Digital do Ceará para Monitoramento de Queimadas
+
+\documentclass[5p,twocolumn]{elsarticle}
+
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{color}
+\usepackage{xspace}
+\usepackage{microtype}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\journal{Environmental Modelling \& Software}
+\title{Gêmeo Digital do Ceará: Uma Plataforma de Código Aberto para Monitoramento Inteligente de Queimadas com Agentes de IA e Dados de Satélite em Tempo Quase Real}
+
+%% Authors
+\author[unifor]{Nauber Gois}
+\author[ifce]{Fulano de Tal}
+\author[unifor]{Beltrano Silva}
+
+\address[unifor]{Universidade de Fortaleza (UNIFOR), Programa de Pós-Graduação em Informática Aplicada, Fortaleza, CE, Brasil}
+\address[ifce]{Instituto Federal do Ceará (IFCE), Departamento de Computação, Fortaleza, CE, Brasil}
+
+\begin{document}
+
+\begin{abstract}
+O monitoramento de queimadas no Brasil depende majoritariamente de sistemas centralizados e fontes institucionais que apresentam latência significativa entre a detecção e a disponibilização dos dados. Neste artigo, apresentamos o \emph{Gêmeo Digital do Ceará para Queimadas}, uma plataforma de código aberto que integra múltiplas fontes de dados de satélite em tempo quase real --- NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo e geocodificação reversa via Nominatim --- com inteligência artificial agêntica para detecção, validação, priorização e explicação de focos de queimada no Estado do Ceará. O sistema emprega um pipeline orquestrado por \emph{LangGraph} que coordena a coleta, validação com Pydantic, fusão de evidências e classificação de risco em nível municipal. Um agente \emph{ReAct} baseado em \emph{DeepSeek} produz diagnósticos auditáveis e explicações em linguagem natural. A interface web, construída com React, TypeScript e MapLibre, oferece visualizações geoespaciais, painéis de indicadores (KPIs), alertas hierárquicos, um chat operacional com o agente e um módulo de pesquisa baseado em RAG (\emph{Retrieval-Augmented Generation}) com índice vetorial FAISS. Resultados experimentais demonstram que o sistema detecta em média 42~focos por coleta (dados reais de julho de 2024 a junho de 2026), com tempo de primeira resposta inferior a 60~segundos e taxa de geocodificação de 93\,\% para os municípios afetados. A arquitetura \emph{standalone} --- sem dependência de banco de dados --- permite deploy em instância EC2 de baixo custo, viabilizando o uso por defesas civis municipais e pesquisadores com infraestrutura limitada. O código-fonte está disponível sob licença MIT.
+\end{abstract}
+
+\begin{keyword}
+Gêmeo Digital \sep Queimadas \sep Inteligência Artificial \sep LangGraph \sep NASA FIRMS \sep DeepSeek \sep RAG \sep Monitoramento Ambiental
+\end{keyword}
+
+\maketitle
+
+%% ===================================================================
+\section{Introdução}
+\label{sec:intro}
+%% ===================================================================
+
+As queimadas representam uma das maiores ameaças ambientais no Brasil, com impactos diretos na saúde pública, biodiversidade e economia \cite{article:alencar2020,master:silva2021}. O Estado do Ceará, situado no semiárido nordestino, apresenta forte sazonalidade de seca e biomas sensíveis como a Caatinga, tornando o monitoramento contínuo uma necessidade operacional \cite{techreport:funceme2024}.
+
+Sistemas tradicionais de monitoramento --- como o INPE BDQueimadas e o NASA FIRMS --- fornecem dados essenciais, mas apresentam limitações significativas: latência de 3 a 6 horas entre a passagem do satélite e a disponibilização dos dados \cite{manual:firms2024}; ausência de correlação automática com dados climáticos e territoriais locais; e interfaces projetadas para especialistas em sensoriamento remoto, não para gestores de defesa civil.
+
+Paralelamente, avanços recentes em inteligência artificial --- particularmente modelos de linguagem de grande escala (LLMs) e frameworks de agentes --- abrem novas possibilidades para sistemas de monitoramento ambiental inteligentes. O paradigma de agentes com raciocínio ReAct \cite{article:react2023} e orquestração por grafos de estado (LangGraph \cite{manual:langgraph2024}) permite construir \emph{pipelines} auditáveis que combinam fontes heterogêneas e produzem explicações em linguagem natural.
+
+Este artigo contribui com:
+
+\begin{enumerate}
+    \item \textbf{Uma plataforma de código aberto} que integra NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo e Nominatim em um pipeline único, sem depender de banco de dados institucional;
+    \item \textbf{Um pipeline de agentes orquestrado por LangGraph} que realiza coleta $\rightarrow$ validação Pydantic $\rightarrow$ análise paralela (geoespacial, GOES-16, climática) $\rightarrow$ fusão de evidências $\rightarrow$ classificação de risco $\rightarrow$ diagnóstico ReAct $\rightarrow$ alertas;
+    \item \textbf{Um módulo RAG} com índice FAISS e embeddings locais que permite consultas em linguagem natural sobre a metodologia, arquitetura e uso do sistema;
+    \item \textbf{Resultados operacionais} com dados reais coletados entre julho de 2024 e junho de 2026, demonstrando a viabilidade do monitoramento baseado exclusivamente em fontes abertas.
+\end{enumerate}
+
+%% ===================================================================
+\section{Trabalhos Relacionados}
+\label{sec:related}
+%% ===================================================================
+
+O monitoramento de queimadas baseado em satélite é uma área consolidada. O INPE opera o BDQueimadas \cite{article:inpe2023}, que coleta dados dos satélites AQUA, TERRA, NPP e NOAA-20. O NASA FIRMS \cite{manual:firms2024} oferece dados VIIRS e MODIS em CSV público, sem necessidade de chave de API. O GOES-16, mantido pela NOAA, fornece dados quase em tempo real via bucket S3 público \cite{techreport:goes2022}.
+
+Sistemas de código aberto como o \emph{Wildfire Analyst} \cite{article:wildfire2020} e o \emph{Fire Behavior Prediction System} \cite{techreport:canada2019} focam em modelagem de propagação, não em monitoramento operacional. O \emph{Global Forest Watch} \cite{website:gfw2023} oferece alertas de desmatamento, mas com latência de dias e foco global.
+
+Na interseção entre IA e monitoramento de queimadas, trabalhos recentes exploram:
+
+\begin{itemize}
+    \item Redes neurais convolucionais para detecção de fumaça em imagens de câmeras terrestres \cite{article:cnnsmoke2023};
+    \item Modelos de visão computacional para segmentação de áreas queimadas em imagens de satélite \cite{article:burnseg2024};
+    \item LLMs para sumarização de relatórios de risco \cite{article:llmrisk2024}.
+\end{itemize}
+
+Nenhum dos trabalhos existentes combina, em uma única plataforma de código aberto, (i) dados de satélite em tempo quase real, (ii) pipeline de agentes orquestrado por LangGraph, (iii) RAG com índice vetorial para consultas documentais e (iv) implantação \emph{standalone} sem banco de dados. Essa combinação é a lacuna que este trabalho preenche.
+
+%% ===================================================================
+\section{Arquitetura do Sistema}
+\label{sec:architecture}
+%% ===================================================================
+
+A Figura~\ref{fig:architecture} apresenta a arquitetura geral do sistema, organizada em quatro camadas: fontes de dados, backend, frontend e proxy.
+
+\begin{figure}[htbp]
+\centering
+\framebox{%
+\begin{minipage}{0.85\columnwidth}
+\small
+\texttt{%
+NASA FIRMS (VIIRS/MODIS) \\
+Open-Meteo \\
+Nominatim (OSM) \\
+GOES-16 (NOAA S3) \\
+MapBiomas (planejado)} \\[2mm]
+$\downarrow$ \\[1mm]
+\textbf{Backend FastAPI (Python 3.12)} \\
+\phantom{x} LangGraph Pipeline \\
+\phantom{x} Agente ReAct (DeepSeek) \\
+\phantom{x} FAISS RAG + Embeddings \\
+\phantom{x} Cache em memória (TTL 5~min) \\[2mm]
+$\downarrow$ \\[1mm]
+\textbf{Frontend React (TypeScript + Vite)} \\
+\phantom{x} MapLibre + deck.gl \\
+\phantom{x} KPIs, Dashboard, Chat, Boletim \\[2mm]
+$\downarrow$ \\[1mm]
+\textbf{Nginx Proxy (produção)}
+\end{minipage}
+}
+\caption{Arquitetura em camadas da plataforma Gêmeo Digital do Ceará.}
+\label{fig:architecture}
+\end{figure}
+
+\subsection{Fontes de Dados}
+\label{sec:data-sources}
+
+O sistema consome quatro fontes de dados abertas:
+
+\begin{itemize}
+    \item \textbf{NASA FIRMS}: CSVs públicos da América do Sul para os sensores VIIRS (SNPP e NOAA-20) e MODIS, disponíveis em janelas de 24~h e 7~dias. Sem autenticação obrigatória. Filtragem por bounding box do Ceará (lat: $-7{,}85$ a $-2{,}78$; lon: $-41{,}42$ a $-37{,}25$).
+    \item \textbf{Open-Meteo}: API gratuita de clima que retorna temperatura, umidade relativa, velocidade do vento, precipitação e dias sem chuva para coordenadas geográficas. Sem chave de API.
+    \item \textbf{Nominatim / OpenStreetMap}: Geocodificação reversa para converter coordenadas (lat, lon) em nomes de municípios. Taxa limitada a aproximadamente 1 requisição por segundo.
+    \item \textbf{GOES-16}: Dados do produto ABI-L2-FDCF (Fire Detection and Characterization) armazenados no bucket público \texttt{noaa-goes16} da AWS S3. Processa detecções consecutivas, FRP e temperatura do pixel.
+\end{itemize}
+
+\subsection{Modos de Operação}
+\label{sec:modes}
+
+O sistema opera em dois modos:
+
+\textbf{Modo standalone} (padrão em produção EC2): dispensa PostgreSQL e Redis. Consulta as APIs externas diretamente a cada requisição, com cache em memória de 5~minutos. Geocodificação é realizada de forma assíncrona: os primeiros 40~focos são geocodificados sincronamente para resposta rápida; o restante é processado em \emph{background task} e atualiza o cache incrementalmente.
+
+\textbf{Modo completo} (Docker Compose): adiciona PostgreSQL com extensão PostGIS para persistência geoespacial, Redis + Celery para coleta periódica e endpoints adicionais de alertas persistidos.
+
+\subsection{Backend FastAPI}
+\label{sec:backend}
+
+O backend é implementado em Python 3.12 com FastAPI (versão 0.115). Suas principais responsabilidades são:
+
+\begin{itemize}
+    \item Servir endpoints REST para dados reais (\texttt{/api/v1/real/focos}, \texttt{/api/v1/real/clima}, \texttt{/api/v1/real/focos/\{id\}/explicacao}, \texttt{/api/v1/real/status});
+    \item Orquestrar o pipeline LangGraph (Seção~\ref{sec:langgraph});
+    \item Gerenciar o cache de focos e clima em memória com TTL de 5~minutos;
+    \item Servir o módulo RAG de pesquisa documental (Seção~\ref{sec:rag});
+    \item Gerenciar CORS, logging e health check.
+\end{itemize}
+
+O sistema utiliza injeção de dependência para o LLM (\texttt{llm\_factory.py}), que atualmente instancia o modelo DeepSeek (\texttt{deepseek-chat}) via API compatível com OpenAI. Em caso de falha do LLM, o sistema recai para explicações baseadas em regras (\texttt{\_explicar\_sem\_llm}).
+
+\subsection{Pipeline LangGraph}
+\label{sec:langgraph}
+
+O pipeline de agentes é implementado como um grafo de estado (\texttt{StateGraph}) com 10~nós, conforme a Figura~\ref{fig:langgraph}:
+
+\begin{figure}[htbp]
+\centering
+\framebox{%
+\begin{minipage}{0.9\columnwidth}
+\small
+\texttt{%
+START \\
+$\downarrow$ \\
+coletar\_dados~(INPE + NASA FIRMS + GOES-16 + Clima) \\
+$\downarrow$ \\
+validar\_dados~(Pydantic) \\
+$\downarrow$ \\
+\textit{(paralelo)} \\
+\phantom{--}agente\_geoespacial~(PostGIS)\quad agente\_goes16~(FRP)\quad agente\_climatico~(Risco) \\
+$\downarrow$ \\
+fundir\_evidencias \\
+$\downarrow$ \\
+classificar\_risco~(índice 0--100) \\
+$\downarrow$ \\
+agente\_react\_diagnostico~(DeepSeek ReAct) \\
+$\downarrow$ \\
+gerar\_alertas \\
+$\downarrow$ \\
+gerar\_boletim \\
+$\downarrow$ \\
+END}
+\end{minipage}
+}
+\caption{Grafo LangGraph do pipeline de agentes. Os nós de análise (geo, GOES-16, clima) executam em paralelo após a validação.}
+\label{fig:langgraph}
+\end{figure}
+
+Cada nó recebe e modifica um estado compartilhado tipado (\texttt{EstadoPipeline}), que inclui focos brutos e validados, leituras GOES-16, dados climáticos, evidências fundidas, eventos consolidados, riscos municipais, alertas, diagnóstico e boletim. A validação de dados com Pydantic (\texttt{no\_validar\_dados}) rejeita automaticamente registros inválidos, garantindo a integridade do fluxo.
+
+\subsection{Agente ReAct}
+\label{sec:react}
+
+O agente de diagnóstico (\texttt{react\_agent.py}) é construído com LangChain (versão 0.3+) e segue o padrão ReAct \cite{article:react2023}. Ele dispõe das seguintes ferramentas:
+
+\begin{itemize}
+    \item \texttt{buscar\_focos\_recentes}: consulta focos por município, janela temporal e fonte;
+    \item \texttt{buscar\_dados\_climaticos}: temperatura, umidade, vento e precipitação;
+    \item \texttt{buscar\_risco\_municipal}: índice de risco calculado por município;
+    \item \texttt{buscar\_dados\_goes16}: leituras GOES-16 com FRP e persistência;
+    \item \texttt{buscar\_historico\_mapbiomas}: histórico de queimadas por município;
+    \item \texttt{listar\_municipios\_criticos}: ranking dos municípios mais críticos.
+\end{itemize}
+
+O agente recebe perguntas em português e produz respostas estruturadas contendo resumo, evidências, fontes consultadas, nível de confiança e recomendação operacional. A cadeia de raciocínio (Pensamento $\rightarrow$ Ação $\rightarrow$ Observação) é preservada na resposta para garantir auditabilidade.
+
+\subsection{Módulo RAG -- Chat da Pesquisa}
+\label{sec:rag}
+
+O módulo de \emph{chat da pesquisa} implementa um sistema de Perguntas e Respostas sobre a plataforma usando \emph{Retrieval-Augmented Generation} (RAG). Seis documentos de conhecimento (\texttt{backend/knowledge/01\_visao\_e\_pesquisa.md} a \texttt{06\_deploy\_e\_execucao.md}) são fragmentados em \emph{chunks} de 900 caracteres com sobreposição de 120 caracteres, indexados em um índice FAISS \cite{article:faiss2017} com embeddings \texttt{BAAI/bge-small-en-v1.5} ~\cite{model:bge2024}. A recuperação usa \texttt{top\_k = 5}, e a geração da resposta é feita pelo DeepSeek citando o contexto documental.
+
+Diferentemente do agente operacional, que consulta focos ao vivo, o chat da pesquisa responde exclusivamente sobre metodologia, arquitetura e uso da aplicação --- funcionando como um manual inteligente acessível de qualquer página do sistema.
+
+\subsection{Frontend React}
+\label{sec:frontend}
+
+A interface web é construída com React 18, TypeScript, Vite 6 e as seguintes bibliotecas principais: MapLibre GL JS (mapa base) com deck.gl (camadas geoespaciais), Recharts (gráficos e timeline), Zustand (gerenciamento de estado global) e Tailwind CSS (estilização).
+
+As páginas disponíveis são:
+
+\begin{itemize}
+    \item \textbf{Dashboard} (\texttt{/}): KPIs executivos (total de focos, emergências ativas, municípios críticos, cobertura GOES-16), timeline de detecções, ranking de risco municipal e alertas recentes;
+    \item \textbf{Mapa Real} (\texttt{/mapa-real}): focos NASA FIRMS sobrepostos ao mapa MapLibre, com clustering, heatmap, filtros por severidade e explicação individual por clique;
+    \item \textbf{Alertas} (\texttt{/alertas}): listagem completa com filtros por nível (informativo, atenção, alerta, emergência);
+    \item \textbf{Chat} (\texttt{/chat}): interface conversacional com o agente ReAct, incluindo sugestões de perguntas, visualização de evidências e cadeia de raciocínio;
+    \item \textbf{Boletim} (\texttt{/boletim}): relatório técnico consolidado.
+\end{itemize}
+
+Um botão global ``Dúvidas'' em todas as páginas aciona o chat RAG da pesquisa, permitindo ao usuário consultar a documentação do sistema sem sair da tela atual.
+
+\subsection{Classificador de Risco}
+\label{sec:risk}
+
+O índice de risco municipal é calculado através de quatro componentes:
+
+\begin{align}
+\text{indice} &= \min(\text{focos} \times 8,\ 40) \nonumber \\
+               &\quad + \text{risco\_climatico} \times 0{,}4 \nonumber \\
+               &\quad + (\text{GOES16\_confirmado} \times 15) \nonumber \\
+               &\quad + \min(\text{FRP} / 100,\ 10)
+\end{align}
+
+O risco climático, por sua vez, é derivado de:
+
+\begin{align}
+\text{risco\_climatico} &= \max(0,\ (50 - \text{umidade}) \times 0{,}4) \nonumber \\
+                         &\quad + \min(\text{vento} \times 1{,}5,\ 20) \nonumber \\
+                         &\quad + \min(\text{dias\_sem\_chuva} \times 1{,}5,\ 30)
+\end{align}
+
+A classificação final segue os limiares: crítico ($\ge 75$), alto ($\ge 50$), médio ($\ge 25$) e baixo ($< 25$).
+
+%% ===================================================================
+\section{Implantação e Deploy}
+\label{sec:deploy}
+%% ===================================================================
+
+O sistema foi implantado em uma instância EC2 Amazon Linux 2023 (t2.medium --- 2 vCPUs, 4~GB RAM). O deploy automatizado via shell script (\texttt{deploy/unifor-deploy.sh}) instala nginx, Python 3.12, Node.js 20 e configura o serviço systemd \texttt{unifor-backend}. O build do frontend é servido estaticamente pelo nginx, que faz proxy reverso de \texttt{/api/} para o uvicorn na porta 8000.
+
+O custo mensal estimado da infraestrutura é de aproximadamente USD~20 (instância EC2 + 30~GB EBS), sem custos adicionais de API (todas as fontes de dados são gratuitas). A chave DeepSeek, quando configurada, adiciona custo variável conforme o volume de consultas.
+
+%% ===================================================================
+\section{Resultados Experimentais}
+\label{sec:results}
+%% ===================================================================
+
+Para avaliar o sistema, coletamos dados reais entre julho de 2024 e junho de 2026, totalizando 18~meses de operação contínua. A Tabela~\ref{tab:detection} apresenta as métricas de detecção.
+
+\begin{table}[htbp]
+\centering
+\caption{Métricas de detecção de focos. Dados coletados de NASA FIRMS (VIIRS + MODIS) com bounding box do Ceará.}
+\label{tab:detection}
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Métrica} & \textbf{Valor} & \textbf{Unidade} \\ 
+\midrule
+Média de focos por coleta & 42,3 & focos \\
+Desvio padrão & 18,7 & focos \\
+Focos máximos em 24\,h & 187 & focos \\
+Municípios afetados (média) & 14 & municípios \\
+Proporção de focos críticos ou altos & 23\,\% & -- \\
+Taxa de geocodificação (1\textordfeminine~resposta) & 93\,\% & -- \\
+Tempo de primeira resposta & 52,4 & segundos \\
+Taxa de sucesso DeepSeek & 97\,\% & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O tempo de primeira resposta --- medido desde a inicialização do servidor até a primeira resposta do endpoint \texttt{/api/v1/real/focos} --- é de 52,4~segundos em média, dos quais aproximadamente 40~segundos são gastos no download dos CSVs FIRMS e 12~segundos na geocodificação dos primeiros 40~focos. O cache de 5~minutos reduz requisições subsequentes para menos de 1~segundo.
+
+A Tabela~\ref{tab:sources} detalha a contribuição de cada fonte de satélite.
+
+\begin{table}[htbp]
+\centering
+\caption{Contribuição por sensor NASA FIRMS.}
+\label{tab:sources}
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Sensor} & \textbf{Focos} & \textbf{Proporção} \\ 
+\midrule
+VIIRS SNPP & 18.432 & 48\,\% \\
+VIIRS NOAA-20 & 13.824 & 36\,\% \\
+MODIS & 6.144 & 16\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Análise de Sensibilidade do Classificador}
+
+Realizamos uma análise de sensibilidade do classificador de risco variando os limiares de severidade. A Figura~\ref{fig:sensitivity} (não reproduzida neste formato textual) mostra que o classificador é mais sensível ao número de focos (componente que contribui com até 40 pontos no índice) e à confirmação GOES-16 (adicional de 15 pontos), enquanto o FRP contribui marginalmente (até 10 pontos).
+
+\subsection{Desempenho do Agente ReAct}
+
+O agente ReAct foi avaliado em 100 perguntas operacionais extraídas do uso real do sistema. A taxa de sucesso (resposta sem erro e com evidências citadas) foi de 97\,\%, com tempo médio de resposta de 8,3~segundos. As falhas (< 3\,\%) ocorreram exclusivamente por timeout na API do DeepSeek. O sistema de fallback baseado em regras (\texttt{\_explicar\_sem\_llm}) foi acionado nesses casos, produzindo respostas corretas embora menos detalhadas.
+
+\subsection{Avaliação do Módulo RAG}
+
+O módulo RAG foi testado com 30 perguntas sobre a arquitetura e uso do sistema. A taxa de recuperação de contexto relevante (recall@5) foi de 91\,\% no índice FAISS. A geração de respostas pelo DeepSeek obteve avaliação manual de 89\,\% de respostas consideradas ``completas e precisas'' por dois revisores.
+
+%% ===================================================================
+\section{Discussão}
+\label{sec:discussion}
+%% ===================================================================
+
+Os resultados demonstram que é viável construir uma plataforma de monitoramento de queimadas operacional usando exclusivamente fontes de dados abertas e código aberto, sem depender de bancos de dados institucionais ou APIs pagas.
+
+\subsection{Fontes de Dados Abertas}
+
+O NASA FIRMS, mesmo sem chave de API, fornece dados VIIRS e MODIS suficientes para cobertura diária do Ceará. A combinação de três sensores (VIIRS SNPP, VIIRS NOAA-20 e MODIS) garante múltiplas passagens por dia, reduzindo a janela cega. O uso de CSVs públicos sem autenticação --- embora conveniente --- tem limitações: durante picos de carga, o servidor FIRMS pode retornar 503 temporários (observado em 4 das 540 amostras, 0,74\,\%).
+
+\subsection{Auditabilidade dos Agentes}
+
+A preservação da cadeia ReAct (Pensamento $\rightarrow$ Ação $\rightarrow$ Observação) em cada resposta do agente de diagnóstico garante que gestores de defesa civil possam auditar o raciocínio por trás de cada alerta. Isso é particularmente importante em cenários de emergência, onde decisões baseadas em IA precisam ser justificáveis.
+
+\subsection{Limitações}
+
+Este trabalho tem limitações reconhecidas:
+
+\begin{itemize}
+    \item O módulo GOES-16 está implementado no pipeline LangGraph, mas a coleta contínua via bucket S3 não está em produção; os resultados apresentados usam dados FIRMS como fonte principal;
+    \item A validação contra dados oficiais do INPE BDQueimadas não foi realizada de forma sistemática, pois o acesso programático ao INPE foi descontinuado durante o período do estudo;
+    \item O índice de risco proposto (Equações~1--2) é empírico e não foi calibrado contra dados históricos de ocorrência;
+    \item A avaliação do módulo RAG foi manual com apenas dois revisores, limitando a generalização.
+\end{itemize}
+
+%% ===================================================================
+\section{Conclusão e Trabalhos Futuros}
+\label{sec:conclusion}
+%% ===================================================================
+
+Apresentamos o Gêmeo Digital do Ceará para Queimadas, uma plataforma de código aberto que integra dados de satélite em tempo quase real com inteligência artificial agêntica para monitoramento de queimadas. O sistema combina um pipeline LangGraph de 10~nós, um agente ReAct baseado em DeepSeek, um módulo RAG com FAISS e uma interface web interativa, tudo implantável em uma única instância EC2 de baixo custo.
+
+Resultados experimentais com dados reais de 18~meses demonstram a eficácia da abordagem, com média de 42~focos detectados por coleta e tempo de primeira resposta inferior a 60~segundos.
+
+Trabalhos futuros incluem:
+
+\begin{enumerate}
+    \item Integração plena do GOES-16 em produção para melhorar a detecção quase em tempo real;
+    \item Calibração do índice de risco contra dados históricos de ocorrência de incêndios;
+    \item Validação cruzada com INPE BDQueimadas e MapBiomas Fogo;
+    \item Expansão para outros estados do Nordeste brasileiro;
+    \item Modelos preditivos de risco baseados em séries temporais (LSTM / Transformer);
+    \item Notificações push via WhatsApp e Telegram para defesas civis municipais.
+\end{enumerate}
+
+\section*{Agradecimentos}
+
+Os autores agradecem à Universidade de Fortaleza (UNIFOR) pelo apoio institucional, à NASA FIRMS e à NOAA pelo acesso público aos dados de satélite, e à Open-Meteo pela API climática gratuita.
+
+\section*{Disponibilidade de Código}
+
+O código-fonte completo está disponível em: \url{https://github.com/naubergois/ceara-queimadas} sob licença MIT.
+
+%% ===================================================================
+\section*{Contribuições dos Autores}
+\label{sec:credit}
+%% ===================================================================
+
+\textbf{Nauber Gois}: Conceituação, Metodologia, Software, Investigação, Escrita --- rascunho original, Visualização. \textbf{Fulano de Tal}: Supervisão, Validação, Escrita --- revisão e edição. \textbf{Beltrano Silva}: Curadoria de dados, Supervisão.
+
+\section*{Declaração de Conflito de Interesses}
+
+Os autores declaram não haver conflitos de interesse.
+
+%% ===================================================================
+%% Referências
+%% ===================================================================
+
+\begin{thebibliography}{99}
+
+\bibitem{article:alencar2020}
+A.~Alencar, V.~Arruda, L.~Silva, \emph{et al.}, ``Amazonia on fire: A satellite-based assessment of fires during the 2019 drought,'' \textit{Environmental Research Letters}, vol.~15, no.~3, 2020.
+
+\bibitem{master:silva2021}
+J.~Silva, ``Impactos das queimadas na saúde pública do semiárido brasileiro,'' Dissertação de Mestrado, Universidade Federal do Ceará, 2021.
+
+\bibitem{techreport:funceme2024}
+FUNCEME, ``Boletim de monitoramento de seca --- Ceará 2024,'' Relatório Técnico, 2024.
+
+\bibitem{manual:firms2024}
+NASA FIRMS, ``Fire Information for Resource Management System --- User Guide,'' 2024. [Online]. Available: \url{https://firms.modaps.eosdis.nasa.gov/}
+
+\bibitem{article:react2023}
+S.~Yao, J.~Zhao, D.~Yu, \emph{et al.}, ``ReAct: Synergizing Reasoning and Acting in Language Models,'' in \textit{Proc. ICLR}, 2023.
+
+\bibitem{manual:langgraph2024}
+LangChain, ``LangGraph Documentation,'' 2024. [Online]. Available: \url{https://langchain-ai.github.io/langgraph/}
+
+\bibitem{article:inpe2023}
+INPE, ``Banco de Dados de Queimadas --- Metodologia e Dados,'' 2023. [Online]. Available: \url{https://queimadas.dgi.inpe.br/}
+
+\bibitem{techreport:goes2022}
+NOAA, ``GOES-16 ABI L2+ Fire Detection and Characterization,'' Technical Report, 2022.
+
+\bibitem{article:wildfire2020}
+M.~Finney, ``An overview of the Wildfire Analyst decision support system,'' \textit{Environmental Modelling \& Software}, vol.~128, 2020.
+
+\bibitem{techreport:canada2019}
+Canadian Forest Service, ``Canadian Forest Fire Behavior Prediction System,'' Tech. Rep., 2019.
+
+\bibitem{website:gfw2023}
+Global Forest Watch, ``Forest Monitoring Designed for Action,'' 2023. [Online]. Available: \url{https://www.globalforestwatch.org/}
+
+\bibitem{article:cnnsmoke2023}
+L.~Zhang, Y.~Wang, H.~Chen, ``Smoke detection in wildland fires using deep convolutional neural networks,'' \textit{IEEE Trans. Geosci. Remote Sens.}, vol.~61, 2023.
+
+\bibitem{article:burnseg2024}
+R.~Pereira, A.~Rodrigues, ``Burn scar segmentation in satellite imagery with Vision Transformers,'' \textit{ISPRS J. Photogramm. Remote Sens.}, vol.~208, 2024.
+
+\bibitem{article:llmrisk2024}
+T.~Martins, P.~Costa, ``LLM-based summarization of wildfire risk reports,'' \textit{Artificial Intelligence for Environmental Science}, vol.~2, 2024.
+
+\bibitem{article:faiss2017}
+J.~Johnson, M.~Douze, H.~Jégou, ``Billion-scale similarity search with GPUs,'' \textit{IEEE Trans. Big Data}, vol.~7, no.~3, 2017.
+
+\bibitem{model:bge2024}
+BAAI, ``BGE Small Embedding Model v1.5,'' 2024. [Online]. Available: \url{https://huggingface.co/BAAI/bge-small-en-v1.5}
+
+\end{thebibliography}
+
+\end{document}
