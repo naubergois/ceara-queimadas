@@ -1,0 +1,66 @@
+\begin{thebibliography}{9}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[{INPE}(2025)]{inpe2025}
+{INPE}.
+\newblock {Programa Queimadas}, 2025.
+\newblock URL \url{http://queimadas.dgi.inpe.br/queimadas/}.
+
+\bibitem[{ISO/IEC}(2021)]{iso2021}
+{ISO/IEC}.
+\newblock {ISO/IEC 23247-1: Digital Twin Framework for Manufacturing}, 2021.
+
+\bibitem[{MapBiomas}(2025)]{mapbiomas2025}
+{MapBiomas}.
+\newblock {MapBiomas Fogo}, 2025.
+\newblock URL \url{https://mapbiomas.org/}.
+
+\bibitem[Morsali and Khajavi(2026)]{morsali2026}
+M.~Morsali and S.~H. Khajavi.
+\newblock {Digital Twin and Agentic AI for Wild Fire Disaster Management:
+  Intelligent Virtual Situation Room (IVSR)}.
+\newblock In \emph{arXiv preprint}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2602.08949}.
+
+\bibitem[Raha et~al.(2025)Raha, Tavakkoli, Webb, Habibpour, et~al.]{raha2025}
+M.~H. Raha, A.~R. Tavakkoli, C.~Webb, M.~Habibpour, et~al.
+\newblock {FIRETWIN: Digital Twin Advancing Multi-Modal Sensing, Interactive
+  Analytics for Wildfire Response}.
+\newblock In \emph{arXiv preprint}, 2025.
+\newblock URL \url{https://arxiv.org/abs/2510.18879}.
+
+\bibitem[Shen and Zhou(2025)]{shen2025}
+Z.~Shen and H.~Zhou.
+\newblock {Hazard-Responsive Digital Twin for Climate-Driven Urban Resilience
+  and Equity}.
+\newblock In \emph{arXiv preprint}, 2025.
+\newblock URL \url{https://arxiv.org/abs/2510.22941}.
+
+\bibitem[Vogiatzoglou et~al.(2024)Vogiatzoglou, Papadimitriou, Bontozoglou, and
+  Ampountolas]{vogiatzoglou2024}
+K.~Vogiatzoglou, C.~Papadimitriou, V.~Bontozoglou, and K.~Ampountolas.
+\newblock {Physics-informed Neural Networks for Parameter Learning of Wildfire
+  Spreading}.
+\newblock In \emph{arXiv preprint}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2406.14591}.
+
+\bibitem[Webb et~al.(2026)Webb, Habibpour, Raha, Tavakkoli, Coen, and
+  Afghah]{webb2026}
+C.~Webb, M.~Habibpour, M.~H. Raha, A.~R. Tavakkoli, J.~Coen, and F.~Afghah.
+\newblock {FIRE-VLM: A Vision-Language-Driven Reinforcement Learning Framework
+  for UAV Wildfire Tracking in a Physics-Grounded Fire Digital Twin}.
+\newblock In \emph{arXiv preprint}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2601.03449}.
+
+\bibitem[Zhou et~al.(2025)Zhou, Wang, Yan, et~al.]{zhou2025}
+Z.~Zhou, X.~Wang, Y.~Yan, et~al.
+\newblock {AIMNET: An IoT-Empowered Digital Twin for Continuous Gas Emission
+  Monitoring and Early Hazard Detection}.
+\newblock In \emph{arXiv preprint}, 2025.
+\newblock URL \url{https://arxiv.org/abs/2512.06148}.
+
+\end{thebibliography}

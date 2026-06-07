@@ -22,7 +22,7 @@ export default function MapaPage() {
           <select
             value={filtroHoras}
             onChange={(e) => setFiltroHoras(Number(e.target.value))}
-            className="bg-gray-900/90 border border-gray-700 text-gray-200 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
+            className="bg-white/90 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
             aria-label="Filtrar por período"
           >
             <option value={6}>Últimas 6h</option>
@@ -34,7 +34,7 @@ export default function MapaPage() {
           <select
             value={filtroFonte ?? ''}
             onChange={(e) => setFiltroFonte(e.target.value || null)}
-            className="bg-gray-900/90 border border-gray-700 text-gray-200 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
+            className="bg-white/90 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
             aria-label="Filtrar por fonte"
           >
             <option value="">Todas as fontes</option>
@@ -44,7 +44,7 @@ export default function MapaPage() {
           </select>
 
           {carregando && (
-            <div className="bg-gray-900/90 border border-gray-700 rounded-lg px-3 py-2 text-xs text-orange-400">
+            <div className="bg-white/90 border border-slate-200 rounded-lg px-3 py-2 text-xs text-fire-600">
               Atualizando...
             </div>
           )}
@@ -54,7 +54,7 @@ export default function MapaPage() {
       </div>
 
       {/* Painel lateral */}
-      <aside className="w-72 bg-gray-950 border-l border-gray-800 overflow-y-auto p-3 space-y-3 shrink-0">
+      <aside className="w-72 bg-stone-50 border-l border-slate-200 overflow-y-auto p-3 space-y-3 shrink-0">
         <CamadasControle camadas={camadas} />
         <PainelRiscoMunicipal riscos={riscos.slice(0, 10)} carregando={carregando} />
       </aside>

@@ -1,12 +1,15 @@
+import { useState } from 'react'
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
-import { Flame, Map, BarChart3, Bell, MessageSquare, FileText, Satellite, BookOpen } from 'lucide-react'
+import { Flame, Map, BarChart3, Bell, MessageSquare, FileText, Satellite } from 'lucide-react'
+import MascoteGuia, { NOME_MASCOTE } from './components/MascoteGuia'
 import DashboardPage from './pages/DashboardPage'
+import InovacaoPage from './pages/InovacaoPage'
 import MapaPage from './pages/MapaPage'
 import MapaRealPage from './pages/MapaRealPage'
 import AlertasPage from './pages/AlertasPage'
 import ChatPage from './pages/ChatPage'
-import GuiaPage from './pages/GuiaPage'
 import BoletimPage from './pages/BoletimPage'
+import DialogoGuiaPesquisa from './components/DialogoGuiaPesquisa'
 import { clsx } from 'clsx'
 
 const navItems = [
@@ -14,78 +17,133 @@ const navItems = [
   { to: '/mapa-real', label: 'Mapa Real',    icon: Satellite },
   { to: '/mapa',      label: 'Mapa',         icon: Map },
   { to: '/alertas',   label: 'Alertas',      icon: Bell },
-  { to: '/guia',       label: 'Guia',         icon: BookOpen },
   { to: '/chat',      label: 'Chat IA',      icon: MessageSquare },
   { to: '/boletim',   label: 'Boletim',      icon: FileText },
 ]
 
+function AppShell() {
+  const [guiaAberto, setGuiaAberto] = useState(false)
+
+  const navClass = (isActive: boolean) =>
+    clsx(
+      'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+      isActive
+        ? 'bg-fire-600 text-white shadow-sm'
+        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+    )
+
+  return (
+    <div className="flex h-screen overflow-hidden bg-surface-page">
+      <aside className="w-16 lg:w-60 bg-white border-r border-slate-200 flex flex-col shrink-0 shadow-sm z-10">
+        <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-100">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-fire-500 to-fire-700 flex items-center justify-center shadow-sm shrink-0">
+            <Flame className="text-white" size={22} />
+          </div>
+          <span className="hidden lg:block font-semibold text-sm text-slate-900 leading-tight">
+            Gêmeo Digital
+            <span className="block text-fire-600 font-medium text-xs mt-0.5">Ceará Queimadas</span>
+          </span>
+        </div>
+
+        <nav className="flex-1 py-4 space-y-1 px-2">
+          {navItems.map(({ to, label, icon: Icon }) => (
+            <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => navClass(isActive)}>
+              <Icon size={18} className="shrink-0" />
+              <span className="hidden lg:block">{label}</span>
+            </NavLink>
+          ))}
+
+          <div className="pt-2 mt-2 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => setGuiaAberto(true)}
+              className={clsx(
+                'w-full rounded-2xl border-2 transition-all text-left overflow-hidden',
+                guiaAberto
+                  ? 'border-violet-500 bg-violet-600 shadow-md'
+                  : 'border-violet-200 bg-gradient-to-br from-violet-50 via-white to-orange-50 hover:border-violet-400 hover:shadow-soft',
+              )}
+              aria-label={`Abrir guia com ${NOME_MASCOTE}`}
+            >
+              <div className="flex items-center gap-2 px-2 py-2.5 lg:px-3 lg:py-3">
+                <MascoteGuia
+                  size={40}
+                  animado={!guiaAberto}
+                  className="shrink-0 drop-shadow-sm"
+                />
+                <div className="hidden lg:block min-w-0 flex-1">
+                  <p
+                    className={clsx(
+                      'text-sm font-bold leading-tight',
+                      guiaAberto ? 'text-white' : 'text-violet-900',
+                    )}
+                  >
+                    {NOME_MASCOTE}
+                  </p>
+                  <p
+                    className={clsx(
+                      'text-[11px] font-medium leading-tight mt-0.5',
+                      guiaAberto ? 'text-violet-100' : 'text-violet-600',
+                    )}
+                  >
+                    Guia cearense
+                  </p>
+                </div>
+                <span
+                  className={clsx(
+                    'hidden lg:inline text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full shrink-0',
+                    guiaAberto
+                      ? 'bg-white/20 text-white'
+                      : 'bg-violet-600 text-white',
+                  )}
+                >
+                  Ajuda
+                </span>
+              </div>
+            </button>
+          </div>
+        </nav>
+
+        <div className="px-3 pb-3">
+          <div className="hidden lg:flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span className="text-xs text-emerald-800 font-medium">Dados em tempo real</span>
+          </div>
+        </div>
+
+        <div className="px-4 py-4 border-t border-slate-100">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="hidden lg:block text-xs text-slate-500">Sistema ativo</span>
+          </div>
+        </div>
+      </aside>
+
+      <main className="flex-1 overflow-auto min-w-0">
+        <Routes>
+          <Route path="/"          element={<DashboardPage />} />
+          <Route path="/mapa-real" element={<MapaRealPage />} />
+          <Route path="/mapa"      element={<MapaPage />} />
+          <Route path="/alertas"   element={<AlertasPage />} />
+          <Route path="/chat"      element={<ChatPage />} />
+          <Route path="/boletim"   element={<BoletimPage />} />
+          <Route path="/inovacao"  element={<InovacaoPage />} />
+        </Routes>
+      </main>
+
+      <DialogoGuiaPesquisa
+        aberto={guiaAberto}
+        onAbrir={() => setGuiaAberto(true)}
+        onFechar={() => setGuiaAberto(false)}
+      />
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="flex h-screen overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-16 lg:w-56 bg-gray-900 border-r border-gray-800 flex flex-col shrink-0">
-          {/* Logo */}
-          <div className="flex items-center gap-2 px-4 py-5 border-b border-gray-800">
-            <Flame className="text-orange-500 shrink-0" size={24} />
-            <span className="hidden lg:block font-bold text-sm text-white leading-tight">
-              Gêmeo Digital<br />
-              <span className="text-orange-400 font-normal">Ceará Queimadas</span>
-            </span>
-          </div>
-
-          {/* Nav */}
-          <nav className="flex-1 py-4 space-y-1 px-2">
-            {navItems.map(({ to, label, icon: Icon }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={to === '/'}
-                className={({ isActive }) =>
-                  clsx(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors',
-                    isActive
-                      ? 'bg-orange-600 text-white'
-                      : 'text-gray-400 hover:bg-gray-800 hover:text-white',
-                  )
-                }
-              >
-                <Icon size={18} className="shrink-0" />
-                <span className="hidden lg:block">{label}</span>
-              </NavLink>
-            ))}
-          </nav>
-
-          {/* Badge "Dados Reais" */}
-          <div className="px-3 pb-2">
-            <div className="hidden lg:flex items-center gap-1.5 bg-green-950 border border-green-800 rounded-lg px-2 py-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shrink-0" />
-              <span className="text-xs text-green-400 font-medium">Dados Reais</span>
-            </div>
-          </div>
-
-          {/* Status */}
-          <div className="px-4 py-3 border-t border-gray-800">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="hidden lg:block text-xs text-gray-400">Sistema ativo</span>
-            </div>
-          </div>
-        </aside>
-
-        {/* Main content */}
-        <main className="flex-1 overflow-auto bg-gray-950">
-          <Routes>
-            <Route path="/"          element={<DashboardPage />} />
-            <Route path="/mapa-real" element={<MapaRealPage />} />
-            <Route path="/mapa"      element={<MapaPage />} />
-            <Route path="/alertas"   element={<AlertasPage />} />
-            <Route path="/guia"       element={<GuiaPage />} />
-            <Route path="/chat"      element={<ChatPage />} />
-            <Route path="/boletim"   element={<BoletimPage />} />
-          </Routes>
-        </main>
-      </div>
+      <AppShell />
     </BrowserRouter>
   )
 }

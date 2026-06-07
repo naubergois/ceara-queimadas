@@ -3,13 +3,21 @@
  */
 
 import { create } from 'zustand'
-import type { Alerta, CamadaMapa, Foco, LeituraGOES16, RiscoMunicipal } from '../services/api'
+import type { Alerta, CamadaMapa, Foco, FocoReal, LeituraGOES16, RiscoMunicipal } from '../services/api'
 
 interface QueimadasState {
-  // Dados
+  // Dados simulados (mapa demo / GOES-16)
   focos: Foco[]
+  // Dados reais NASA FIRMS (mapa real + dashboard)
+  focosReais: FocoReal[]
+  atualizadoEmReais: string | null
+  diasFocosReais: number
+  carregandoReais: boolean
+  erroReais: string | null
   riscos: RiscoMunicipal[]
   alertas: Alerta[]
+  carregandoAlertas: boolean
+  erroAlertas: string | null
   leituraGOES16: LeituraGOES16[]
   camadas: CamadaMapa[]
 
@@ -26,8 +34,15 @@ interface QueimadasState {
 
   // Actions
   setFocos: (focos: Foco[]) => void
+  setFocosReais: (focos: FocoReal[]) => void
+  setAtualizadoEmReais: (iso: string | null) => void
+  setDiasFocosReais: (dias: number) => void
+  setCarregandoReais: (v: boolean) => void
+  setErroReais: (e: string | null) => void
   setRiscos: (riscos: RiscoMunicipal[]) => void
   setAlertas: (alertas: Alerta[]) => void
+  setCarregandoAlertas: (v: boolean) => void
+  setErroAlertas: (e: string | null) => void
   setLeituraGOES16: (leituras: LeituraGOES16[]) => void
   setCamadas: (camadas: CamadaMapa[]) => void
   toggleCamada: (id: string) => void
@@ -42,8 +57,15 @@ interface QueimadasState {
 
 export const useQueimadasStore = create<QueimadasState>((set) => ({
   focos: [],
+  focosReais: [],
+  atualizadoEmReais: null,
+  diasFocosReais: 7,
+  carregandoReais: false,
+  erroReais: null,
   riscos: [],
   alertas: [],
+  carregandoAlertas: false,
+  erroAlertas: null,
   leituraGOES16: [],
   camadas: [],
 
@@ -57,8 +79,15 @@ export const useQueimadasStore = create<QueimadasState>((set) => ({
   eventoSelecionado: null,
 
   setFocos: (focos) => set({ focos }),
+  setFocosReais: (focosReais) => set({ focosReais }),
+  setAtualizadoEmReais: (atualizadoEmReais) => set({ atualizadoEmReais }),
+  setDiasFocosReais: (diasFocosReais) => set({ diasFocosReais }),
+  setCarregandoReais: (carregandoReais) => set({ carregandoReais }),
+  setErroReais: (erroReais) => set({ erroReais }),
   setRiscos: (riscos) => set({ riscos }),
   setAlertas: (alertas) => set({ alertas }),
+  setCarregandoAlertas: (carregandoAlertas) => set({ carregandoAlertas }),
+  setErroAlertas: (erroAlertas) => set({ erroAlertas }),
   setLeituraGOES16: (leituraGOES16) => set({ leituraGOES16 }),
   setCamadas: (camadas) => set({ camadas }),
   toggleCamada: (id) =>

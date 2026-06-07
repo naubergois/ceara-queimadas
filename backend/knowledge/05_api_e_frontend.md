@@ -22,7 +22,7 @@
 | /mapa | Mapa | Camadas simuladas / completas |
 | /alertas | Alertas | Listagem de alertas |
 | /chat | Chat operacional | Agente ReAct (dados operacionais) |
-| /guia | Guia da aplicação | Chat RAG FAISS — pesquisa e manual |
+| (diálogo global) | Botão **Dúvidas** | Chat RAG FAISS — pesquisa e manual em todas as páginas |
 | /boletim | Boletim | Relatório técnico |
 
 ## Variáveis de ambiente do frontend

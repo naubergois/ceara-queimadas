@@ -38,8 +38,10 @@ class Settings(BaseSettings):
     OPENAI_MODEL: str = "gpt-4o"
     ANTHROPIC_API_KEY: str = ""
 
-    # INPE BDQueimadas
-    INPE_API_URL: str = "https://queimadas.dgi.inpe.br/api"
+    # INPE BDQueimadas (CSV público — API anterior desativada)
+    # Antigo: queimadas.dgi.inpe.br/api (301 → terrabrasilis 404)
+    # Novo:   https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/diario/Brasil/
+    INPE_API_URL: str = "https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/diario/Brasil"
     INPE_API_KEY: Optional[str] = None
 
     # NASA FIRMS

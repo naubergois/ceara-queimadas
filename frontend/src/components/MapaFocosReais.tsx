@@ -222,7 +222,7 @@ export default function MapaFocosReais({
                 />
                 {/* Ícone de chama para críticos */}
                 {foco.severidade === 'critica' && (
-                  <span className="absolute inset-0 flex items-center justify-center text-white text-[8px] font-bold">
+                  <span className="absolute inset-0 flex items-center justify-center text-slate-900 text-[8px] font-bold">
                     🔥
                   </span>
                 )}
@@ -269,20 +269,20 @@ export default function MapaFocosReais({
             <div className="text-gray-900 text-xs space-y-0.5 min-w-[140px] p-1">
               <p className="font-bold text-sm">{popupHover.municipio ?? 'Ceará'}</p>
               <p>
-                <span className="text-gray-500">Sensor:</span>{' '}
+                <span className="text-slate-500">Sensor:</span>{' '}
                 <strong>{popupHover.sensor}</strong>
               </p>
               {popupHover.frp != null && (
                 <p>
-                  <span className="text-gray-500">FRP:</span>{' '}
+                  <span className="text-slate-500">FRP:</span>{' '}
                   <strong>{popupHover.frp.toFixed(1)} MW</strong>
                 </p>
               )}
               <p>
-                <span className="text-gray-500">Confiança:</span>{' '}
+                <span className="text-slate-500">Confiança:</span>{' '}
                 <strong>{popupHover.confianca.toFixed(0)}%</strong>
               </p>
-              <p className="text-gray-400 pt-0.5">Clique para ver análise do agente</p>
+              <p className="text-slate-500 pt-0.5">Clique para ver análise do agente</p>
             </div>
           </Popup>
         )}
@@ -299,15 +299,15 @@ export default function MapaFocosReais({
           >
             <div className="text-gray-900 text-xs p-1">
               <p className="font-bold">📍 {focoSelecionado.municipio ?? 'Selecionado'}</p>
-              <p className="text-gray-500">Ver análise no painel →</p>
+              <p className="text-slate-500">Ver análise no painel →</p>
             </div>
           </Popup>
         )}
       </Map>
 
       {/* ── Legenda ── */}
-      <div className="absolute bottom-4 left-4 bg-gray-900/95 border border-gray-700 rounded-xl p-3 text-xs space-y-1.5 backdrop-blur-sm">
-        <p className="font-semibold text-gray-300 mb-2">Severidade (FRP)</p>
+      <div className="absolute bottom-4 left-4 bg-white/95 border border-slate-200 rounded-xl p-3 text-xs space-y-1.5 backdrop-blur-sm">
+        <p className="font-semibold text-slate-600 mb-2">Severidade (FRP)</p>
         {[
           { sev: 'critica', label: 'Crítica (≥50 MW)', pulse: true },
           { sev: 'alta',    label: 'Alta (15–50 MW)',  pulse: false },
@@ -327,10 +327,10 @@ export default function MapaFocosReais({
                 style={{ backgroundColor: SEV_COR[sev] }}
               />
             </div>
-            <span className="text-gray-400">{label}</span>
+            <span className="text-slate-500">{label}</span>
           </div>
         ))}
-        <div className="pt-1 border-t border-gray-700 text-gray-500">
+        <div className="pt-1 border-t border-slate-200 text-slate-500">
           Fonte: NASA FIRMS (VIIRS/MODIS)
         </div>
       </div>

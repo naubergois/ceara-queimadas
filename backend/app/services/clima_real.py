@@ -57,6 +57,9 @@ async def buscar_clima_por_coordenada(lat: float, lon: float) -> dict:
             resp.raise_for_status()
             data = resp.json()
 
+        if data.get("error"):
+            raise ValueError(f"Open-Meteo error: {data.get('reason', 'unknown')}")
+
         current = data.get("current", {})
         daily = data.get("daily", {})
 
@@ -93,8 +96,8 @@ async def buscar_clima_municipios_ceara() -> list[dict]:
         clima = await buscar_clima_por_coordenada(mun["lat"], mun["lon"])
         return {**mun, **clima}
 
-    # Busca em paralelo (máx 5 simultâneos para não sobrecarregar)
-    semaforo = asyncio.Semaphore(5)
+    # Busca em paralelo (máx 3 simultâneos para evitar timeouts)
+    semaforo = asyncio.Semaphore(3)
 
     async def _com_semaforo(mun):
         async with semaforo:

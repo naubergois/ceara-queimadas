@@ -161,7 +161,7 @@ export default function MapaQueimadas({ focos, leituraGOES16 }: Props) {
               <p>Severidade: <strong>{popupFoco.severidade ?? '—'}</strong></p>
               {popupFoco.frp && <p>FRP: <strong>{popupFoco.frp.toFixed(1)} MW</strong></p>}
               {popupFoco.confianca && <p>Confiança: <strong>{popupFoco.confianca.toFixed(0)}%</strong></p>}
-              <p className="text-gray-500">{new Date(popupFoco.data_hora).toLocaleString('pt-BR')}</p>
+              <p className="text-slate-500">{new Date(popupFoco.data_hora).toLocaleString('pt-BR')}</p>
             </div>
           </Popup>
         )}
@@ -192,17 +192,17 @@ export default function MapaQueimadas({ focos, leituraGOES16 }: Props) {
       </Map>
 
       {/* Legenda */}
-      <div className="absolute bottom-4 left-4 bg-gray-900/90 border border-gray-700 rounded-lg p-3 text-xs space-y-1.5">
-        <p className="font-semibold text-gray-300 mb-1">Severidade</p>
+      <div className="absolute bottom-4 left-4 bg-white/90 border border-slate-200 rounded-lg p-3 text-xs space-y-1.5">
+        <p className="font-semibold text-slate-600 mb-1">Severidade</p>
         {Object.entries(severidadeCor).map(([sev, cor]) => (
           <div key={sev} className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full" style={{ backgroundColor: cor }} />
-            <span className="text-gray-400 capitalize">{sev}</span>
+            <span className="text-slate-500 capitalize">{sev}</span>
           </div>
         ))}
-        <div className="flex items-center gap-2 pt-1 border-t border-gray-700">
+        <div className="flex items-center gap-2 pt-1 border-t border-slate-200">
           <span className="w-3 h-3 rounded-sm border border-yellow-400 bg-yellow-500/70" />
-          <span className="text-gray-400">GOES-16</span>
+          <span className="text-slate-500">GOES-16</span>
         </div>
       </div>
     </div>

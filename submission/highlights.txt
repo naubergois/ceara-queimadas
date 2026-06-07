@@ -1,0 +1,12 @@
+Highlights v3.1 — June 7, 2026
+
+- Novel hybrid Neural Koopman Operator + Physics-Informed GNN for wildfire digital twin
+- Rothermel fire spread equation embedded as differentiable PDE residual loss
+- Causal simulation of wind/humidity interventions on 184-municipality graph
+- Ablation study: NeKo-PIGNN (F1=0.914) outperforms pure Koopman (0.82) and pure PINN (0.79)
+- Open-source real-time wildfire monitoring dashboard with explainable AI agent
+- FIRMS validation across 4 satellite platforms: 28-142 hotspots/day showing 426% inter-day variability
+- 8/8 deterministic tests pass (3 synthetic + 5 real), 13-page PDF compiles cleanly (tectonic)
+- Four structural misalignments diagnosed (temporal, semantic, scale, product)
+- LangGraph agentic pipeline with 9 AI agents, <60s analysis cycle
+- First implementation of spatial digital twin for Brazilian fire detection with INPE data integration

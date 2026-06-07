@@ -4,7 +4,6 @@
 
 import { useCallback, useEffect } from 'react'
 import {
-  getAlertasAtivos,
   getCamadasMapa,
   getEventosGOES16,
   getFocosTempoReal,
@@ -20,7 +19,6 @@ export function useQueimadas() {
     filtroFonte,
     setFocos,
     setRiscos,
-    setAlertas,
     setLeituraGOES16,
     setCamadas,
     setCarregando,
@@ -31,17 +29,15 @@ export function useQueimadas() {
     setCarregando(true)
     setErro(null)
     try {
-      const [focos, riscos, alertas, goes16, camadas] = await Promise.allSettled([
+      const [focos, riscos, goes16, camadas] = await Promise.allSettled([
         getFocosTempoReal(filtroHoras, filtroFonte ?? undefined),
         getRiscoMunicipios(20),
-        getAlertasAtivos(),
         getEventosGOES16(6),
         getCamadasMapa(),
       ])
 
       if (focos.status === 'fulfilled') setFocos(focos.value)
       if (riscos.status === 'fulfilled') setRiscos(riscos.value)
-      if (alertas.status === 'fulfilled') setAlertas(alertas.value)
       if (goes16.status === 'fulfilled') setLeituraGOES16(goes16.value)
       if (camadas.status === 'fulfilled') setCamadas(camadas.value)
     } catch (e) {
@@ -49,7 +45,7 @@ export function useQueimadas() {
     } finally {
       setCarregando(false)
     }
-  }, [filtroHoras, filtroFonte, setFocos, setRiscos, setAlertas, setLeituraGOES16, setCamadas, setCarregando, setErro])
+  }, [filtroHoras, filtroFonte, setFocos, setRiscos, setLeituraGOES16, setCamadas, setCarregando, setErro])
 
   useEffect(() => {
     carregar()

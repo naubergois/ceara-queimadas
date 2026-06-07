@@ -24,8 +24,8 @@ export default function CamadasControle({ camadas }: Props) {
   return (
     <section className="card space-y-2" aria-label="Controle de camadas do mapa">
       <div className="flex items-center gap-2 mb-1">
-        <Layers size={16} className="text-blue-400" aria-hidden="true" />
-        <h2 className="text-sm font-semibold text-white">Camadas</h2>
+        <Layers size={16} className="text-sky-600" aria-hidden="true" />
+        <h2 className="text-sm font-semibold text-slate-900">Camadas</h2>
       </div>
 
       <ul className="space-y-1.5">
@@ -42,10 +42,10 @@ export default function CamadasControle({ camadas }: Props) {
               <span
                 className={clsx(
                   'text-xs transition-colors',
-                  camada.ativo ? 'text-gray-200' : 'text-gray-500',
+                  camada.ativo ? 'text-slate-700' : 'text-slate-500',
                 )}
               >
-                <span className="mr-1 text-gray-500">{tipoLabel[camada.tipo]}</span>
+                <span className="mr-1 text-slate-500">{tipoLabel[camada.tipo]}</span>
                 {camada.nome}
               </span>
             </label>

@@ -108,7 +108,7 @@ export default function ChatAgente() {
             key={s}
             onClick={() => enviar(s)}
             disabled={enviando}
-            className="shrink-0 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-full transition-colors disabled:opacity-50"
+            className="shrink-0 text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-full transition-colors disabled:opacity-50"
           >
             {s}
           </button>
@@ -116,7 +116,7 @@ export default function ChatAgente() {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-800">
+      <div className="p-4 border-t border-slate-200">
         <div className="flex gap-2 items-end">
           <textarea
             ref={inputRef}
@@ -126,19 +126,19 @@ export default function ChatAgente() {
             placeholder="Pergunte sobre queimadas no Ceará..."
             rows={2}
             disabled={enviando}
-            className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-100 placeholder-gray-500 resize-none focus:outline-none focus:border-orange-500 disabled:opacity-50"
+            className="flex-1 bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 resize-none focus:outline-none focus:border-orange-500 disabled:opacity-50"
             aria-label="Campo de pergunta"
           />
           <button
             onClick={() => enviar(input)}
             disabled={!input.trim() || enviando}
-            className="p-3 bg-orange-600 hover:bg-orange-500 disabled:bg-gray-700 disabled:text-gray-500 text-white rounded-xl transition-colors"
+            className="p-3 bg-orange-600 hover:bg-orange-500 disabled:bg-slate-200 disabled:text-slate-500 text-white rounded-xl transition-colors"
             aria-label="Enviar pergunta"
           >
             {enviando ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           </button>
         </div>
-        <p className="text-xs text-gray-600 mt-1.5">Enter para enviar · Shift+Enter para nova linha</p>
+        <p className="text-xs text-slate-400 mt-1.5">Enter para enviar · Shift+Enter para nova linha</p>
       </div>
     </div>
   )
@@ -158,11 +158,11 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
       <div
         className={clsx(
           'w-8 h-8 rounded-full flex items-center justify-center shrink-0',
-          isAgente ? 'bg-orange-600' : 'bg-gray-700',
+          isAgente ? 'bg-orange-600' : 'bg-slate-200',
         )}
         aria-hidden="true"
       >
-        {isAgente ? <Bot size={16} className="text-white" /> : <User size={16} className="text-gray-300" />}
+        {isAgente ? <Bot size={16} className="text-white" /> : <User size={16} className="text-slate-600" />}
       </div>
 
       {/* Balão */}
@@ -170,11 +170,11 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
         <div
           className={clsx(
             'rounded-2xl px-4 py-3 text-sm leading-relaxed',
-            isAgente ? 'bg-gray-800 text-gray-200' : 'bg-orange-600 text-white',
+            isAgente ? 'bg-slate-100 text-slate-700' : 'bg-orange-600 text-white',
           )}
         >
           {mensagem.carregando ? (
-            <div className="flex items-center gap-2 text-gray-400">
+            <div className="flex items-center gap-2 text-slate-500">
               <Loader2 size={14} className="animate-spin" />
               <span>Consultando ferramentas...</span>
             </div>
@@ -185,10 +185,10 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
 
         {/* Evidências e metadados */}
         {mensagem.resposta && !mensagem.carregando && (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <button
               onClick={() => setExpandido(!expandido)}
-              className="w-full flex items-center justify-between px-3 py-2 text-xs text-gray-400 hover:bg-gray-800 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 text-xs text-slate-500 hover:bg-slate-100 transition-colors"
               aria-expanded={expandido}
             >
               <span>
@@ -202,24 +202,24 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
               <div className="px-3 pb-3 space-y-2 text-xs">
                 {mensagem.resposta.recomendacao_operacional && (
                   <div>
-                    <p className="text-orange-400 font-medium mb-0.5">Recomendação</p>
-                    <p className="text-gray-300">{mensagem.resposta.recomendacao_operacional}</p>
+                    <p className="text-fire-600 font-medium mb-0.5">Recomendação</p>
+                    <p className="text-slate-600">{mensagem.resposta.recomendacao_operacional}</p>
                   </div>
                 )}
                 {mensagem.resposta.evidencias.length > 0 && (
                   <div>
-                    <p className="text-blue-400 font-medium mb-0.5">Evidências</p>
+                    <p className="text-sky-600 font-medium mb-0.5">Evidências</p>
                     <ul className="space-y-0.5">
                       {mensagem.resposta.evidencias.map((e, i) => (
-                        <li key={i} className="text-gray-400 truncate">{e}</li>
+                        <li key={i} className="text-slate-500 truncate">{e}</li>
                       ))}
                     </ul>
                   </div>
                 )}
                 {mensagem.resposta.fontes.length > 0 && (
                   <div>
-                    <p className="text-green-400 font-medium mb-0.5">Fontes</p>
-                    <p className="text-gray-400">{mensagem.resposta.fontes.join(', ')}</p>
+                    <p className="text-emerald-600 font-medium mb-0.5">Fontes</p>
+                    <p className="text-slate-500">{mensagem.resposta.fontes.join(', ')}</p>
                   </div>
                 )}
               </div>
@@ -227,7 +227,7 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
           </div>
         )}
 
-        <time className="text-xs text-gray-600 px-1">
+        <time className="text-xs text-slate-400 px-1">
           {format(mensagem.timestamp, 'HH:mm', { locale: ptBR })}
         </time>
       </div>

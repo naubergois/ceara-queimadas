@@ -3,7 +3,8 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
-import { Send, Bot, User, Loader2, BookOpen, FileText } from 'lucide-react'
+import { Send, User, Loader2, FileText } from 'lucide-react'
+import MascoteGuia, { NOME_MASCOTE } from './MascoteGuia'
 import { clsx } from 'clsx'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -19,12 +20,12 @@ interface Mensagem {
 }
 
 const SUGESTOES = [
-  'Qual é o objetivo da pesquisa deste gêmeo digital?',
-  'Como funciona a arquitetura do sistema?',
-  'Quais fontes de dados reais estão implementadas?',
-  'Explique o pipeline LangGraph e os agentes de IA.',
-  'Como faço deploy na EC2?',
-  'Qual a diferença entre o mapa real e o chat operacional?',
+  'Qual é o objetivo da pesquisa?',
+  'Como funciona a arquitetura?',
+  'Quais fontes de dados estão ativas?',
+  'Como usar o mapa real?',
+  'O que faz o agente DeepSeek?',
+  'Como fazer deploy na EC2?',
 ]
 
 export default function ChatPesquisa() {
@@ -33,7 +34,7 @@ export default function ChatPesquisa() {
       id: '0',
       tipo: 'agente',
       texto:
-        'Olá! Sou o guia da aplicação. Pergunte sobre a pesquisa, a arquitetura, as fontes de dados (NASA FIRMS, Open-Meteo), os agentes DeepSeek ou como usar o sistema.',
+        `Oxente! Eu sou o ${NOME_MASCOTE} — o mapa do Ceará com olhos, seu guia nesta plataforma. Pergunte sobre a pesquisa, arquitetura, NASA FIRMS, agentes de IA ou como usar cada tela do sistema.`,
       timestamp: new Date(),
     },
   ])
@@ -83,7 +84,7 @@ export default function ChatPesquisa() {
             ? {
                 ...m,
                 texto:
-                  'Não foi possível consultar o guia. Verifique se o backend está ativo e se o índice FAISS foi gerado (scripts/build_faiss_index.py).',
+                  'Não foi possível consultar o guia. Verifique se o backend está ativo.',
                 carregando: false,
               }
             : m,
@@ -105,9 +106,9 @@ export default function ChatPesquisa() {
   return (
     <div className="flex flex-col h-full">
       {indicePronto === false && (
-        <div className="mx-4 mt-3 px-3 py-2 bg-amber-950/50 border border-amber-800 rounded-lg text-xs text-amber-200 flex items-center gap-2">
-          <BookOpen size={14} />
-          Índice FAISS ainda em construção. Aguarde alguns segundos e tente novamente.
+        <div className="mx-4 mt-3 alert-warning flex items-center gap-2">
+          <MascoteGuia size={20} className="shrink-0" />
+          Índice em construção. Aguarde alguns segundos e tente novamente.
         </div>
       )}
 
@@ -115,48 +116,57 @@ export default function ChatPesquisa() {
         {mensagens.map((msg) => (
           <div
             key={msg.id}
-            className={clsx('flex gap-3', msg.tipo === 'agente' ? 'items-start' : 'items-start flex-row-reverse')}
+            className={clsx(
+              'flex gap-3',
+              msg.tipo === 'agente' ? 'items-start' : 'items-start flex-row-reverse',
+            )}
           >
             <div
               className={clsx(
-                'w-8 h-8 rounded-full flex items-center justify-center shrink-0',
-                msg.tipo === 'agente' ? 'bg-indigo-600' : 'bg-gray-700',
+                'rounded-xl flex items-center justify-center shrink-0 shadow-sm overflow-hidden',
+                msg.tipo === 'agente'
+                  ? 'w-11 h-14 bg-gradient-to-br from-violet-100 to-orange-50 border border-violet-200'
+                  : 'w-9 h-9 bg-fire-100 text-fire-700',
               )}
             >
               {msg.tipo === 'agente' ? (
-                <BookOpen size={16} className="text-white" />
+                <MascoteGuia size={32} />
               ) : (
-                <User size={16} className="text-gray-300" />
+                <User size={16} />
               )}
             </div>
-            <div className="max-w-[85%] space-y-2">
+            <div className={clsx('max-w-[85%] space-y-2', msg.tipo === 'usuario' && 'text-right')}>
               <div
                 className={clsx(
-                  'rounded-2xl px-4 py-3 text-sm leading-relaxed',
-                  msg.tipo === 'agente' ? 'bg-gray-800 text-gray-200' : 'bg-indigo-600 text-white',
+                  'rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm',
+                  msg.tipo === 'agente'
+                    ? 'bg-white border border-slate-200 text-slate-700'
+                    : 'bg-fire-600 text-white',
                 )}
               >
                 {msg.carregando ? (
-                  <div className="flex items-center gap-2 text-gray-400">
-                    <Loader2 size={14} className="animate-spin" />
-                    <span>Consultando documentação (FAISS)...</span>
+                  <div className="flex items-center gap-2 text-slate-500">
+                    <Loader2 size={14} className="animate-spin text-violet-500" />
+                    <span>Consultando documentação...</span>
                   </div>
                 ) : (
                   <p className="whitespace-pre-wrap">{msg.texto}</p>
                 )}
               </div>
               {msg.resposta && msg.resposta.fontes.length > 0 && (
-                <div className="flex flex-wrap gap-1 items-center text-xs text-gray-500">
-                  <FileText size={11} />
+                <div className="flex flex-wrap gap-1 items-center justify-end text-xs text-slate-500">
+                  <FileText size={11} className="text-violet-500" />
                   {msg.resposta.fontes.map((f) => (
-                    <span key={f} className="bg-gray-900 border border-gray-800 px-2 py-0.5 rounded-full">
-                      {f}
+                    <span
+                      key={f}
+                      className="bg-violet-50 text-violet-700 border border-violet-100 px-2 py-0.5 rounded-full"
+                    >
+                      {f.replace('.md', '').replace(/_/g, ' ')}
                     </span>
                   ))}
-                  <span className="text-gray-600">· {msg.resposta.fragmentos_usados} trechos</span>
                 </div>
               )}
-              <time className="text-xs text-gray-600 block">
+              <time className="text-xs text-slate-400 block">
                 {format(msg.timestamp, 'HH:mm', { locale: ptBR })}
               </time>
             </div>
@@ -172,37 +182,37 @@ export default function ChatPesquisa() {
             type="button"
             onClick={() => enviar(s)}
             disabled={enviando}
-            className="shrink-0 text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-full transition-colors disabled:opacity-50"
+            className="shrink-0 text-xs bg-white border border-slate-200 text-slate-600 hover:border-violet-300 hover:text-violet-700 px-3 py-1.5 rounded-full transition-colors disabled:opacity-50 shadow-sm"
           >
             {s}
           </button>
         ))}
       </div>
 
-      <div className="p-4 border-t border-gray-800">
+      <div className="p-4 border-t border-slate-200 bg-white">
         <div className="flex gap-2 items-end">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Pergunte sobre a pesquisa, arquitetura ou como usar o sistema..."
+            placeholder={`Pergunte ao ${NOME_MASCOTE} sobre a pesquisa ou o sistema...`}
             rows={2}
             disabled={enviando}
-            className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-100 placeholder-gray-500 resize-none focus:outline-none focus:border-indigo-500 disabled:opacity-50"
+            className="input-field flex-1 resize-none"
             aria-label="Pergunta sobre a aplicação"
           />
           <button
             type="button"
             onClick={() => enviar(input)}
             disabled={!input.trim() || enviando}
-            className="p-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-gray-700 text-white rounded-xl transition-colors"
+            className="p-3 bg-violet-600 hover:bg-violet-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-xl transition-colors shadow-sm"
             aria-label="Enviar"
           >
             {enviando ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           </button>
         </div>
-        <p className="text-xs text-gray-600 mt-1.5 flex items-center gap-1">
-          <Bot size={11} /> RAG FAISS + DeepSeek · base: backend/knowledge/
+        <p className="text-xs text-slate-400 mt-2 text-center">
+          {NOME_MASCOTE} · documentação do projeto · FAISS + DeepSeek
         </p>
       </div>
     </div>

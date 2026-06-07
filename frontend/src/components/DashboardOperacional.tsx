@@ -34,28 +34,28 @@ export default function DashboardOperacional({ focos, alertas, riscos, leituraGO
       valor: focos24h,
       sub: 'últimas 24h',
       icon: Flame,
-      cor: 'text-orange-400',
+      cor: 'text-fire-600',
     },
     {
       label: 'Emergências',
       valor: alertasEmergencia,
       sub: 'alertas críticos',
       icon: AlertTriangle,
-      cor: alertasEmergencia > 0 ? 'text-red-400' : 'text-gray-500',
+      cor: alertasEmergencia > 0 ? 'text-red-600' : 'text-slate-500',
     },
     {
       label: 'Municípios Críticos',
       valor: municipiosCriticos,
       sub: 'risco crítico',
       icon: CloudRain,
-      cor: municipiosCriticos > 0 ? 'text-red-400' : 'text-green-400',
+      cor: municipiosCriticos > 0 ? 'text-red-600' : 'text-emerald-600',
     },
     {
       label: 'GOES-16',
       valor: goes16Ativos,
       sub: 'pixels com fogo',
       icon: Satellite,
-      cor: 'text-yellow-400',
+      cor: 'text-amber-600',
     },
   ]
 
@@ -65,17 +65,17 @@ export default function DashboardOperacional({ focos, alertas, riscos, leituraGO
         const Icon = kpi.icon
         return (
           <div key={kpi.label} className="card flex items-center gap-3">
-            <div className={clsx('p-2 rounded-lg bg-gray-800', kpi.cor)}>
+            <div className={clsx('p-2 rounded-lg bg-slate-100', kpi.cor)}>
               <Icon size={20} aria-hidden="true" />
             </div>
             <div className="min-w-0">
               {carregando ? (
-                <div className="h-6 w-12 bg-gray-700 rounded animate-pulse mb-1" />
+                <div className="h-6 w-12 bg-slate-200 rounded animate-pulse mb-1" />
               ) : (
                 <p className={clsx('text-2xl font-bold', kpi.cor)}>{kpi.valor}</p>
               )}
-              <p className="text-xs text-gray-400 truncate">{kpi.label}</p>
-              <p className="text-xs text-gray-600">{kpi.sub}</p>
+              <p className="text-xs text-slate-500 truncate">{kpi.label}</p>
+              <p className="text-xs text-slate-400">{kpi.sub}</p>
             </div>
           </div>
         )

@@ -27,10 +27,10 @@ const SEV_COR = {
   critica: 'bg-red-500',
 }
 const SEV_TEXT = {
-  baixa:   'text-green-400',
-  media:   'text-yellow-400',
-  alta:    'text-orange-400',
-  critica: 'text-red-400',
+  baixa:   'text-emerald-600',
+  media:   'text-amber-600',
+  alta:    'text-fire-600',
+  critica: 'text-red-600',
 }
 
 export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFoco, carregando }: Props) {
@@ -63,23 +63,23 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
   return (
     <div className="flex flex-col h-full">
       {/* Controles */}
-      <div className="p-3 space-y-2 border-b border-gray-800">
+      <div className="p-3 space-y-2 border-b border-slate-200">
         <input
           type="text"
           value={busca}
           onChange={e => setBusca(e.target.value)}
           placeholder="Buscar município ou sensor..."
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-200 placeholder-gray-500 focus:outline-none focus:border-orange-500"
+          className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-orange-500"
           aria-label="Buscar focos"
         />
         <div className="flex gap-1.5">
           {/* Filtro severidade */}
           <div className="flex items-center gap-1 flex-1">
-            <Filter size={11} className="text-gray-500 shrink-0" />
+            <Filter size={11} className="text-slate-500 shrink-0" />
             <select
               value={filtroSev}
               onChange={e => setFiltroSev(e.target.value)}
-              className="flex-1 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300 px-1.5 py-1 focus:outline-none"
+              className="flex-1 bg-slate-100 border border-slate-200 rounded text-xs text-slate-600 px-1.5 py-1 focus:outline-none"
               aria-label="Filtrar por severidade"
             >
               <option value="todos">Todas</option>
@@ -91,11 +91,11 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
           </div>
           {/* Ordenação */}
           <div className="flex items-center gap-1 flex-1">
-            <ArrowUpDown size={11} className="text-gray-500 shrink-0" />
+            <ArrowUpDown size={11} className="text-slate-500 shrink-0" />
             <select
               value={ordenacao}
               onChange={e => setOrdenacao(e.target.value as Ordenacao)}
-              className="flex-1 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300 px-1.5 py-1 focus:outline-none"
+              className="flex-1 bg-slate-100 border border-slate-200 rounded text-xs text-slate-600 px-1.5 py-1 focus:outline-none"
               aria-label="Ordenar focos"
             >
               <option value="recente">Mais recente</option>
@@ -104,7 +104,7 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
             </select>
           </div>
         </div>
-        <p className="text-xs text-gray-600">
+        <p className="text-xs text-slate-400">
           {focosFiltrados.length} de {focos.length} focos
         </p>
       </div>
@@ -114,11 +114,11 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
         {carregando ? (
           <div className="space-y-2 p-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-16 bg-gray-800 rounded-lg animate-pulse" />
+              <div key={i} className="h-16 bg-slate-100 rounded-lg animate-pulse" />
             ))}
           </div>
         ) : focosFiltrados.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+          <div className="flex flex-col items-center justify-center py-12 text-slate-500">
             <Flame size={32} className="mb-2 opacity-30" />
             <p className="text-sm">Nenhum foco encontrado</p>
           </div>
@@ -128,10 +128,10 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
               key={foco.id}
               onClick={() => onSelecionarFoco(foco)}
               className={clsx(
-                'w-full text-left px-3 py-2.5 border-b border-gray-800/50 transition-colors',
+                'w-full text-left px-3 py-2.5 border-b border-slate-200/50 transition-colors',
                 focoSelecionado?.id === foco.id
-                  ? 'bg-orange-950/40 border-l-2 border-l-orange-500'
-                  : 'hover:bg-gray-800/50'
+                  ? 'bg-orange-50/40 border-l-2 border-l-orange-500'
+                  : 'hover:bg-slate-100/50'
               )}
               role="listitem"
               aria-selected={focoSelecionado?.id === foco.id}
@@ -142,7 +142,7 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-xs font-medium text-gray-200 truncate">
+                    <span className="text-xs font-medium text-slate-700 truncate">
                       {foco.municipio ?? `${foco.lat.toFixed(3)}, ${foco.lon.toFixed(3)}`}
                     </span>
                     <span className={clsx('text-xs font-bold shrink-0', SEV_TEXT[foco.severidade])}>
@@ -152,16 +152,16 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
 
                   <div className="flex items-center gap-2 mt-0.5">
                     <div className="flex items-center gap-1">
-                      <Satellite size={10} className="text-gray-500" />
-                      <span className="text-xs text-gray-500">{foco.sensor}</span>
+                      <Satellite size={10} className="text-slate-500" />
+                      <span className="text-xs text-slate-500">{foco.sensor}</span>
                     </div>
                     {foco.frp != null && (
                       <div className="flex items-center gap-1">
                         <Flame size={10} className="text-orange-500" />
-                        <span className="text-xs text-gray-500">{foco.frp.toFixed(1)} MW</span>
+                        <span className="text-xs text-slate-500">{foco.frp.toFixed(1)} MW</span>
                       </div>
                     )}
-                    <span className="text-xs text-gray-600 ml-auto">
+                    <span className="text-xs text-slate-400 ml-auto">
                       {format(new Date(foco.data_hora), 'dd/MM HH:mm', { locale: ptBR })}
                     </span>
                   </div>

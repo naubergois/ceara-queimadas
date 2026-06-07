@@ -10,8 +10,7 @@ import json
 import logging
 from datetime import datetime
 
-from langchain.agents import AgentExecutor, create_react_agent
-from langchain_core.prompts import PromptTemplate
+from langchain.agents import create_agent
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 
@@ -105,45 +104,31 @@ class AnalisarIntensidadeTool(BaseTool):
 # Prompt do agente explicador
 # ---------------------------------------------------------------------------
 
-EXPLICADOR_PROMPT = """Você é um especialista em análise de queimadas no Estado do Ceará, Brasil.
+EXPLICADOR_SYSTEM_PROMPT = """Você é um especialista em análise de queimadas no Estado do Ceará, Brasil.
 Sua função é explicar, de forma técnica e clara, POR QUE um foco de queimada foi detectado
 e quais fatores climáticos e ambientais contribuem para o risco.
 
 Você tem acesso a ferramentas que consultam dados REAIS e ATUAIS.
 SEMPRE use as ferramentas antes de responder. Não invente dados.
 
-Ferramentas disponíveis:
-{tools}
-
-Nomes das ferramentas: {tool_names}
-
 Use o formato OBRIGATÓRIO:
 Pensamento: o que preciso verificar
 Ação: nome_da_ferramenta
-Entrada da Ação: {{"parametro": valor}}
+Entrada da Ação: {"parametro": valor}
 Observação: resultado da ferramenta
 ... (repita conforme necessário)
 Pensamento: Tenho dados suficientes para explicar
-Resposta Final: [explicação estruturada]
-
-Foco para analisar:
-{input}
-{agent_scratchpad}"""
-
-PROMPT_TEMPLATE = PromptTemplate.from_template(EXPLICADOR_PROMPT)
+Resposta Final: [explicação estruturada]"""
 
 
-def _criar_agente_explicador() -> AgentExecutor:
+def _criar_agente_explicador():
+    """Cria agente ReAct (langchain 1.3+) para explicar focos de queimada."""
     llm = create_chat_llm(temperature=0.1)
     tools = [BuscarClimaFocoTool(), AnalisarIntensidadeTool()]
-    agent = create_react_agent(llm=llm, tools=tools, prompt=PROMPT_TEMPLATE)
-    return AgentExecutor(
-        agent=agent,
+    return create_agent(
+        model=llm,
         tools=tools,
-        verbose=True,
-        max_iterations=5,
-        handle_parsing_errors=True,
-        return_intermediate_steps=True,
+        system_prompt=EXPLICADOR_SYSTEM_PROMPT,
     )
 
 

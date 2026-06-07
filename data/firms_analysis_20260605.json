@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-06-05T22:59:08.619696+00:00",
+  "total_hotspots": 142,
+  "by_satellite": {
+    "VIIRS_SNPP (Suomi NPP)": 39,
+    "VIIRS_NOAA20 (JPSS-1)": 53,
+    "VIIRS_NOAA21 (JPSS-2)": 44,
+    "MODIS": 6
+  },
+  "by_daynight": {
+    "Day": 85,
+    "Night": 57
+  },
+  "frp_stats": {
+    "min": 0.7,
+    "max": 52.54,
+    "avg": 11.2
+  },
+  "severe_hotspots_frp_ge_20": 24,
+  "medium_hotspots_frp_ge_10": 52,
+  "low_hotspots_frp_ge_5": 75,
+  "major_clusters": [
+    {
+      "center": {
+        "lat": -6.99,
+        "lon": -42.88
+      },
+      "count": 68,
+      "total_frp": 1223.7,
+      "location": "Oeiras/Picos region (PI border)"
+    },
+    {
+      "center": {
+        "lat": -3.59,
+        "lon": -38.86
+      },
+      "count": 23,
+      "total_frp": 88.9,
+      "location": "Caucaia/Fortaleza metro area"
+    },
+    {
+      "center": {
+        "lat": -4.36,
+        "lon": -37.9
+      },
+      "count": 7,
+      "total_frp": 28.3,
+      "location": "Aracati coast"
+    },
+    {
+      "center": {
+        "lat": -5.52,
+        "lon": -37.49
+      },
+      "count": 8,
+      "total_frp": 19.5,
+      "location": "Mossor\u00f3/Assu region (RN border)"
+    },
+    {
+      "center": {
+        "lat": -2.84,
+        "lon": -42.1
+      },
+      "count": 5,
+      "total_frp": 28.3,
+      "location": "Barreirinhas/Tut\u00f3ia (MA border)"
+    }
+  ],
+  "data_sources": {
+    "VIIRS_SNPP": "https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_South_America_24h.csv",
+    "VIIRS_NOAA20": "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_South_America_24h.csv",
+    "VIIRS_NOAA21": "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-21-viirs-c2/csv/J2_VIIRS_C2_South_America_24h.csv",
+    "MODIS": "https://firms.modaps.eosdis.nasa.gov/data/active_fire/modis-c6.1/csv/MODIS_C6_1_South_America_24h.csv"
+  },
+  "previous_run_comparison": {
+    "previous_hotspots": 27,
+    "current_hotspots": 142,
+    "change": "+115 (426% increase)",
+    "note": "Previous count (27) was VIIRS-only. Now including all 4 sensors. Also fire season intensifying."
+  }
+}

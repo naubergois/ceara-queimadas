@@ -15,30 +15,30 @@ interface Props {
 const nivelConfig = {
   informativo: {
     icon: Info,
-    bg: 'bg-blue-950 border-blue-800',
-    text: 'text-blue-300',
-    badge: 'bg-blue-900 text-blue-200',
+    bg: 'bg-sky-50 border-sky-200',
+    text: 'text-sky-800',
+    badge: 'bg-sky-100 text-sky-800',
     label: 'Informativo',
   },
   atencao: {
     icon: AlertTriangle,
-    bg: 'bg-yellow-950 border-yellow-800',
-    text: 'text-yellow-300',
-    badge: 'bg-yellow-900 text-yellow-200',
+    bg: 'bg-amber-50 border-amber-200',
+    text: 'text-amber-800',
+    badge: 'bg-amber-100 text-amber-900',
     label: 'Atenção',
   },
   alerta: {
     icon: AlertTriangle,
-    bg: 'bg-orange-950 border-orange-800',
-    text: 'text-orange-300',
-    badge: 'bg-orange-900 text-orange-200',
+    bg: 'bg-orange-50 border-orange-200',
+    text: 'text-orange-800',
+    badge: 'bg-orange-100 text-orange-900',
     label: 'Alerta',
   },
   emergencia: {
     icon: Zap,
-    bg: 'bg-red-950 border-red-800',
-    text: 'text-red-300',
-    badge: 'bg-red-900 text-red-200',
+    bg: 'bg-red-50 border-red-200',
+    text: 'text-red-800',
+    badge: 'bg-red-100 text-red-900',
     label: 'Emergência',
   },
 }
@@ -68,24 +68,24 @@ export default function CardAlerta({ alerta }: Props) {
             {config.label}
           </span>
           {alerta.auditado && (
-            <CheckCircle size={14} className="text-green-400" aria-label="Alerta auditado" />
+            <CheckCircle size={14} className="text-emerald-600" aria-label="Alerta auditado" />
           )}
         </div>
       </div>
 
       {/* Mensagem */}
-      <p className="text-sm text-gray-300 leading-relaxed">{alerta.mensagem}</p>
+      <p className="text-sm text-slate-600 leading-relaxed">{alerta.mensagem}</p>
 
       {/* Recomendação */}
       {alerta.recomendacao && (
-        <div className="bg-black/20 rounded-lg p-2">
-          <p className="text-xs text-gray-400 font-medium mb-0.5">Recomendação</p>
-          <p className="text-xs text-gray-300">{alerta.recomendacao}</p>
+        <div className="bg-white/70 border border-slate-200/80 rounded-lg p-2">
+          <p className="text-xs text-slate-500 font-medium mb-0.5">Recomendação</p>
+          <p className="text-xs text-slate-600">{alerta.recomendacao}</p>
         </div>
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-xs text-gray-500 pt-1">
+      <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
         <time dateTime={alerta.data_hora}>
           {format(new Date(alerta.data_hora), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
         </time>

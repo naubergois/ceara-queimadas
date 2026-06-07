@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99e (TeX Live 2026)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: paper-digital-twin-queimadas.aux
+The style file: plainnat.bst
+Database file #1: refs-queimadas.bib
+You've used 9 entries,
+            2773 wiz_defined-function locations,
+            633 strings with 6360 characters,
+and the built_in function-call counts, 3882 in all, are:
+= -- 312
+> -- 253
+< -- 5
++ -- 87
+- -- 78
+* -- 283
+:= -- 607
+add.period$ -- 32
+call.type$ -- 9
+change.case$ -- 51
+chr.to.int$ -- 9
+cite$ -- 18
+duplicate$ -- 187
+empty$ -- 341
+format.name$ -- 91
+if$ -- 815
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 6
+newline$ -- 58
+num.names$ -- 36
+pop$ -- 133
+preamble$ -- 1
+purify$ -- 42
+quote$ -- 0
+skip$ -- 142
+stack$ -- 0
+substring$ -- 18
+swap$ -- 15
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 99
+warning$ -- 0
+while$ -- 27
+width$ -- 0
+write$ -- 125

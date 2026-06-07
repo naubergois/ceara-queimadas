@@ -13,6 +13,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
 from app.agents.explicador_agent import explicar_foco, _explicar_sem_llm
 from app.agents.llm_factory import get_deepseek_model, llm_is_configured
 from app.core.config import settings
+from app.services.alertas_real import gerar_alertas_reais
 from app.services.clima_real import buscar_clima_municipios_ceara, buscar_clima_foco
 from app.services.firms_real import coletar_focos_firms_real
 from app.services.geocoder import geocodificar_lote
@@ -196,6 +197,33 @@ async def get_clima_foco(
     if not clima:
         raise HTTPException(status_code=503, detail="Dados climáticos indisponíveis")
     return {"lat": lat, "lon": lon, "clima": clima, "fonte": "Open-Meteo API"}
+
+
+@router.get("/alertas", summary="Alertas ativos gerados a partir de dados reais")
+async def get_alertas_reais(
+    horas: int = Query(default=48, ge=6, le=168, description="Janela de análise em horas"),
+    nivel: Optional[str] = Query(
+        default=None, description="informativo, atencao, alerta ou emergencia"
+    ),
+    dias: int = Query(default=7, ge=1, le=7, description="Dias de focos FIRMS no cache"),
+):
+    """
+    Gera alertas por município a partir de focos NASA FIRMS e condições Open-Meteo.
+    Não requer banco de dados.
+    """
+    await _garantir_cache(dias)
+    alertas = gerar_alertas_reais(_cache_focos, _cache_clima, horas=horas)
+
+    if nivel:
+        alertas = [a for a in alertas if a["nivel"] == nivel]
+
+    return {
+        "total": len(alertas),
+        "periodo_horas": horas,
+        "atualizado_em": _cache_ts.isoformat() if _cache_ts else None,
+        "fontes": ["NASA FIRMS", "Open-Meteo"],
+        "alertas": alertas,
+    }
 
 
 @router.get("/status", summary="Status das fontes de dados reais")

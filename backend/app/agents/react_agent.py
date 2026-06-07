@@ -1,14 +1,12 @@
-"""
-Agente ReAct de Diagnóstico de Queimadas.
-Usa LangChain + padrão ReAct para raciocinar sobre focos, clima e risco,
+"""Agente ReAct de Diagnóstico de Queimadas.
+Usa LangChain (v1.3+) + padrão ReAct para raciocinar sobre focos, clima e risco,
 consultando ferramentas reais e produzindo recomendações operacionais.
 """
 
 import logging
 from datetime import datetime
 
-from langchain.agents import AgentExecutor, create_react_agent
-from langchain_core.prompts import PromptTemplate
+from langchain.agents import create_agent
 from app.agents.llm_factory import create_chat_llm
 from app.models.schemas import RespostaAgente
 from app.tools.queimada_tools import get_all_tools
@@ -16,20 +14,15 @@ from app.tools.queimada_tools import get_all_tools
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Prompt ReAct em português
+# Prompt ReAct em português (system prompt — langchain 1.3+ usa system_prompt)
 # ---------------------------------------------------------------------------
 
-REACT_PROMPT_TEMPLATE = """Você é um especialista em monitoramento de queimadas no Estado do Ceará, Brasil.
+REACT_SYSTEM_PROMPT = """Você é um especialista em monitoramento de queimadas no Estado do Ceará, Brasil.
 Você tem acesso a ferramentas que consultam dados reais de satélite, clima e território.
 
 Seu objetivo é responder perguntas operacionais sobre queimadas com base em evidências concretas.
 Sempre consulte as ferramentas disponíveis antes de responder.
 Estruture sua resposta final com: resumo, evidências, fontes, nível de confiança e recomendação operacional.
-
-Ferramentas disponíveis:
-{tools}
-
-Nomes das ferramentas: {tool_names}
 
 Use o seguinte formato OBRIGATÓRIO:
 
@@ -40,28 +33,19 @@ Entrada da Ação: parâmetros da ferramenta em JSON
 Observação: resultado da ferramenta
 ... (repita Pensamento/Ação/Entrada/Observação quantas vezes necessário)
 Pensamento: Agora tenho informações suficientes para responder
-Resposta Final: [resposta estruturada com resumo, evidências, fontes, confiança e recomendação]
-
-Pergunta: {input}
-{agent_scratchpad}"""
-
-REACT_PROMPT = PromptTemplate.from_template(REACT_PROMPT_TEMPLATE)
+Resposta Final: [resposta estruturada com resumo, evidências, fontes, confiança e recomendação]"""
 
 
-def criar_agente_react() -> AgentExecutor:
-    """Cria e retorna o AgentExecutor ReAct configurado."""
+def criar_agente_react():
+    """Cria e retorna o CompiledStateGraph ReAct configurado (langchain 1.3+)."""
     llm = create_chat_llm(temperature=0)
     tools = get_all_tools()
-    agent = create_react_agent(llm=llm, tools=tools, prompt=REACT_PROMPT)
-    executor = AgentExecutor(
-        agent=agent,
+    agent = create_agent(
+        model=llm,
         tools=tools,
-        verbose=True,
-        max_iterations=8,
-        handle_parsing_errors=True,
-        return_intermediate_steps=True,
+        system_prompt=REACT_SYSTEM_PROMPT,
     )
-    return executor
+    return agent
 
 
 async def diagnosticar(pergunta: str) -> RespostaAgente:
@@ -69,10 +53,11 @@ async def diagnosticar(pergunta: str) -> RespostaAgente:
     Executa o agente ReAct para responder uma pergunta operacional.
     Retorna RespostaAgente com evidências, fontes e recomendação.
     """
-    executor = criar_agente_react()
+    agent = criar_agente_react()
 
     try:
-        resultado = await executor.ainvoke({"input": pergunta})
+        # API langchain 1.3+: invoca com messages, retorna {messages: [...]}
+        resultado = await agent.ainvoke({"messages": [("human", pergunta)]})
     except Exception as e:
         logger.error("Erro no agente ReAct: %s", e)
         return RespostaAgente(
@@ -82,18 +67,28 @@ async def diagnosticar(pergunta: str) -> RespostaAgente:
             nivel_confianca=0.0,
         )
 
-    # Extrair passos intermediários
-    passos = []
+    # Extrair resposta das mensagens
+    mensagens = resultado.get("messages", [])
+    resposta_texto = ""
+    for msg in reversed(mensagens):
+        if hasattr(msg, "type") and msg.type == "ai" and hasattr(msg, "content"):
+            resposta_texto = msg.content or ""
+            if resposta_texto:
+                break
+
+    # Ferramentas usadas a partir dos tool calls nas mensagens
     ferramentas_usadas = []
     evidencias = []
-
-    for step in resultado.get("intermediate_steps", []):
-        action, observation = step
-        passos.append(f"Ação: {action.tool} | Entrada: {action.tool_input}")
-        ferramentas_usadas.append(action.tool)
-        evidencias.append(f"[{action.tool}]: {str(observation)[:200]}")
-
-    resposta_texto = resultado.get("output", "")
+    passos = []
+    for msg in mensagens:
+        if hasattr(msg, "type") and msg.type == "ai":
+            if hasattr(msg, "tool_calls") and msg.tool_calls:
+                for tc in msg.tool_calls:
+                    nome = tc.get("name", "?")
+                    ferramentas_usadas.append(nome)
+                    passos.append(f"Ação: {nome} | Entrada: {tc.get('args', {})}")
+        if hasattr(msg, "type") and msg.type == "tool":
+            evidencias.append(f"[{msg.name or 'tool'}]: {str(msg.content)[:200]}")
 
     return RespostaAgente(
         pergunta=pergunta,

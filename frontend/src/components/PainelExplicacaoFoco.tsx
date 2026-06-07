@@ -22,10 +22,10 @@ interface Props {
 }
 
 const severidadeConfig = {
-  baixa:   { cor: 'text-green-400',  bg: 'bg-green-950 border-green-800',  label: 'Baixa' },
-  media:   { cor: 'text-yellow-400', bg: 'bg-yellow-950 border-yellow-800', label: 'Média' },
-  alta:    { cor: 'text-orange-400', bg: 'bg-orange-950 border-orange-800', label: 'Alta' },
-  critica: { cor: 'text-red-400',    bg: 'bg-red-950 border-red-800',       label: 'Crítica' },
+  baixa:   { cor: 'text-emerald-600',  bg: 'bg-emerald-50 border-emerald-200',  label: 'Baixa' },
+  media:   { cor: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', label: 'Média' },
+  alta:    { cor: 'text-fire-600', bg: 'bg-orange-50 border-orange-200', label: 'Alta' },
+  critica: { cor: 'text-red-600',    bg: 'bg-red-50 border-red-200',       label: 'Crítica' },
 }
 
 export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
@@ -66,11 +66,11 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
 
   return (
     <aside
-      className="w-96 bg-gray-900 border-l border-gray-800 flex flex-col h-full overflow-hidden"
+      className="w-96 bg-white border-l border-slate-200 flex flex-col h-full overflow-hidden"
       aria-label="Painel de explicação do foco"
     >
       {/* Header */}
-      <div className={clsx('px-4 py-3 border-b border-gray-800 flex items-start justify-between gap-2', sev.bg)}>
+      <div className={clsx('px-4 py-3 border-b border-slate-200 flex items-start justify-between gap-2', sev.bg)}>
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
             <Flame size={16} className={sev.cor} />
@@ -81,13 +81,13 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
               {sev.label}
             </span>
           </div>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-500">
             {foco.lat.toFixed(4)}, {foco.lon.toFixed(4)} · {foco.sensor}
           </p>
         </div>
         <button
           onClick={onFechar}
-          className="p-1 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white transition-colors shrink-0"
+          className="p-1 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors shrink-0"
           aria-label="Fechar painel"
         >
           <X size={16} />
@@ -95,38 +95,38 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
       </div>
 
       {/* Dados do foco */}
-      <div className="px-4 py-3 border-b border-gray-800 grid grid-cols-2 gap-2">
+      <div className="px-4 py-3 border-b border-slate-200 grid grid-cols-2 gap-2">
         <MetricaItem
-          icon={<Satellite size={13} className="text-blue-400" />}
+          icon={<Satellite size={13} className="text-sky-600" />}
           label="Satélite"
           valor={foco.satelite}
         />
         <MetricaItem
-          icon={<Clock size={13} className="text-gray-400" />}
+          icon={<Clock size={13} className="text-slate-500" />}
           label="Detecção"
           valor={format(new Date(foco.data_hora), 'dd/MM HH:mm', { locale: ptBR })}
         />
         {foco.frp != null && (
           <MetricaItem
-            icon={<Flame size={13} className="text-orange-400" />}
+            icon={<Flame size={13} className="text-fire-600" />}
             label="FRP"
             valor={`${foco.frp.toFixed(1)} MW`}
           />
         )}
         {tempC && (
           <MetricaItem
-            icon={<Thermometer size={13} className="text-red-400" />}
+            icon={<Thermometer size={13} className="text-red-600" />}
             label="Temp. pixel"
             valor={`${tempC}°C`}
           />
         )}
         <MetricaItem
-          icon={<CheckCircle size={13} className="text-green-400" />}
+          icon={<CheckCircle size={13} className="text-emerald-600" />}
           label="Confiança"
           valor={`${foco.confianca.toFixed(0)}%`}
         />
         <MetricaItem
-          icon={<Info size={13} className="text-gray-400" />}
+          icon={<Info size={13} className="text-slate-500" />}
           label="Período"
           valor={foco.daynight === 'D' ? 'Diurno' : foco.daynight === 'N' ? 'Noturno' : '—'}
         />
@@ -138,17 +138,17 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
           <div className="flex flex-col items-center justify-center py-12 gap-3">
             <div className="relative">
               <Bot size={32} className="text-orange-500" />
-              <Loader2 size={16} className="animate-spin text-orange-400 absolute -bottom-1 -right-1" />
+              <Loader2 size={16} className="animate-spin text-fire-600 absolute -bottom-1 -right-1" />
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-300 font-medium">Agente analisando...</p>
-              <p className="text-xs text-gray-500 mt-1">Consultando clima real e intensidade</p>
+              <p className="text-sm text-slate-600 font-medium">Agente analisando...</p>
+              <p className="text-xs text-slate-500 mt-1">Consultando clima real e intensidade</p>
             </div>
             <div className="flex gap-1 mt-2">
               {['Clima', 'Intensidade', 'Diagnóstico'].map((s, i) => (
                 <span
                   key={s}
-                  className="text-xs bg-gray-800 text-gray-400 px-2 py-1 rounded-full animate-pulse"
+                  className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded-full animate-pulse"
                   style={{ animationDelay: `${i * 0.3}s` }}
                 >
                   {s}
@@ -159,12 +159,12 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
         )}
 
         {erro && (
-          <div className="m-4 bg-red-950 border border-red-800 rounded-xl p-4">
+          <div className="m-4 bg-red-50 border border-red-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle size={16} className="text-red-400" />
-              <span className="text-sm font-medium text-red-300">Erro na análise</span>
+              <AlertTriangle size={16} className="text-red-600" />
+              <span className="text-sm font-medium text-red-800">Erro na análise</span>
             </div>
-            <p className="text-xs text-red-400">{erro}</p>
+            <p className="text-xs text-red-600">{erro}</p>
           </div>
         )}
 
@@ -178,16 +178,16 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
             {/* Explicação do agente */}
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Bot size={14} className="text-orange-400" />
-                <span className="text-xs font-semibold text-gray-300 uppercase tracking-wide">
+                <Bot size={14} className="text-fire-600" />
+                <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
                   Análise do Agente
                 </span>
-                <span className="text-xs text-gray-600 ml-auto">
+                <span className="text-xs text-slate-400 ml-auto">
                   {(dados.analise_agente.nivel_confianca * 100).toFixed(0)}% confiança
                 </span>
               </div>
-              <div className="bg-gray-800 rounded-xl p-3">
-                <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">
+              <div className="bg-slate-100 rounded-xl p-3">
+                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
                   {dados.analise_agente.explicacao}
                 </p>
               </div>
@@ -206,21 +206,21 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
 
             {/* Passos de raciocínio (expansível) */}
             {dados.analise_agente.passos_raciocinio?.length > 0 && (
-              <div className="border border-gray-800 rounded-xl overflow-hidden">
+              <div className="border border-slate-200 rounded-xl overflow-hidden">
                 <button
                   onClick={() => setExpandirPassos(!expandirPassos)}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs text-gray-400 hover:bg-gray-800 transition-colors"
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs text-slate-500 hover:bg-slate-100 transition-colors"
                   aria-expanded={expandirPassos}
                 >
                   <span>Raciocínio do agente ({dados.analise_agente.passos_raciocinio.length} passos)</span>
                   {expandirPassos ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                 </button>
                 {expandirPassos && (
-                  <div className="px-3 pb-3 space-y-1.5 bg-gray-950">
+                  <div className="px-3 pb-3 space-y-1.5 bg-stone-50">
                     {dados.analise_agente.passos_raciocinio.map((p, i) => (
                       <div key={i} className="flex gap-2">
-                        <span className="text-xs text-gray-600 shrink-0 mt-0.5">{i + 1}.</span>
-                        <p className="text-xs text-gray-400 leading-relaxed">{p}</p>
+                        <span className="text-xs text-slate-400 shrink-0 mt-0.5">{i + 1}.</span>
+                        <p className="text-xs text-slate-500 leading-relaxed">{p}</p>
                       </div>
                     ))}
                   </div>
@@ -229,7 +229,7 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
             )}
 
             {/* Timestamp */}
-            <p className="text-xs text-gray-600 text-right">
+            <p className="text-xs text-slate-400 text-right">
               Análise gerada em{' '}
               {format(new Date(dados.analise_agente.gerado_em), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
             </p>
@@ -249,8 +249,8 @@ function MetricaItem({ icon, label, valor }: { icon: React.ReactNode; label: str
     <div className="flex items-center gap-1.5">
       {icon}
       <div className="min-w-0">
-        <p className="text-xs text-gray-500">{label}</p>
-        <p className="text-xs font-medium text-gray-200 truncate">{valor}</p>
+        <p className="text-xs text-slate-500">{label}</p>
+        <p className="text-xs font-medium text-slate-700 truncate">{valor}</p>
       </div>
     </div>
   )
@@ -259,13 +259,13 @@ function MetricaItem({ icon, label, valor }: { icon: React.ReactNode; label: str
 function PainelClima({ clima }: { clima: ClimaReal }) {
   const itens = [
     {
-      icon: <Thermometer size={14} className="text-red-400" />,
+      icon: <Thermometer size={14} className="text-red-600" />,
       label: 'Temperatura',
       valor: clima.temperatura_c != null ? `${clima.temperatura_c.toFixed(1)}°C` : null,
       alerta: (clima.temperatura_c ?? 0) >= 35,
     },
     {
-      icon: <Droplets size={14} className="text-blue-400" />,
+      icon: <Droplets size={14} className="text-sky-600" />,
       label: 'Umidade',
       valor: clima.umidade_relativa != null ? `${clima.umidade_relativa.toFixed(0)}%` : null,
       alerta: (clima.umidade_relativa ?? 100) < 40,
@@ -289,8 +289,8 @@ function PainelClima({ clima }: { clima: ClimaReal }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <CloudRain size={14} className="text-blue-400" />
-        <span className="text-xs font-semibold text-gray-300 uppercase tracking-wide">
+        <CloudRain size={14} className="text-sky-600" />
+        <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
           Clima Real (Open-Meteo)
         </span>
       </div>
@@ -301,16 +301,16 @@ function PainelClima({ clima }: { clima: ClimaReal }) {
             className={clsx(
               'rounded-lg p-2.5 border',
               alerta
-                ? 'bg-orange-950/50 border-orange-800/50'
-                : 'bg-gray-800 border-gray-700'
+                ? 'bg-orange-50/50 border-orange-200/50'
+                : 'bg-slate-100 border-slate-200'
             )}
           >
             <div className="flex items-center gap-1.5 mb-0.5">
               {icon}
-              <span className="text-xs text-gray-400">{label}</span>
-              {alerta && <AlertTriangle size={10} className="text-orange-400 ml-auto" />}
+              <span className="text-xs text-slate-500">{label}</span>
+              {alerta && <AlertTriangle size={10} className="text-fire-600 ml-auto" />}
             </div>
-            <p className={clsx('text-sm font-bold', alerta ? 'text-orange-300' : 'text-white')}>
+            <p className={clsx('text-sm font-bold', alerta ? 'text-fire-700' : 'text-slate-900')}>
               {valor}
             </p>
           </div>

@@ -105,8 +105,16 @@ export const getFocosMunicipio = (municipio: string, horas = 24) =>
 export const getRiscoMunicipios = (limite = 20) =>
   api.get<RiscoMunicipal[]>('/risco/municipios', { params: { limite } }).then(r => r.data)
 
+/** @deprecated Em produção use getAlertasReais (sem banco) */
 export const getAlertasAtivos = (nivel?: string) =>
   api.get<Alerta[]>('/alertas/ativos', { params: { nivel } }).then(r => r.data)
+
+export const getAlertasReais = (dias = 7, horas = 48, nivel?: string) =>
+  apiReal
+    .get<{ total: number; alertas: Alerta[]; atualizado_em: string | null }>('/real/alertas', {
+      params: { dias, horas, nivel },
+    })
+    .then((r) => r.data.alertas)
 
 export const getEventosGOES16 = (horas = 6, municipio?: string) =>
   api.get<LeituraGOES16[]>('/goes16/eventos', { params: { horas, municipio } }).then(r => r.data)
