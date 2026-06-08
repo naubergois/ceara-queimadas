@@ -1,0 +1,72 @@
+{
+  "experiment": "TASK-083 v4 \u2014 Optimized Real Data",
+  "date": "2026-06-08",
+  "improvements": [
+    "Feature engineering (lag-3, rolling mean/std)",
+    "Residual learning (predict \u0394x)",
+    "Ensemble head (Koopman + GNN + Persistence)",
+    "Adjacency weighted by fire correlation",
+    "Spectral regularization",
+    "Data augmentation (jitter)"
+  ],
+  "config": {
+    "num_municipalities": 15,
+    "num_days_raw": 97,
+    "features_raw": 6,
+    "features_engineered": 36,
+    "lookback": 3,
+    "output_dim": 6
+  },
+  "results": [
+    {
+      "model": "MLP-Residual+FeatEng",
+      "rmse": 0.1809,
+      "mae": 0.1296,
+      "r2": 0.6533,
+      "f1_score": 0.9036,
+      "precision": 0.8975,
+      "recall": 0.9098,
+      "inference_ms": 0.001387794812520345
+    },
+    {
+      "model": "XGBoost+FeatEng",
+      "rmse": 0.1496,
+      "mae": 0.1126,
+      "r2": 0.7629,
+      "f1_score": 0.9263,
+      "precision": 0.888,
+      "recall": 0.968,
+      "inference_ms": 4.403820633888245
+    },
+    {
+      "model": "LSTM+FeatEng",
+      "rmse": 0.1715,
+      "mae": 0.1245,
+      "r2": 0.6956,
+      "f1_score": 0.9392,
+      "precision": 0.9234,
+      "recall": 0.9554,
+      "inference_ms": 0.22699616172096945
+    },
+    {
+      "model": "NeKo-PIGNN v4 (ours)",
+      "rmse": 0.1474,
+      "mae": 0.107,
+      "r2": 0.7699,
+      "f1_score": 0.9421,
+      "precision": 0.9368,
+      "recall": 0.9475,
+      "inference_ms": 0.01704692840576172
+    },
+    {
+      "model": "Persistence (naive)",
+      "rmse": 0.1202,
+      "mae": 0.0782,
+      "r2": 0.8471,
+      "f1_score": 0.9509,
+      "precision": 0.9509,
+      "recall": 0.9509,
+      "inference_ms": 0.0
+    }
+  ]
+}
