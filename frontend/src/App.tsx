@@ -17,6 +17,7 @@ const navItems = [
   { to: '/mapa-real', label: 'Mapa Real',    icon: Satellite },
   { to: '/mapa',      label: 'Mapa',         icon: Map },
   { to: '/alertas',   label: 'Alertas',      icon: Bell },
+  { to: '/inovacao',  label: 'Predição IA',  icon: Flame },
   { to: '/chat',      label: 'Chat IA',      icon: MessageSquare },
   { to: '/boletim',   label: 'Boletim',      icon: FileText },
 ]
