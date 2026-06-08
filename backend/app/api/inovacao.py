@@ -487,32 +487,52 @@ async def prever_risco_municipios(
 
         # Default features (normalizado 0-1)
         for i, (mun, (lat, lon)) in enumerate(MUNICIPIOS_CE.items()):
-            # Buscar clima do município mais próximo no cache
+            # Buscar clima do município mais próximo no cache (por nome ou distância)
             clima_mun = None
             if _cache_clima:
+                # Primeiro tenta match por nome
+                mun_lower = mun.lower().replace("_", " ")
                 for c in _cache_clima:
-                    if mun.lower() in c.get("municipio", "").lower():
+                    c_nome = c.get("nome", "").lower()
+                    if c_nome and (c_nome in mun_lower or mun_lower in c_nome):
                         clima_mun = c
                         break
+                # Se não achou, pega o mais próximo por coordenada
+                if clima_mun is None:
+                    best_dist = float("inf")
+                    for c in _cache_clima:
+                        d = (c.get("lat", 0) - lat)**2 + (c.get("lon", 0) - lon)**2
+                        if d < best_dist:
+                            best_dist = d
+                            clima_mun = c
 
             if clima_mun:
-                features[i, 0] = min(1.0, max(0.0, (clima_mun.get("temperatura", 30) - 20) / 20))
-                features[i, 2] = min(1.0, max(0.0, clima_mun.get("vento_kmh", 5) / 30))
-                features[i, 3] = min(1.0, max(0.0, clima_mun.get("umidade", 60) / 100))
-                features[i, 4] = min(1.0, max(0.0, clima_mun.get("precipitacao", 0) / 50))
+                temp_c = clima_mun.get("temperatura_c", clima_mun.get("temperatura", 30))
+                vento_ms = clima_mun.get("velocidade_vento_ms", clima_mun.get("vento_kmh", 5) / 3.6)
+                umidade = clima_mun.get("umidade_relativa", clima_mun.get("umidade", 60))
+                precip = clima_mun.get("precipitacao_mm", clima_mun.get("precipitacao", 0))
+                features[i, 0] = min(1.0, max(0.0, (temp_c - 20) / 20))      # temp normalizada
+                features[i, 2] = min(1.0, max(0.0, vento_ms / 10.0))          # vento normalizado
+                features[i, 3] = min(1.0, max(0.0, umidade / 100.0))          # umidade normalizada
+                features[i, 4] = min(1.0, max(0.0, precip / 50.0))            # precipitação normalizada
             else:
                 features[i, 0] = 0.5  # temp default
-                features[i, 3] = 0.5  # umidade default
+                features[i, 2] = 0.3  # vento default
+                features[i, 3] = 0.6  # umidade default
 
-            # Contar focos por município no cache
+            # Contar focos por município no cache (por nome ou proximidade)
             focos_mun = 0
             if _cache_focos:
                 for f in _cache_focos:
                     f_mun = f.get("municipio", "")
-                    if f_mun and mun.lower() in f_mun.lower():
+                    f_lat = f.get("lat", f.get("latitude", 0))
+                    f_lon = f.get("lon", f.get("longitude", 0))
+                    # Match por nome ou distância < 0.5 graus
+                    if (f_mun and mun_lower in f_mun.lower()) or \
+                       ((f_lat - lat)**2 + (f_lon - lon)**2 < 0.25):
                         focos_mun += 1
             features[i, 1] = min(1.0, focos_mun / 10.0)  # FRP proxy
-            features[i, 5] = 0.1  # declividade constante
+            features[i, 5] = 0.15  # declividade default (interior > litoral)
 
         # Predizer
         x_t = torch.tensor(features, dtype=torch.float32).unsqueeze(0)  # (1, nodes, 6)

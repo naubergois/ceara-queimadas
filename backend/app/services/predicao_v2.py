@@ -213,7 +213,8 @@ def compute_risk_index(prediction: dict, features_current: np.ndarray) -> list[d
     - Score de Rothermel (condições atuais)
     - Consenso (se GOES-16 disponível)
 
-    Implementa Linha B (PEAK+PERSIST) ao nível do município.
+    Features: [temp, frp/focos, vento, umidade, precip, declividade] normalizadas 0-1
+    Rothermel: R ∝ (1 - umidade) × vento × (temp) × (1 + decliv)
     """
     x_pred = prediction["x_pred"].detach().cpu().numpy()[0]  # (nodes, features)
     rothermel = prediction["rothermel_score"].detach().cpu().numpy()[0]  # (nodes,)
@@ -223,29 +224,40 @@ def compute_risk_index(prediction: dict, features_current: np.ndarray) -> list[d
 
     for i, mun in enumerate(municipios):
         # FRP previsto (feature index 1, normalizado 0-1)
-        frp_previsto = float(x_pred[i, 1])
+        frp_previsto = float(np.clip(x_pred[i, 1], 0, 1))
 
-        # Rothermel score (normalizado)
-        roth_score = float(rothermel[i])
+        # Rothermel score calculado das features atuais (mais robusto que o do modelo)
+        temp = float(features_current[i, 0])      # normalizado 0-1
+        vento = float(features_current[i, 2])     # normalizado 0-1
+        umidade = float(features_current[i, 3])   # normalizado 0-1
+        precip = float(features_current[i, 4])    # normalizado 0-1
+        decliv = float(features_current[i, 5])    # normalizado 0-1
+        focos_atuais = float(features_current[i, 1])  # proxy FRP atual
 
-        # Índice composto: 40% modelo + 30% Rothermel + 30% condições atuais
-        temp_atual = float(features_current[i, 0])
-        umidade_atual = float(features_current[i, 3])
+        # Rothermel simplificado: risco = (1-umidade) × vento × temp × (1+decliv) × (1-precip)
+        roth_score = (1 - umidade) * vento * temp * (1 + decliv) * (1 - precip * 0.5)
+        roth_score = float(np.clip(roth_score, 0, 1))
 
+        # Persistência temporal (focos existentes aumentam risco)
+        persist_score = float(np.clip(focos_atuais * 2, 0, 1))
+
+        # Índice composto (Linha E — consenso multi-vista):
+        # 30% modelo Koopman + 25% Rothermel + 25% persistência + 20% condições
         indice = (
-            0.40 * frp_previsto
-            + 0.30 * roth_score
-            + 0.15 * temp_atual
-            + 0.15 * (1 - umidade_atual)
+            0.30 * frp_previsto
+            + 0.25 * roth_score
+            + 0.25 * persist_score
+            + 0.10 * temp
+            + 0.10 * (1 - umidade)
         )
-        indice = min(1.0, max(0.0, indice))
+        indice = float(np.clip(indice, 0, 1))
 
         # Classificação
-        if indice >= 0.7:
+        if indice >= 0.6:
             classificacao = "critico"
-        elif indice >= 0.5:
+        elif indice >= 0.4:
             classificacao = "alto"
-        elif indice >= 0.3:
+        elif indice >= 0.2:
             classificacao = "medio"
         else:
             classificacao = "baixo"
@@ -261,8 +273,9 @@ def compute_risk_index(prediction: dict, features_current: np.ndarray) -> list[d
             "componentes": {
                 "modelo_koopman": round(frp_previsto, 4),
                 "fisica_rothermel": round(roth_score, 4),
-                "temperatura": round(temp_atual, 4),
-                "deficit_umidade": round(1 - umidade_atual, 4),
+                "persistencia_focos": round(persist_score, 4),
+                "temperatura": round(temp, 4),
+                "deficit_umidade": round(1 - umidade, 4),
             },
         })
 
