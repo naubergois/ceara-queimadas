@@ -362,8 +362,10 @@ class PhysicsInformedGNN(nn.Module):
         """
         batch_size, num_nodes = x.shape[:2]
 
-        # Encoder
-        h = self.encoder(x)  # (batch, num_nodes, hidden_dim)
+        # Encoder — flatten to (batch*num_nodes, feat) for BatchNorm1d
+        x_flat = x.view(-1, x.shape[-1])
+        h_flat = self.encoder(x_flat)  # (batch*num_nodes, hidden_dim)
+        h = h_flat.view(batch_size, num_nodes, self.hidden_dim)
 
         # Message Passing (aplicado a cada batch)
         for i in range(self.num_layers):

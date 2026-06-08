@@ -89,6 +89,14 @@ app.add_middleware(
 app.include_router(router_real, prefix="/api/v1")
 app.include_router(router_pesquisa, prefix="/api/v1")
 
+# ── Endpoints de inovação (modelos Koopman/PI-GNN) ──
+try:
+    from app.api.inovacao import router as router_inovacao
+    app.include_router(router_inovacao)
+    logger.info("Endpoints de inovação (Koopman/PI-GNN) registrados")
+except Exception as e:
+    logger.warning("Endpoints de inovação não registrados: %s", e)
+
 # ── Endpoints com banco (opcional) ──
 try:
     from app.api.routes import router

@@ -412,57 +412,31 @@ def _interpretar_intervencao(variaveis: dict, diff: list) -> str:
 @router.get("/comparar-baseline", response_model=list[ComparacaoBaselineResponse])
 async def comparar_baseline(
     modelo_principal: str = Query(default="neko_pignn", description="Modelo principal a comparar"),
+    dataset: str = Query(default="real", description="Dataset: 'real' (FIRMS+INPE) ou 'sintetico'"),
 ):
     """
-    Compara o modelo NeKo-PIGNN com baselines:
-    - Rothermel puro
-    - CNN (U-Net)
-    - GNN pura (ST-GNN)
-    - Neural ODE
+    Compara o modelo NeKo-PIGNN com baselines.
+    Resultados de validação experimental real (TASK-083 v2/v3).
     """
-    # Resultados simulados (substituir por validação real)
-    baselines = [
-        ComparacaoBaselineResponse(
-            baseline="Rothermel Puro",
-            rmse=0.245,
-            mae=0.182,
-            r2=0.32,
-            f1_score=0.41,
-            tempo_inferencia_ms=0.5,
-        ),
-        ComparacaoBaselineResponse(
-            baseline="CNN (U-Net)",
-            rmse=0.189,
-            mae=0.141,
-            r2=0.55,
-            f1_score=0.62,
-            tempo_inferencia_ms=12.3,
-        ),
-        ComparacaoBaselineResponse(
-            baseline="GNN Pura (ST-GNN)",
-            rmse=0.167,
-            mae=0.123,
-            r2=0.64,
-            f1_score=0.71,
-            tempo_inferencia_ms=8.7,
-        ),
-        ComparacaoBaselineResponse(
-            baseline="Neural ODE",
-            rmse=0.152,
-            mae=0.114,
-            r2=0.71,
-            f1_score=0.76,
-            tempo_inferencia_ms=45.2,
-        ),
-        ComparacaoBaselineResponse(
-            baseline="NeKo-PIGNN (Este trabalho)",
-            rmse=0.098,
-            mae=0.071,
-            r2=0.87,
-            f1_score=0.89,
-            tempo_inferencia_ms=15.1,
-        ),
-    ]
+    if dataset == "real":
+        # Resultados reais do experimento v3 (dados NASA FIRMS + INPE + Open-Meteo)
+        baselines = [
+            ComparacaoBaselineResponse(baseline="MLP", rmse=0.1377, mae=0.0993, r2=0.7986, f1_score=0.9407, tempo_inferencia_ms=0.01),
+            ComparacaoBaselineResponse(baseline="LSTM", rmse=0.1631, mae=0.1268, r2=0.7182, f1_score=0.9431, tempo_inferencia_ms=0.4),
+            ComparacaoBaselineResponse(baseline="XGBoost", rmse=0.1485, mae=0.1115, r2=0.7660, f1_score=0.9311, tempo_inferencia_ms=5.6),
+            ComparacaoBaselineResponse(baseline="Koopman-Det (ours)", rmse=0.1569, mae=0.1148, r2=0.7388, f1_score=0.9243, tempo_inferencia_ms=0.1),
+            ComparacaoBaselineResponse(baseline="NeKo-PIGNN v2 (ours)", rmse=0.1516, mae=0.1099, r2=0.7561, f1_score=0.9257, tempo_inferencia_ms=0.3),
+        ]
+    else:
+        # Resultados do experimento v2 (dados sintéticos, 500 timesteps, 30 nós)
+        baselines = [
+            ComparacaoBaselineResponse(baseline="MLP", rmse=0.0687, mae=0.0237, r2=0.9677, f1_score=0.9750, tempo_inferencia_ms=0.01),
+            ComparacaoBaselineResponse(baseline="LSTM", rmse=0.0841, mae=0.0446, r2=0.9512, f1_score=0.9448, tempo_inferencia_ms=0.8),
+            ComparacaoBaselineResponse(baseline="XGBoost", rmse=0.0871, mae=0.0387, r2=0.9480, f1_score=0.9311, tempo_inferencia_ms=4.4),
+            ComparacaoBaselineResponse(baseline="Koopman-Det (ours)", rmse=0.0680, mae=0.0224, r2=0.9683, f1_score=0.9751, tempo_inferencia_ms=0.1),
+            ComparacaoBaselineResponse(baseline="NeKo-PIGNN v2 (ours)", rmse=0.0640, mae=0.0241, r2=0.9719, f1_score=0.9751, tempo_inferencia_ms=0.4),
+            ComparacaoBaselineResponse(baseline="NeKo-GNN (no physics)", rmse=0.0664, mae=0.0216, r2=0.9698, f1_score=0.9764, tempo_inferencia_ms=0.4),
+        ]
 
     return baselines
 
@@ -480,3 +454,130 @@ async def status_modelos():
         ),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
+
+
+# ---------------------------------------------------------------------------
+# Novos endpoints v2: Previsão operacional com Koopman Determinístico + GNN
+# ---------------------------------------------------------------------------
+
+
+@router.get("/prever-risco-municipios", response_model=dict)
+async def prever_risco_municipios(
+    horas_frente: int = Query(default=6, ge=1, le=72, description="Horas à frente para previsão"),
+):
+    """
+    Previsão operacional de risco por município usando NeKo-PIGNN v2.
+
+    Combina:
+    - Koopman Determinístico (propagação temporal)
+    - GNN com adjacência real (propagação espacial)
+    - Score Rothermel (regularização física)
+
+    Usa dados reais do cache (NASA FIRMS + Open-Meteo).
+    """
+    try:
+        from app.services.predicao_v2 import get_operational_model, compute_risk_index, MUNICIPIOS_CE
+        from app.api.focos_reais import _cache_focos, _cache_clima
+
+        model, adj = get_operational_model()
+
+        # Construir features atuais a partir do cache
+        num_mun = len(MUNICIPIOS_CE)
+        features = np.zeros((num_mun, 6))
+
+        # Default features (normalizado 0-1)
+        for i, (mun, (lat, lon)) in enumerate(MUNICIPIOS_CE.items()):
+            # Buscar clima do município mais próximo no cache
+            clima_mun = None
+            if _cache_clima:
+                for c in _cache_clima:
+                    if mun.lower() in c.get("municipio", "").lower():
+                        clima_mun = c
+                        break
+
+            if clima_mun:
+                features[i, 0] = min(1.0, max(0.0, (clima_mun.get("temperatura", 30) - 20) / 20))
+                features[i, 2] = min(1.0, max(0.0, clima_mun.get("vento_kmh", 5) / 30))
+                features[i, 3] = min(1.0, max(0.0, clima_mun.get("umidade", 60) / 100))
+                features[i, 4] = min(1.0, max(0.0, clima_mun.get("precipitacao", 0) / 50))
+            else:
+                features[i, 0] = 0.5  # temp default
+                features[i, 3] = 0.5  # umidade default
+
+            # Contar focos por município no cache
+            focos_mun = 0
+            if _cache_focos:
+                for f in _cache_focos:
+                    f_mun = f.get("municipio", "")
+                    if f_mun and mun.lower() in f_mun.lower():
+                        focos_mun += 1
+            features[i, 1] = min(1.0, focos_mun / 10.0)  # FRP proxy
+            features[i, 5] = 0.1  # declividade constante
+
+        # Predizer
+        x_t = torch.tensor(features, dtype=torch.float32).unsqueeze(0)  # (1, nodes, 6)
+        steps = max(1, horas_frente // 6)
+
+        with torch.no_grad():
+            prediction = model(x_t, adj, steps=steps)
+
+        riscos = compute_risk_index(prediction, features)
+
+        return {
+            "previsao_horas": horas_frente,
+            "modelo": "NeKo-PIGNN v2 (Koopman-Det + GNN + Rothermel)",
+            "spectral_radius": prediction["spectral_radius"],
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "municipios_risco": riscos,
+            "resumo": {
+                "total_municipios": num_mun,
+                "critico": sum(1 for r in riscos if r["classificacao"] == "critico"),
+                "alto": sum(1 for r in riscos if r["classificacao"] == "alto"),
+                "medio": sum(1 for r in riscos if r["classificacao"] == "medio"),
+                "baixo": sum(1 for r in riscos if r["classificacao"] == "baixo"),
+            },
+            "metodologia": {
+                "linha_b": "PEAK + PERSIST + FUSÃO (score composto temporal)",
+                "linha_e": "Consenso multi-vista (modelo + Rothermel + condições)",
+                "modelo": "Koopman Determinístico + GNN + Rothermel Loss",
+                "referencia": "docs/METODOLOGIA_NOVA_PROPOSTA.md",
+            },
+        }
+    except Exception as e:
+        logger.error(f"Erro previsão risco: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/experimentos/resultados", response_model=dict)
+async def resultados_experimentos():
+    """
+    Retorna os resultados dos experimentos de validação (TASK-083 v1, v2, v3).
+    Dados de benchmark comparando NeKo-PIGNN com baselines.
+    """
+    import json as _json
+    from pathlib import Path
+
+    results_dir = Path(__file__).parent.parent.parent / "experiments" / "results"
+
+    output = {"experimentos": []}
+
+    # v2 — sintético
+    v2_path = results_dir / "benchmark_results_v2.json"
+    if v2_path.exists():
+        with open(v2_path) as f:
+            output["experimentos"].append(_json.load(f))
+
+    # v3 — dados reais
+    v3_path = results_dir / "benchmark_results_real.json"
+    if v3_path.exists():
+        with open(v3_path) as f:
+            output["experimentos"].append(_json.load(f))
+
+    output["total_experimentos"] = len(output["experimentos"])
+    output["conclusao"] = (
+        "NeKo-PIGNN v2 alcança melhor RMSE (0.064) e R² (0.972) em dados sintéticos, "
+        "superando MLP, LSTM e XGBoost. Em dados reais (97 dias, 377 focos), é competitivo "
+        "(3º em RMSE com margem mínima de 0.014 vs MLP) com Recall ≥ 96%."
+    )
+
+    return output

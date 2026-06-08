@@ -94,7 +94,7 @@ class NeKoPIGNN(nn.Module):
         # Decoder para saída física
         self.output_decoder = nn.Sequential(
             nn.Linear(latent_dim, latent_dim // 2),
-            nn.BatchNorm1d(num_nodes),
+            nn.LayerNorm(latent_dim // 2),
             nn.GELU(),
             nn.Dropout(0.1),
             nn.Linear(latent_dim // 2, node_features),
