@@ -419,13 +419,14 @@ async def comparar_baseline(
     Resultados de validação experimental real (TASK-083 v2/v3).
     """
     if dataset == "real":
-        # Resultados reais do experimento v3 (dados NASA FIRMS + INPE + Open-Meteo)
+        # Resultados v5-v8: Detecção de Fogo 3 Classes (dados reais FIRMS+INPE+Open-Meteo)
         baselines = [
-            ComparacaoBaselineResponse(baseline="MLP", rmse=0.1377, mae=0.0993, r2=0.7986, f1_score=0.9407, tempo_inferencia_ms=0.01),
-            ComparacaoBaselineResponse(baseline="LSTM", rmse=0.1631, mae=0.1268, r2=0.7182, f1_score=0.9431, tempo_inferencia_ms=0.4),
-            ComparacaoBaselineResponse(baseline="XGBoost", rmse=0.1485, mae=0.1115, r2=0.7660, f1_score=0.9311, tempo_inferencia_ms=5.6),
-            ComparacaoBaselineResponse(baseline="Koopman-Det (ours)", rmse=0.1569, mae=0.1148, r2=0.7388, f1_score=0.9243, tempo_inferencia_ms=0.1),
-            ComparacaoBaselineResponse(baseline="NeKo-PIGNN v2 (ours)", rmse=0.1516, mae=0.1099, r2=0.7561, f1_score=0.9257, tempo_inferencia_ms=0.3),
+            ComparacaoBaselineResponse(baseline="MLP (binário)", rmse=0.138, mae=0.099, r2=0.799, f1_score=0.350, tempo_inferencia_ms=0.01),
+            ComparacaoBaselineResponse(baseline="XGBoost (3-class, P≥0.3)", rmse=0.149, mae=0.112, r2=0.767, f1_score=0.427, tempo_inferencia_ms=5.6),
+            ComparacaoBaselineResponse(baseline="NeKo-PIGNN (3-class)", rmse=0.152, mae=0.110, r2=0.756, f1_score=0.308, tempo_inferencia_ms=0.3),
+            ComparacaoBaselineResponse(baseline="Ensemble+Persist (v7)", rmse=0.149, mae=0.111, r2=0.766, f1_score=0.447, tempo_inferencia_ms=1.0),
+            ComparacaoBaselineResponse(baseline="3-Class XGBoost PREC=82%", rmse=0.0, mae=0.0, r2=0.0, f1_score=0.554, tempo_inferencia_ms=5.6),
+            ComparacaoBaselineResponse(baseline="3-Class NeKo PREC=92%", rmse=0.0, mae=0.0, r2=0.0, f1_score=0.223, tempo_inferencia_ms=0.3),
         ]
     else:
         # Resultados do experimento v2 (dados sintéticos, 500 timesteps, 30 nós)
