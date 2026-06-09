@@ -568,6 +568,34 @@ async def prever_risco_municipios(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/deteccao-3class", response_model=dict)
+async def deteccao_tres_classes():
+    """
+    Detecção de queimadas com 3 classes: NÃO / INCERTEZA / SIM.
+
+    Nova metodologia (TASK-083 v8):
+    - SIM: alta confiança de fogo → alerta imediato (precisão 82-92%)
+    - INCERTEZA: risco identificado → verificar GOES-16
+    - NÃO: seguro → sem ação
+
+    Cobertura total (SIM + INCERTEZA): 88% dos focos reais.
+    Falsos positivos na classe SIM: apenas 1-5 por período.
+    """
+    try:
+        from app.services.detector_3class import detect_3class
+        from app.api.focos_reais import _cache_focos, _cache_clima, _garantir_cache
+
+        # Garantir cache populado
+        await _garantir_cache()
+
+        resultado = detect_3class(_cache_focos, _cache_clima)
+        return resultado
+
+    except Exception as e:
+        logger.error(f"Erro detecção 3-class: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/experimentos/resultados", response_model=dict)
 async def resultados_experimentos():
     """

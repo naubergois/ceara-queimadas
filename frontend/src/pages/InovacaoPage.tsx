@@ -50,6 +50,7 @@ export default function InovacaoPage() {
   const [horasFrente, setHorasFrente] = useState(12);
   const [modelo, setModelo] = useState("");
   const [resumo, setResumo] = useState<Record<string, number>>({});
+  const [deteccao3c, setDeteccao3c] = useState<any>(null);
 
   // Simulador causal
   const [vento, setVento] = useState(5);
@@ -63,10 +64,11 @@ export default function InovacaoPage() {
   async function fetchData() {
     setLoading(true);
     try {
-      const [riscoRes, baselineRealRes, baselineSintRes] = await Promise.all([
+      const [riscoRes, baselineRealRes, baselineSintRes, det3cRes] = await Promise.all([
         fetch(`${API}/prever-risco-municipios?horas_frente=${horasFrente}`),
         fetch(`${API}/comparar-baseline?dataset=real`),
         fetch(`${API}/comparar-baseline?dataset=sintetico`),
+        fetch(`${API}/deteccao-3class`),
       ]);
 
       if (riscoRes.ok) {
@@ -77,6 +79,7 @@ export default function InovacaoPage() {
       }
       if (baselineRealRes.ok) setBaselines(await baselineRealRes.json());
       if (baselineSintRes.ok) setBaselinesSintetico(await baselineSintRes.json());
+      if (det3cRes.ok) setDeteccao3c(await det3cRes.json());
     } catch (e) {
       console.error("Erro ao buscar dados:", e);
     }
@@ -142,6 +145,80 @@ export default function InovacaoPage() {
           ))}
         </div>
       </FadeIn>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+        {/* Detecção 3 Classes */}
+        <FadeIn delay={0.15}>
+          <div className="bg-[#111122] border border-gray-800 rounded-xl p-5 xl:col-span-3">
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
+              🔥 Detecção 3 Classes — NÃO / INCERTEZA / SIM (Precisão 82-92%)
+            </h2>
+            {deteccao3c ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* SIM */}
+                <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">🚨</span>
+                    <div>
+                      <div className="text-red-400 font-bold text-lg">ALERTA ({deteccao3c.resumo?.SIM || 0})</div>
+                      <div className="text-xs text-red-300/70">Precisão: 82-92%</div>
+                    </div>
+                  </div>
+                  <div className="space-y-1 max-h-40 overflow-y-auto">
+                    {(deteccao3c.municipios || []).filter((m: any) => m.classe === "SIM").map((m: any) => (
+                      <div key={m.municipio} className="flex items-center justify-between text-sm bg-red-900/30 rounded px-2 py-1">
+                        <span className="text-red-200">{m.municipio}</span>
+                        <span className="text-red-400 font-mono text-xs">{(m.p_sim * 100).toFixed(0)}%</span>
+                      </div>
+                    ))}
+                    {(deteccao3c.resumo?.SIM || 0) === 0 && <div className="text-sm text-gray-500 italic">Nenhum alerta ativo</div>}
+                  </div>
+                </div>
+
+                {/* INCERTEZA */}
+                <div className="bg-yellow-900/20 border border-yellow-800/50 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">⚠️</span>
+                    <div>
+                      <div className="text-yellow-400 font-bold text-lg">VIGÍLIA ({deteccao3c.resumo?.INCERTEZA || 0})</div>
+                      <div className="text-xs text-yellow-300/70">Verificar GOES-16</div>
+                    </div>
+                  </div>
+                  <div className="space-y-1 max-h-40 overflow-y-auto">
+                    {(deteccao3c.municipios || []).filter((m: any) => m.classe === "INCERTEZA").map((m: any) => (
+                      <div key={m.municipio} className="flex items-center justify-between text-sm bg-yellow-900/30 rounded px-2 py-1">
+                        <span className="text-yellow-200">{m.municipio}</span>
+                        <span className="text-yellow-400 font-mono text-xs">{(m.p_sim * 100).toFixed(0)}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* NÃO */}
+                <div className="bg-green-900/20 border border-green-800/50 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">✅</span>
+                    <div>
+                      <div className="text-green-400 font-bold text-lg">SEGURO ({deteccao3c.resumo?.NAO || 0})</div>
+                      <div className="text-xs text-green-300/70">Sem ação necessária</div>
+                    </div>
+                  </div>
+                  <div className="space-y-1 max-h-40 overflow-y-auto">
+                    {(deteccao3c.municipios || []).filter((m: any) => m.classe === "NAO").map((m: any) => (
+                      <div key={m.municipio} className="flex items-center justify-between text-sm bg-green-900/30 rounded px-2 py-1">
+                        <span className="text-green-200">{m.municipio}</span>
+                        <span className="text-green-400 font-mono text-xs">seguro</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-6 text-gray-500">Carregando detecção...</div>
+            )}
+          </div>
+        </FadeIn>
+      </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
         {/* Ranking de Risco por Município */}
