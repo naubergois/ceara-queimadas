@@ -1,72 +1,81 @@
 {
-  "experiment": "TASK-083 v4 \u2014 Optimized Real Data",
+  "experiment": "TASK-083 v4 \u2014 Improved NeKo-PIGNN on Real Data",
   "date": "2026-06-08",
   "improvements": [
-    "Feature engineering (lag-3, rolling mean/std)",
-    "Residual learning (predict \u0394x)",
-    "Ensemble head (Koopman + GNN + Persistence)",
-    "Adjacency weighted by fire correlation",
-    "Spectral regularization",
-    "Data augmentation (jitter)"
+    "Feature Engineering (15 features incl. moving avg, interactions, dry spell)",
+    "Lookback window = 7 days",
+    "Data Augmentation 3x (noise jitter)",
+    "NeKo-PIGNN v3 with temporal encoder",
+    "Ensemble stacking (NeKo + XGBoost)"
   ],
   "config": {
     "num_municipalities": 15,
-    "num_days_raw": 97,
-    "features_raw": 6,
-    "features_engineered": 36,
-    "lookback": 3,
-    "output_dim": 6
+    "num_days": 97,
+    "raw_features": 6,
+    "engineered_features": 15,
+    "lookback": 7,
+    "augmentation_factor": 3
   },
   "results": [
     {
-      "model": "MLP-Residual+FeatEng",
-      "rmse": 0.1809,
-      "mae": 0.1296,
-      "r2": 0.6533,
-      "f1_score": 0.9036,
-      "precision": 0.8975,
-      "recall": 0.9098,
-      "inference_ms": 0.001387794812520345
+      "model": "MLP plain (v3 ref)",
+      "rmse": 0.1434,
+      "mae": 0.1045,
+      "r2": 0.7817,
+      "f1_score": 0.9364,
+      "precision": 0.9106,
+      "recall": 0.9637,
+      "inference_ms": 0.01
     },
     {
-      "model": "XGBoost+FeatEng",
-      "rmse": 0.1496,
-      "mae": 0.1126,
-      "r2": 0.7629,
-      "f1_score": 0.9263,
-      "precision": 0.888,
-      "recall": 0.968,
-      "inference_ms": 4.403820633888245
+      "model": "XGBoost (ensemble base)",
+      "rmse": 0.1484,
+      "mae": 0.112,
+      "r2": 0.7676,
+      "f1_score": 0.935,
+      "precision": 0.9019,
+      "recall": 0.9706,
+      "inference_ms": 63742.552042007446
     },
     {
-      "model": "LSTM+FeatEng",
-      "rmse": 0.1715,
-      "mae": 0.1245,
-      "r2": 0.6956,
-      "f1_score": 0.9392,
-      "precision": 0.9234,
-      "recall": 0.9554,
-      "inference_ms": 0.22699616172096945
+      "model": "XGBoost + FeatEng",
+      "rmse": 0.1486,
+      "mae": 0.1123,
+      "r2": 0.7671,
+      "f1_score": 0.935,
+      "precision": 0.9011,
+      "recall": 0.9716,
+      "inference_ms": 323.2834109553584
     },
     {
-      "model": "NeKo-PIGNN v4 (ours)",
-      "rmse": 0.1474,
-      "mae": 0.107,
-      "r2": 0.7699,
-      "f1_score": 0.9421,
-      "precision": 0.9368,
-      "recall": 0.9475,
-      "inference_ms": 0.01704692840576172
+      "model": "Ensemble (NeKo+XGB)",
+      "rmse": 0.149,
+      "mae": 0.1112,
+      "r2": 0.7657,
+      "f1_score": 0.9302,
+      "precision": 0.8957,
+      "recall": 0.9675,
+      "inference_ms": 63743.55506896973
     },
     {
-      "model": "Persistence (naive)",
-      "rmse": 0.1202,
-      "mae": 0.0782,
-      "r2": 0.8471,
-      "f1_score": 0.9509,
-      "precision": 0.9509,
-      "recall": 0.9509,
-      "inference_ms": 0.0
+      "model": "NeKo-PIGNN v3",
+      "rmse": 0.1725,
+      "mae": 0.1273,
+      "r2": 0.686,
+      "f1_score": 0.906,
+      "precision": 0.9065,
+      "recall": 0.9056,
+      "inference_ms": 1.0030269622802734
+    },
+    {
+      "model": "MLP + FeatEng + LB7",
+      "rmse": 0.2759,
+      "mae": 0.1941,
+      "r2": 0.197,
+      "f1_score": 0.8298,
+      "precision": 0.9362,
+      "recall": 0.7452,
+      "inference_ms": 0.052558051215277776
     }
   ]
 }
