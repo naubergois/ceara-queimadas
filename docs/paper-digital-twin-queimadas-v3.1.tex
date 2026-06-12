@@ -81,13 +81,15 @@ FireCastNet), FIRMS validation, expanded discussion}
 % ======================================================================
 \begin{abstract}
 
-Wildfire detection in Brazilian biomes---Amazon, Cerrado, Pantanal, and Caatinga---remains a critical challenge, lacking operational digital twins that integrate real-time satellite data, physical simulation, and autonomous decision support. This paper presents an unsupervised spatial digital twin framework for wildfire detection using \abbrev{GOES-16} \abbrev{ABI} L2 CMIPF data over the state of Cear\'{a}, Brazil. The system combines: (i) multi-scale median filtering of thermal band \abbrev{T\_B13} (10.3~$\mu$m) with weighted spectral contrast \abbrev{T\_B7}$-$\abbrev{T\_B14} (3.9$-$11.2~$\mu$m); (ii) temporal assimilation via probabilistic fusion with exponential decay (\code{prob\_or}); (iii) a combined persistence method fusing peak intensity, temporal mean, and activation dwell ratio across hourly granules; (iv) a consensus ensemble requiring agreement of 2~of~3 physical views (digital twin, persistence, spatial residual); and (v) a LangGraph-based agentic orchestration pipeline with ReAct reasoning, spatial cross-referencing, and auditable alert generation. Evaluation against 76 \abbrev{INPE} reference fire foci on 2024-10-31 with automatic contamination calibration maximizing F1 yields a consistent performance hierarchy: digital twin (P=0.032, R=0.106, F1=0.049), isolation forest (P=0.026, R=0.063, F1=0.037), combined persistence (P=0.031, R=0.007, F1=0.012), spatial residual (P=0.019, R=0.004, F1=0.006), and consensus ensemble (P=0.000, F1=0.000). Synthetic benchmarks confirm all methods exceed precision $>$ 0.8 and F1 $>$ 0.8 under well-posed grid-aligned conditions (8/8 test assertions pass). We identify four structural misalignments---temporal, semantic, scale, and product---as root causes of the synthetic-real gap. Extending this diagnostic foundation, we introduce the Neural Koopman Physics-Informed Graph Neural Network (NeKo-PIGNN) mathematical framework for predictive fire propagation modeling, combining Koopman operator theory (absolute gap in wildfire literature) with physics-constrained GNNs regularized by the Rothermel equation. A LangGraph pipeline orchestrates 9 specialized AI agents for data collection, geospatial analysis, climate risk assessment, GOES-16 persistence analysis, evidence fusion, ReAct diagnosis, alert generation, technical reporting, and auditing---all integrated with a React/TypeScript frontend and PostGIS spatial database. We propose a complete six-layer roadmap for a bidirectional Brazilian fire digital twin integrating \abbrev{INPE}, \abbrev{NASA} \abbrev{FIRMS}, \abbrev{MapBiomas}, IoT sensor networks, and autonomous agentic decision support.
+and autonomous agentic decision support.
+Code available at \url{https://github.com/naubergois/ceara-queimadas}.
 \end{abstract}
 
 %% Portuguese abstract
 \begin{otherlanguage}{portuguese}
 \begin{abstract}
-A detecção de incêndios florestais nos biomas brasileiros---Amazônia, Cerrado, Pantanal e Caatinga---continua sendo um desafio crítico, sem gêmeos digitais operacionais que integrem dados de satélite em tempo real, simulação física e suporte autônomo à decisão. Este artigo apresenta um framework não supervisionado de gêmeo digital espacial para detecção de queimadas usando dados GOES-16 ABI L2 CMIPF sobre o estado do Ceará, Brasil. O sistema combina: (i) filtragem mediana multi-escala da banda térmica T\_B13 (10,3~$\mu$m) com contraste espectral ponderado T\_B7$-$T\_B14 (3,9$-$11,2~$\mu$m); (ii) assimilação temporal via fusão probabilística com decaimento exponencial (prob\_or); (iii) um método de persistência combinada fundindo intensidade de pico, média temporal e razão de ativação entre granules horários; (iv) um ensemble de consenso exigindo concordância de 2 em 3 visões físicas (gêmeo digital, persistência, residual espacial); e (v) um pipeline de orquestração agentiva baseado em LangGraph com raciocínio ReAct, cruzamento geoespacial e geração auditável de alertas. A avaliação contra 76 focos de referência do INPE em 31/10/2024 com calibração automática de contaminação maximizando F1 produz uma hierarquia de desempenho consistente: gêmeo digital (P=0,032, R=0,106, F1=0,049), isolation forest (P=0,026, R=0,063, F1=0,037), persistência combinada (P=0,031, R=0,007, F1=0,012), residual espacial (P=0,019, R=0,004, F1=0,006) e ensemble de consenso (P=0,000, F1=0,000). Benchmarks sintéticos confirmam que todos os métodos excedem precisão $>$ 0,8 e F1 $>$ 0,8 sob condições alinhadas (8/8 testes aprovados). Identificamos quatro desalinhamentos estruturais---temporal, semântico, de escala e de produto---como causas raiz da lacuna sintético-real. Estendendo esta base diagnóstica, introduzimos o framework matemático Neural Koopman Physics-Informed Graph Neural Network (NeKo-PIGNN) para modelagem preditiva de propagação de fogo, combinando a teoria do operador de Koopman (lacuna absoluta na literatura de queimadas) com GNNs com restrição física regularizadas pela equação de Rothermel. Um pipeline LangGraph orquestra 9 agentes especializados de IA para coleta, análise geoespacial, risco climático, persistência GOES-16, fusão de evidências, diagnóstico ReAct, geração de alertas, relatoria técnica e auditoria---tudo integrado com frontend React/TypeScript e banco de dados espacial PostGIS. Propomos um roteiro completo em seis camadas para um gêmeo digital bidirecional brasileiro de queimadas integrando INPE, NASA FIRMS, MapBiomas, redes de sensores IoT e suporte autônomo à decisão agentiva.
+A detecção de incêndios florestais nos biomas brasileiros---Amazônia, Cerrado, Pantanal e Caatinga---continua sendo um desafio crítico, sem gêmeos digitais operacionais que integrem dados de satélite em tempo real, simulação física e suporte autônomo à decisão. Este artigo apresenta um framework não supervisionado de gêmeo digital espacial para detecção de queimadas usando dados GOES-16 ABI L2 CMIPF sobre o estado do Ceará, Brasil. O sistema combina: (i) filtragem mediana multi-escala da banda térmica T\_B13 (10,3~$\mu$m) com contraste espectral ponderado T\_B7$-$T\_B14 (3,9$-$11,2~$\mu$m); (ii) assimilação temporal via fusão probabilística com decaimento exponencial (prob\_or); (iii) um método de persistência combinada fundindo intensidade de pico, média temporal e razão de ativação entre granules horários; (iv) um ensemble de consenso exigindo concordância de 2 em 3 visões físicas (gêmeo digital, persistência, residual espacial); e (v) um pipeline de orquestração agentiva baseado em LangGraph com raciocínio ReAct, cruzamento geoespacial e geração auditável de alertas. A avaliação contra 76 focos de referência do INPE em 31/10/2024 com calibração automática de contaminação maximizando F1 produz uma hierarquia de desempenho consistente: gêmeo digital (P=0,032, R=0,106, F1=0,049), isolation forest (P=0,026, R=0,063, F1=0,037), persistência combinada (P=0,031, R=0,007, F1=0,012), residual espacial (P=0,019, R=0,004, F1=0,006) e ensemble de consenso (P=0,000, F1=0,000). Benchmarks sintéticos confirmam que todos os métodos excedem precisão $>$ 0,8 e F1 $>$ 0,8 sob condições alinhadas (8/8 testes aprovados). Identificamos quatro desalinhamentos estruturais---temporal, semântico, de escala e de produto---como causas raiz da lacuna sintético-real. Estendendo esta base diagnóstica, introduzimos o framework matemático Neural Koopman Physics-Informed Graph Neural Network (NeKo-PIGNN) para modelagem preditiva de propagação de fogo, combinando a teoria do operador de Koopman (lacuna absoluta na literatura de incêndios florestais) com GNNs com restrição física regularizadas pela equação de Rothermel. Um pipeline LangGraph orquestra 9 agentes de IA especializados para coleta de dados, análise geoespacial, avaliação de risco climático, análise de persistência GOES-16, fusão de evidências, diagnóstico ReAct, geração de alertas, relatórios técnicos e auditoria---tudo integrado com um frontend React/TypeScript e banco de dados espacial PostGIS. Propomos um roteiro completo de seis camadas para um gêmeo digital bidirecional de incêndios brasileiro integrando INPE, NASA FIRMS, MapBiomas, redes de sensores IoT e suporte autônomo à decisão baseado em agentes.
+Código disponível em \url{https://github.com/naubergois/ceara-queimadas}.\end{abstract}
 \end{abstract}
 \end{otherlanguage}
 
@@ -116,7 +118,7 @@ International research has advanced digital twin-based wildfire management throu
   \item \textbf{\abbrev{FIRETWIN}}~\cite{raha2025}: A cyber-physical digital twin using Unreal Engine + \abbrev{CAWFE} model for King Fire reconstruction, providing immersive interactive analysis and multi-modal sensing integration.
   \item \textbf{\abbrev{AIMNET}}~\cite{zhou2025}: An IoT-empowered digital twin for continuous gas emission monitoring with coupled weather-transport modeling, using a three-layer architecture (physical world $\to$ bidirectional links $\to$ digital world).
   \item \textbf{\abbrev{H-RDT}}~\cite{shen2025}: A hazard-responsive digital twin using Physics-Informed Neural Networks for the fire-power-outage-urban-heat-wave cascade.
-  \item \textbf{\abbrev{PINN}s for fire spread}~\cite{vogiatzoglou2024}: Physics-informed neural networks learning wildfire propagation parameters, providing a foundation for data-driven digital twins with physical consistency.
+  \item \textbf{\abbrev{PINN}s for fire spread}~\cite{vogiatzoglou2024,mao2024_pinn}: Physics-informed neural networks learning wildfire propagation parameters~\cite{vogiatzoglou2024} and physics-constrained wildfire spread simulation~\cite{mao2024_pinn}, providing complementary foundations for data-driven digital twins with physical consistency.
   \item \textbf{Neural ODEs}~\cite{chen2018}: Continuous-time dynamics modeling that naturally accommodates irregularly timed satellite observations.
   \item \textbf{Koopman operator theory}~\cite{koopman1931,brunton2021}: A framework for linearizing nonlinear dynamics through observable functions, enabling spectral analysis and optimal control.
   \item \textbf{GraphFire-X}~\cite{esparza2025}: A physics-informed graph attention network ensemble for building-scale wildfire vulnerability at the wildland-urban interface (WUI). Combines dual-expert GNN (fire physics-informed convection, radiation, ember probability attention) with XGBoost for structural fragility assessment. Validated on the 2025 Eaton Fire. Uses Google AlphaEarth embeddings and community-level graph-of-contagion representation. The physics-informed GNN approach is directly comparable to our NeKo-PIGNN framework, though GraphFire-X targets building vulnerability rather than satellite-based fire propagation.
@@ -279,7 +281,7 @@ The four structural misalignments identified in our detection pipeline---tempora
 
 \subsection{Koopman Operator Theory for Fire Dynamics}
 
-The Koopman operator~\cite{koopman1931} provides a representation of nonlinear dynamical systems through an infinite-dimensional linear operator acting on observable functions. Let $F: M \to M$ be the (unknown) nonlinear map governing fire state evolution on a compact state space $M \subset \R^d$. For any observable function $g: M \to \C$, the Koopman operator $\sK$ is defined as:
+The Koopman operator~\cite{koopman1931} provides a representation of nonlinear dynamical systems through an infinite-dimensional linear operator acting on observable functions, with broad applications from fluid dynamics~\cite{mezic2013,rowley2009} to climate variability~\cite{lorenzo2026}. Let $F: M \to M$ be the (unknown) nonlinear map governing fire state evolution on a compact state space $M \subset \R^d$. For any observable function $g: M \to \C$, the Koopman operator $\sK$ is defined as:
 
 \begin{equation}
 (\sK g)(z) = g(F(z))
@@ -297,7 +299,7 @@ For fire propagation, the state vector $z \in M$ includes: cell-wise brightness 
 
 \subsection{Extended Dynamic Mode Decomposition with Learned Observables}
 
-Practical approximation of $\sK$ uses Extended Dynamic Mode Decomposition (\abbrev{EDMD})~\cite{williams2015}. Given snapshots $X = [z_1, \ldots, z_T]$ and $Y = [z_2, \ldots, z_{T+1}]$, and a dictionary of observables $\Theta(z) = [\theta_1(z), \ldots, \theta_d(z)]^\top$, we solve:
+Practical approximation of $\sK$ uses Extended Dynamic Mode Decomposition (\abbrev{EDMD})~\cite{williams2015} and its variants~\cite{proctor2016,baddoo2023}. Given snapshots $X = [z_1, \ldots, z_T]$ and $Y = [z_2, \ldots, z_{T+1}]$, and a dictionary of observables $\Theta(z) = [\theta_1(z), \ldots, \theta_d(z)]^\top$, we solve:
 
 \begin{equation}
 \sK \approx G^{+} A, \quad G = \Theta(X)^\top \Theta(X), \quad A = \Theta(X)^\top \Theta(Y)
@@ -306,7 +308,7 @@ Practical approximation of $\sK$ uses Extended Dynamic Mode Decomposition (\abbr
 
 where $G^{+}$ denotes the Moore-Penrose pseudoinverse. The eigenvectors (Koopman eigenfunctions) and eigenvalues (Koopman spectrum) reveal the intrinsic modes of fire propagation---growth rates, oscillation frequencies, and spatial coherence patterns.
 
-Crucially, we learn $\Theta$ directly from satellite data using a variational autoencoder whose latent representation is constrained to approximate Koopman eigenfunctions. The training objective is:
+Crucially, we learn $\Theta$ directly from satellite data using a variational autoencoder whose latent representation is constrained to approximate Koopman eigenfunctions~\cite{lusch2018,takeishi2017}. The training objective is:
 
 \begin{equation}
 \min_{\Theta, \sK} \| \Theta(Y) - \sK \Theta(X) \|_F^2 + \lambda \| \Theta(X) - \hat{\Theta}(X) \|_2^2
@@ -328,14 +330,14 @@ h_v^{(l+1)} = \sigma\Bigl(W^{(l)} h_v^{(l)} + \sum_{u \in \mathcal{N}(v)} \phi^{
 
 where $\mathcal{N}(v)$ are neighbors of $v$, $e_{uv}$ are edge features (distance, wind exposure), and $\phi$ is a learned message function.
 
-The physics-informed loss incorporates the Rothermel fire spread equation~\cite{rothermel1983} as a regularizer:
+The physics-informed loss incorporates the Rothermel fire spread equation~\cite{rothermel1983} as a regularizer, following the Physics-Informed Machine Learning paradigm~\cite{karniadakis2021,cuomo2022}:
 
 \begin{equation}
 \mathcal{L}_{\text{total}} = \mathcal{L}_{\text{data}} + \lambda_1 \mathcal{L}_{\text{PDE}} + \lambda_2 \mathcal{L}_{\text{IC}}
 \label{eq:pinn_loss}
 \end{equation}
 
-The \abbrev{PDE} residual encodes the reaction-diffusion nature of fire spread:
+This residual directly encodes the reaction-diffusion nature of fire spread, with known training challenges in PINNs~\cite{wang2021_gradient,krishnapriyan2021}:
 
 \begin{equation}
 \mathcal{L}_{\text{PDE}} = \Bigl\| \frac{\partial u}{\partial t} - D(\theta) \nabla^2 u - R(\theta, u, w) \Bigr\|_2^2
@@ -481,7 +483,7 @@ The gap between synthetic (F1 $>$ 0.8) and real (F1 $<$ 0.05 for 4/5 methods) pe
 \label{sec:langgraph}
 % ======================================================================
 
-Beyond the unsupervised detection core, the full digital twin platform integrates a LangGraph-based~\cite{langchain2025} agentic orchestration pipeline that coordinates data collection, validation, analysis, and alert generation across 9 specialized \abbrev{AI} agents.
+Beyond the unsupervised detection core, the full digital twin platform integrates a LangGraph-based~\cite{langchain2025} agentic orchestration pipeline~\cite{gao2024_rag} that coordinates data collection, validation, analysis, and alert generation across 9 specialized \abbrev{AI} agents.
 
 \subsection{Pipeline Architecture}
 
@@ -682,7 +684,7 @@ Future work will pursue:
   \item \textbf{Dense temporal cubes} with seasonal baselines (6--12 months) to compute z-score anomalies without \abbrev{INPE} calibration.
   \item \textbf{Event-level evaluation} using Haversine distance ($R = 10$~km) and time window ($\Delta t = 3$~h) for operational benchmarks.
   \item \textbf{Multi-sensor integration} of \abbrev{GOES-16} with \abbrev{VIIRS} 375~m \abbrev{AF} products, Sentinel-2 (10~m) for post-fire scar mapping, and \abbrev{CBERS}-4A for Amazon coverage.
-  \item \textbf{Frontier mathematical extensions}: Neural Fourier Operators for resolution-invariant prediction, causal \abbrev{GNN}s (building on Zhao et al.\ 2025), and multi-modal foundation models (Prithvi-EO-2.0) for \abbrev{VLM}-guided fire analysis.
+  \item \textbf{Frontier mathematical extensions}: Neural Fourier Operators for resolution-invariant prediction, causal \abbrev{GNN}s for wildfire danger~\cite{davalas2024} (building on the GraphCast~\cite{lam2023_graphcast} Earth-as-a-Graph paradigm), and multi-modal foundation models (Prithvi-EO-2.0) for \abbrev{VLM}-guided fire analysis~\cite{wildfirevlm2026}.
   \item \textbf{LangGraph extension} to include semi-autonomous UAV tasking, bidirectional control loop for resource allocation, and integration with \abbrev{PREVFOGO}/IBAMA coordination workflows.
 \end{enumerate}
 
