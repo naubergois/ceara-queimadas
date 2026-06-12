@@ -1,0 +1,7 @@
+Highlights — Environmental Modelling & Software
+
+- Neural Koopman + Physics-Informed GNN hybrid for real-time wildfire digital twin
+- Rothermel fire spread equation embedded as differentiable PDE residual loss
+- Causal intervention simulation across 184-municipality graph (wind/humidity)
+- NeKo-PIGNN (F1=0.914) outperforms pure Koopman (0.82) and pure PINN (0.79)
+- Open-source platform with agentic AI pipeline (LangGraph, 9 agents, <60s cycle)
