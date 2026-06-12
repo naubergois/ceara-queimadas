@@ -1,0 +1,74 @@
+{
+  "data_calibracao": "2026-06-12T20:27:59Z",
+  "dataset": {
+    "fonte": "INPE BDQueimadas",
+    "arquivo": "/Users/naubergois/QueimandasGemeosDigitais/ceara-queimadas/data/inpe_focos_ce/focos_ce_INPE_2024_2026.csv",
+    "n_registros": 111054,
+    "n_amostras_positivas": 19249,
+    "n_amostras_negativas": 11362,
+    "periodo": " a 2026-05-09"
+  },
+  "baseline": {
+    "pesos": {
+      "w_focos": 8.0,
+      "max_focos": 40.0,
+      "w_clima_umidade": 0.4,
+      "w_clima_vento": 1.5,
+      "max_clima_vento": 20.0,
+      "w_clima_seca": 1.5,
+      "max_clima_seca": 30.0,
+      "goes16_bonus": 15.0,
+      "w_frp": 0.01,
+      "max_frp": 10.0,
+      "limiar_critico": 75.0,
+      "limiar_alto": 50.0,
+      "limiar_medio": 25.0
+    },
+    "metricas": {
+      "tp": 13727,
+      "fp": 0,
+      "tn": 11362,
+      "fn": 5522,
+      "precision": 1.0,
+      "recall": 0.7131,
+      "f1": 0.8325,
+      "accuracy": 0.8196,
+      "n_errors": 5522,
+      "n_total": 30611
+    }
+  },
+  "otimizado": {
+    "pesos": {
+      "w_focos": 12.0,
+      "max_focos": 50.0,
+      "w_clima_umidade": 0.6,
+      "w_clima_vento": 1.5,
+      "max_clima_vento": 20.0,
+      "w_clima_seca": 2.5,
+      "max_clima_seca": 20.0,
+      "goes16_bonus": 15.0,
+      "w_frp": 0.01,
+      "max_frp": 10.0,
+      "limiar_critico": 70,
+      "limiar_alto": 45,
+      "limiar_medio": 20
+    },
+    "metricas": {
+      "tp": 16944,
+      "fp": 1,
+      "tn": 11361,
+      "fn": 2305,
+      "precision": 0.9999,
+      "recall": 0.8803,
+      "f1": 0.9363,
+      "accuracy": 0.9247,
+      "n_errors": 2306,
+      "n_total": 30611
+    }
+  },
+  "melhoria": {
+    "delta_f1": 0.1038,
+    "delta_precision": -0.0001,
+    "delta_recall": 0.1672
+  }
+}
