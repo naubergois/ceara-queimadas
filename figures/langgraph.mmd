@@ -3,20 +3,19 @@ title: Ceará Digital Twin — LangGraph Agent Pipeline
 ---
 graph TB
     START((START))
-    ENDD((END))
 
     subgraph Collection["1. Data Collection"]
-        N1["coletar_dados<br/>NASA FIRMS + GOES-16 + Open-Meteo"]
+        N1["coletar_dados<br/>INPE + NASA FIRMS + GOES-16 + Open-Meteo"]
     end
 
     subgraph Validation["2. Validation"]
-        N2["validar_dados<br/>Pydantic Schema"]
+        N2["validar_dados<br/>Pydantic Schema Validation"]
     end
 
     subgraph Analysis["3. Parallel Analysis"]
-        N3["agente_geoespacial<br/>PostGIS"]
-        N4["agente_goes16<br/>FRP Analysis"]
-        N5["agente_climatico<br/>Climate Risk"]
+        N3["agente_geoespacial<br/>PostGIS Enrichment"]
+        N4["agente_goes16<br/>FRP & Persistence"]
+        N5["agente_climatico<br/>Climate Risk Index"]
     end
 
     subgraph Fusion["4. Evidence Fusion"]
@@ -24,22 +23,19 @@ graph TB
     end
 
     subgraph Risk["5. Risk Classification"]
-        N7["classificar_risco<br/>Index 0–100"]
+        N7["classificar_risco<br/>Risk Index 0–100"]
     end
 
-    subgraph ML["6. ML Models"]
-        N8["no_koopman_prever<br/>KoopmanAE (12h)"]
-        N9["no_pignn_risco<br/>Physics-Informed GNN"]
+    subgraph Diagnosis["6. AI Diagnosis"]
+        N8["agente_react<br/>DeepSeek ReAct Agent"]
     end
 
-    subgraph Diagnosis["7. AI Diagnosis"]
-        N10["agente_react<br/>DeepSeek ReAct"]
+    subgraph Output["7. Output"]
+        N9["gerar_alertas<br/>4 Severity Levels"]
+        N10["gerar_boletim<br/>Technical Bulletin"]
     end
 
-    subgraph Output["8. Output"]
-        N11["gerar_alertas<br/>4 Severity Levels"]
-        N12["gerar_boletim<br/>Technical Bulletin"]
-    end
+    ENDD((END))
 
     START --> N1
     N1 --> N2
@@ -53,9 +49,7 @@ graph TB
     N7 --> N8
     N8 --> N9
     N9 --> N10
-    N10 --> N11
-    N11 --> N12
-    N12 --> ENDD
+    N10 --> ENDD
 
     style START fill:#1B4965,color:#fff,stroke:#62B6CB,stroke-width:3px
     style ENDD fill:#7F2D2D,color:#fff,stroke:#E85D5D,stroke-width:3px
@@ -65,9 +59,7 @@ graph TB
     style N4 fill:#1A5B3A,color:#fff,stroke:#2DC653,stroke-width:2px
     style N5 fill:#1A5B3A,color:#fff,stroke:#2DC653,stroke-width:2px
     style N6 fill:#3D348B,color:#fff,stroke:#7678ED,stroke-width:2px
-    style N7 fill:#3D348B,color:#fff,stroke:#7678ED,stroke-width:2px
-    style N8 fill:#E85D26,color:#fff,stroke:#F7A35C,stroke-width:2px
-    style N9 fill:#E85D26,color:#fff,stroke:#F7A35C,stroke-width:2px
-    style N10 fill:#5C2D91,color:#fff,stroke:#A855F7,stroke-width:2px
-    style N11 fill:#3D348B,color:#fff,stroke:#7678ED,stroke-width:2px
-    style N12 fill:#3D348B,color:#fff,stroke:#7678ED,stroke-width:2px
+    style N7 fill:#E85D26,color:#fff,stroke:#F7A35C,stroke-width:2px
+    style N8 fill:#5C2D91,color:#fff,stroke:#A855F7,stroke-width:2px
+    style N9 fill:#7F2D2D,color:#fff,stroke:#E85D5D,stroke-width:2px
+    style N10 fill:#7F2D2D,color:#fff,stroke:#E85D5D,stroke-width:2px
