@@ -445,8 +445,17 @@ async def comparar_baseline(
 @router.get("/status-modelos", response_model=dict)
 async def status_modelos():
     """Status dos modelos de inovação carregados em memória."""
+    # Também consulta cache do agente explicador
+    neko_status = "nao_carregado"
+    try:
+        from app.agents.neko_explicador_agent import _model_cache as neko_cache
+        if neko_cache:
+            neko_status = f"carregado ({len(neko_cache)} modelos: {', '.join(neko_cache.keys())})"
+    except Exception:
+        pass
     return {
         "modelos_carregados": list(_model_cache.keys()),
+        "agente_explicador_neko": neko_status,
         "dispositivo": str(_model_device),
         "total_modelos": len(_model_cache),
         "parametros_total": sum(

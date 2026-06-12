@@ -11,6 +11,11 @@ from typing import Optional
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
 
 from app.agents.explicador_agent import explicar_foco, _explicar_sem_llm
+from app.agents.neko_explicador_agent import (
+    explicar_risco as neko_explicar_risco,
+    simular_cenario as neko_simular_cenario,
+    explicar_por_id as neko_explicar_por_id,
+)
 from app.agents.llm_factory import get_deepseek_model, llm_is_configured
 from app.core.config import settings
 from app.services.alertas_real import gerar_alertas_reais
@@ -272,3 +277,67 @@ async def status_fontes():
     resultados["cache_atualizado"] = _cache_ts.isoformat() if _cache_ts else None
 
     return resultados
+
+
+# ===========================================================================
+# Endpoints NeKo-PIGNN Explicador (INOV-009)
+# ===========================================================================
+
+
+@router.post("/neko/explicar-risco", summary="NeKo-PIGNN: explicar risco com SHAP + ReAct")
+async def get_neko_explicacao_risco(payload: dict):
+    """
+    Usa o agente ReAct NeKo-PIGNN para explicar risco de queimada em um município.
+    Ferramentas: Koopman Operator + análise SHAP de features + clima.
+    """
+    municipio = payload.get("municipio")
+    features = payload.get("features")
+    if not municipio or not features or len(features) != 6:
+        raise HTTPException(
+            status_code=400,
+            detail="Forneça 'municipio' (str) e 'features' (list[6] com temp,frp,vento,umidade,ndvi,declividade)",
+        )
+    try:
+        resultado = await neko_explicar_risco(municipio, features)
+    except Exception as e:
+        logger.warning("NeKo explicador falhou: %s", e)
+        raise HTTPException(status_code=503, detail=f"Agente NeKo indisponível: {e}")
+    return resultado
+
+
+@router.post("/neko/simular-intervencao", summary="NeKo-PIGNN: simular intervenção causal (e se...)")
+async def get_neko_simulacao_causal(payload: dict):
+    """
+    Simula intervenção causal 'e se...' usando o modelo NeKo-PIGNN.
+    Exemplo: {"municipio":"Beberibe", "features":[32,15,6,35,0.45,5], "intervencao":{"vento":2.0,"umidade":0.6}}
+    """
+    municipio = payload.get("municipio")
+    features = payload.get("features")
+    intervencao = payload.get("intervencao")
+    if not all([municipio, features, intervencao]):
+        raise HTTPException(status_code=400, detail="Forneça 'municipio', 'features' e 'intervencao'")
+    try:
+        resultado = await neko_simular_cenario(municipio, features, intervencao)
+    except Exception as e:
+        logger.warning("Simulação causal NeKo falhou: %s", e)
+        raise HTTPException(status_code=503, detail=f"Simulação indisponível: {e}")
+    return resultado
+
+
+@router.get("/neko/explicar-foco/{foco_id}", summary="NeKo-PIGNN: explicar foco específico com DeepSeek ReAct")
+async def get_neko_explicacao_foco(foco_id: str):
+    """
+    Explica um foco específico usando o agente ReAct NeKo-PIGNN.
+    Combina dados do foco (FRP, sensor, coordenadas) com clima real e
+    análise SHAP de features para gerar explicação causal.
+    """
+    await _garantir_cache()
+    foco = next((f for f in _cache_focos if f["id"] == foco_id), None)
+    if not foco:
+        raise HTTPException(status_code=404, detail="Foco não encontrado")
+    try:
+        resultado = await neko_explicar_por_id(foco_id, foco)
+    except Exception as e:
+        logger.warning("NeKo explicador foco falhou: %s", e)
+        raise HTTPException(status_code=503, detail=f"Explicação indisponível: {e}")
+    return resultado
