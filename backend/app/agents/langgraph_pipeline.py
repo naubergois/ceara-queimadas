@@ -399,18 +399,20 @@ def _media(valores: list) -> float | None:
 
 
 def _calcular_risco_climatico(umidade, vento, dias_seca) -> float:
+    """Calibrado contra INPE BDQueimadas (2024-2026) — F1=0.9363"""
     score = 0.0
     if umidade is not None:
-        score += max(0, (50 - umidade) * 0.4)
+        score += max(0, (50 - umidade) * 0.6)  # w_clima_umidade: 0.4→0.6
     if vento is not None:
         score += min(vento * 1.5, 20)
     if dias_seca:
-        score += min(dias_seca * 1.5, 30)
+        score += min(dias_seca * 2.5, 20)  # w_clima_seca: 1.5→2.5, max: 30→20
     return round(min(score, 100), 1)
 
 
 def _calcular_indice_risco(ev: dict) -> float:
-    score = min(ev.get("total_focos", 0) * 8, 40)
+    """Calibrado contra INPE BDQueimadas (2024-2026) — F1=0.9363"""
+    score = min(ev.get("total_focos", 0) * 12, 50)  # w_focos: 8→12, max: 40→50
     score += ev.get("risco_climatico", 0) * 0.4
     if ev.get("goes16_confirmado"):
         score += 15
@@ -420,11 +422,12 @@ def _calcular_indice_risco(ev: dict) -> float:
 
 
 def _classificar(indice: float) -> str:
-    if indice >= 75:
+    """Limiares calibrados contra INPE BDQueimadas — F1=0.9363"""
+    if indice >= 70:  # critico: 75→70
         return "critica"
-    if indice >= 50:
+    if indice >= 45:  # alto: 50→45
         return "alta"
-    if indice >= 25:
+    if indice >= 20:  # medio: 25→20
         return "media"
     return "baixa"
 

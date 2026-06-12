@@ -1,11 +1,15 @@
 """
-Coleta REAL de focos via NASA FIRMS CSV público (sem chave de API).
-URLs públicas sem autenticação — dados NRT (Near Real Time).
+Coleta REAL de focos via NASA FIRMS (API com chave ou CSV público fallback).
+
+Suporta:
+  - API oficial FIRMS (NRT) com MAP_KEY via variável de ambiente FIRMS_MAP_KEY
+  - CSV público sem autenticação como fallback
 """
 
 import csv
 import io
 import logging
+import os
 from datetime import datetime, timezone
 from typing import Optional
 import hashlib
@@ -18,7 +22,15 @@ logger = logging.getLogger(__name__)
 LAT_MIN, LAT_MAX = -7.85, -2.78
 LON_MIN, LON_MAX = -41.42, -37.25
 
-# CSVs públicos NASA FIRMS (sem chave)
+# MAP_KEY da NASA FIRMS (opcional — obtida em https://firms.modaps.eosdis.nasa.gov/api/map_key/)
+FIRMS_MAP_KEY = os.environ.get("FIRMS_MAP_KEY", "")
+
+# API FIRMS (requer MAP_KEY) — endpoint NRT (Near Real Time) para área
+# Formato: api/area/csv/{key}/{SOURCE}/{area}/{day_range}
+# Documentação: https://firms.modaps.eosdis.nasa.gov/api/area/
+FIRMS_API_AREA = "https://firms.modaps.eosdis.nasa.gov/api/area/csv/{key}/{source}/{area}/{day_range}"
+
+# CSVs públicos NASA FIRMS (fallback, sem chave)
 FIRMS_SOURCES = {
     "VIIRS_SNPP_24h": "https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_South_America_24h.csv",
     "VIIRS_SNPP_7d":  "https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_South_America_7d.csv",
@@ -76,7 +88,126 @@ def _classificar_severidade(frp: Optional[float], confianca: float) -> str:
     return "baixa"
 
 
+async def _coletar_focos_via_api(dias: int = 1) -> list[dict]:
+    """
+    Coleta focos FIRMS via API oficial com MAP_KEY.
+
+    Usa o endpoint /api/area/csv/{key}/{SOURCE}/{area}/{day_range}
+    para consultar a bounding box do Ceará com os sensores VIIRS_SNPP, VIIRS_NOAA20 e MODIS.
+    """
+    area_coords = f"{LON_MIN},{LAT_MIN},{LON_MAX},{LAT_MAX}"
+    day_range = min(dias, 7)
+
+    sensors_sources = [
+        ("VIIRS", "VIIRS_SNPP_NRT"),
+        ("VIIRS", "VIIRS_NOAA20_NRT"),
+        ("MODIS", "MODIS_NRT"),
+    ]
+
+    todos: list[dict] = []
+    vistos: set[str] = set()
+
+    async with httpx.AsyncClient(timeout=60, follow_redirects=True) as client:
+        for sensor, source in sensors_sources:
+            url = FIRMS_API_AREA.format(
+                key=FIRMS_MAP_KEY,
+                source=source,
+                area=area_coords,
+                day_range=day_range,
+            )
+            try:
+                logger.info("Consultando FIRMS API: %s (últimos %d dias)", source, day_range)
+                resp = await client.get(url)
+                resp.raise_for_status()
+                reader = csv.DictReader(io.StringIO(resp.text))
+
+                for row in reader:
+                    try:
+                        lat = float(row.get("latitude", 0))
+                        lon = float(row.get("longitude", 0))
+                    except (ValueError, TypeError):
+                        continue
+
+                    if not (LAT_MIN <= lat <= LAT_MAX and LON_MIN <= lon <= LON_MAX):
+                        continue
+
+                    acq_date = row.get("acq_date", "")
+                    acq_time = row.get("acq_time", "0000")
+                    data_hora = _parse_dt(acq_date, acq_time)
+
+                    chave = f"{lat:.4f}_{lon:.4f}_{acq_date}"
+                    if chave in vistos:
+                        continue
+                    vistos.add(chave)
+
+                    confianca = _parse_confianca(row.get("confidence", ""))
+                    frp = _safe_float(row.get("frp"))
+                    temp_k = _safe_float(row.get("bright_ti4") or row.get("brightness"))
+
+                    satelite = row.get("satellite", sensor)
+                    severidade = _classificar_severidade(frp, confianca)
+
+                    foco = {
+                        "id": _foco_id_estavel(lat, lon, data_hora.isoformat(), sensor, satelite),
+                        "fonte": "NASA_FIRMS_API",
+                        "satelite": satelite,
+                        "sensor": sensor,
+                        "lat": lat,
+                        "lon": lon,
+                        "latitude": lat,
+                        "longitude": lon,
+                        "data_hora": data_hora.isoformat(),
+                        "municipio": None,
+                        "confianca": confianca,
+                        "frp": frp,
+                        "temperatura_k": temp_k,
+                        "severidade": severidade,
+                        "daynight": row.get("daynight", ""),
+                        "scan": _safe_float(row.get("scan")),
+                        "track": _safe_float(row.get("track")),
+                    }
+                    todos.append(foco)
+
+                logger.info("FIRMS API %s: %d focos no Ceará", source, len(
+                    [f for f in todos if f["sensor"] == sensor]
+                ))
+
+            except httpx.HTTPStatusError as e:
+                logger.warning("FIRMS API %s: HTTP %s — %s", source, e.response.status_code, e)
+            except httpx.HTTPError as e:
+                logger.warning("FIRMS API %s: erro de conexão — %s", source, e)
+            except Exception as e:
+                logger.error("FIRMS API %s: erro inesperado — %s", source, e)
+
+    logger.info("FIRMS API total: %d focos coletados no Ceará", len(todos))
+    return todos
+
+
 async def coletar_focos_firms_real(dias: int = 7) -> list[dict]:
+    """
+    Coleta focos reais do NASA FIRMS para o Ceará.
+
+    Tenta primeiro a API oficial FIRMS (com MAP_KEY se disponível).
+    Se a API falhar ou MAP_KEY não estiver configurada, usa CSVs públicos como fallback.
+    """
+    if FIRMS_MAP_KEY:
+        logger.info("FIRMS MAP_KEY detectada — usando API oficial")
+        try:
+            focos = await _coletar_focos_via_api(dias=dias)
+            if focos:
+                logger.info("API oficial retornou %d focos", len(focos))
+                return focos
+            else:
+                logger.warning("API oficial retornou 0 focos — tentando fallback CSV")
+        except Exception as e:
+            logger.warning("API oficial falhou (%s) — tentando fallback CSV", e)
+    else:
+        logger.info("FIRMS MAP_KEY não configurada — usando CSVs públicos")
+
+    return await _coletar_focos_csv_publico(dias=dias)
+
+
+async def _coletar_focos_csv_publico(dias: int = 7) -> list[dict]:
     """
     Coleta focos reais do NASA FIRMS para o Ceará.
     Usa CSVs públicos sem necessidade de chave de API.
