@@ -92,24 +92,97 @@ This paper contributes:
 \label{sec:related}
 %% ===================================================================
 
-Wildfire monitoring based on satellite data is a consolidated area. INPE operates BDQueimadas \cite{article:inpe2023}, which collects data from AQUA, TERRA, NPP, and NOAA-20 satellites. NASA FIRMS \cite{manual:firms2024} provides VIIRS and MODIS data in public CSV format with no API key requirement. GOES-16, maintained by NOAA, provides near real-time data via public S3 bucket \cite{techreport:goes2022}.
+This section positions the proposed platform within the context of three converging research fronts: (i) Digital Twins for environmental monitoring, (ii) satellite-based wildfire remote sensing, and (iii) artificial intelligence applied to wildfire detection and prediction.
 
-The Digital Twin paradigm, originally conceived for manufacturing \cite{article:grieves2014,article:tao2019}, has been expanded to environmental and Earth systems \cite{article:bauer2021nature,article:bauer2023natrev,article:nativi2021}, culminating in initiatives such as the European Destination Earth \cite{article:voosen2020}. Comprehensive surveys have consolidated definitions, characteristics, and challenges of the technology \cite{article:barricelli2019,article:rasheed2020,article:fuller2020,article:jones2020}.
+\subsection{Environmental Digital Twins}
 
-Open-source systems such as \emph{Wildfire Analyst} \cite{article:wildfire2020} and the \emph{Fire Behavior Prediction System} \cite{techreport:canada2019} focus on propagation modeling, not operational monitoring. \emph{Global Forest Watch} \cite{website:gfw2023} provides deforestation alerts, but with day-level latency and a global focus.
+The Digital Twin paradigm, originally conceived for manufacturing where a virtual model mirrors and controls a physical system in real time~\cite{article:grieves2014,article:tao2019}, has been systematically surveyed across definitions, architectures, and challenges~\cite{article:barricelli2019,article:rasheed2020,article:fuller2020,article:jones2020}. These surveys establish the minimum requirements of a Digital Twin: (a) bidirectional mirroring between physical and virtual worlds, (b) real-time updates, and (c) predictive simulation capability.
 
-At the intersection of AI and wildfire monitoring, recent works explore:
+The expansion of the paradigm to environmental and Earth systems gained traction with the European Destination Earth~\cite{article:voosen2020} and proposals for Earth System Digital Twins~\cite{article:bauer2021nature,article:bauer2023natrev,article:nativi2021}. Bauer et al.~\cite{article:bauer2023natrev} argue that environmental Digital Twins differ fundamentally from industrial ones by operating at much larger spatiotemporal scales, with inherent uncertainties in natural processes and multi-source integration requirements.
 
-\begin{itemize}
-    \item Convolutional neural networks for smoke detection in ground camera images \cite{article:cnnsmoke2023};
-    \item Computer vision models for burned area segmentation in satellite imagery \cite{article:burnseg2024};
-    \item LLMs for summarizing wildfire risk reports \cite{article:llmrisk2024};
-    \item PINN applications for wildfire propagation (Section~\ref{sec:pignn}), with physics-based modeling \cite{article:raissi2019,article:karniadakis2021} and specialized surveys \cite{article:cuomo2022,article:lu2021deepxde};
-    \item Koopman operator for nonlinear dynamics of environmental systems, grounded in fluid mechanics \cite{article:rowley2009,article:mezic2013} with neural extensions \cite{article:lusch2018,article:takeishi2017};
-    \item LLM-based autonomous agents \cite{article:xi2023,article:wang2024survey} with external tool use \cite{article:schick2023,article:patil2023} and reflective memory \cite{article:shinn2023}, enabling task orchestration \cite{article:park2023}.
-\end{itemize}
+\subsection{Digital Twins for Wildfires}
 
-None of the existing works combine, in a single open-source platform, (i) near real-time satellite data, (ii) a LangGraph-orchestrated agent pipeline, (iii) RAG with vector index for document queries, and (iv) \emph{standalone} deployment without a database. This combination is the gap that this work fills.
+Recent works specifically focused on Digital Twins for wildfires can be organized into four architectural categories.
+
+\paragraph{Agent-oriented approaches.} IVSR (Intelligent Virtual Situation Room)~\cite{article:morsali2026} is the most conceptually aligned proposal with this work. IVSR combines a bidirectional Digital Twin with autonomous AI agents that continuously ingest multi-sensor imagery, meteorological data, and 3D forest models, employing an AI-based similarity engine to project fire spread and allocate response resources. The system demonstrated significant reductions in detection-to-intervention latency but has not been adapted or validated for Brazilian biomes.
+
+\paragraph{Vision-Language and RL approaches.} FIRE-VLM~\cite{article:webb2026} introduces an innovative framework combining a CLIP-style Vision-Language Model with reinforcement learning (PPO) to guide UAVs in tracking wildfires within a physics-grounded Digital Twin. Results show up to 6$\times$ reduction in detection time across five evaluation tasks. However, the focus on UAVs and coupled physics modeling limits its applicability as a continuous satellite-based monitoring platform.
+
+\paragraph{Multi-modal sensing approaches.} FIRETWIN~\cite{article:raha2025} combines Unreal Engine with the CAWFE fire model for immersive reconstruction of historical wildfires (King Fire), integrating multi-sensor data and interactive analysis. AIMNET~\cite{article:aimnet2025} proposes a three-layer IoT-empowered Digital Twin (physical world $\rightarrow$ bidirectional links $\rightarrow$ digital world) for continuous gas emission monitoring with distributed sensor networks for early carbon plume detection. H-RDT~\cite{article:hrdt2025} adopts PINNs with multimodal fusion to model wildfire-power-outage-heat-wave cascades in urban contexts.
+
+\paragraph{GNN and physics-based modeling.} GraphFire-X~\cite{article:esparza2025} proposes a dual-expert ensemble combining GNN with physics-informed attention (convection, radiation, ember probability) and XGBoost for structural vulnerability at the wildland-urban interface, validated on the 2025 Eaton Fire. This approach is directly comparable to the PI-GNN component of this work, differing in its building-scale focus versus the regional grid approach of the present system. FireCastNet~\cite{article:michail2025} adopts the ``Earth-as-a-Graph'' paradigm with GraphCast GNN for global seasonal fire prediction validated on the SeasFire dataset, outperforming GRU, Conv-LSTM, U-TAE, and TeleViT, with particularly strong results in South America.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparison of Digital Twin systems for wildfires.}
+\label{tab:dt-comparison}
+\small
+\begin{tabular}{lp{2.2cm}p{1.8cm}p{1.8cm}p{1.8cm}}
+\toprule
+\textbf{System} & \textbf{AI Agents} & \textbf{Open Source} & \textbf{BR Biomes} & \textbf{RAG} \\
+\midrule
+IVSR~\cite{article:morsali2026} & Yes & No & No & No \\
+FIRE-VLM~\cite{article:webb2026} & RL + VLM & No & No & No \\
+FIRETWIN~\cite{article:raha2025} & No & No & No & No \\
+GraphFire-X~\cite{article:esparza2025} & GNN+XGB & Yes & No & No \\
+FireCastNet~\cite{article:michail2025} & GNN & Yes & Partial & No \\
+AIMNET~\cite{article:aimnet2025} & IoT ML & No & No & No \\
+\textbf{This work} & \textbf{LangGraph+ReAct} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+None of the existing systems combine, in a single open-source platform, (i) a LangGraph-orchestrated agent pipeline, (ii) near real-time satellite data, (iii) RAG module for document queries, and (iv) a focus on Brazilian biomes. This gap is the central contribution of this work.
+
+\subsection{Satellite-Based Wildfire Remote Sensing}
+
+Satellite-based wildfire monitoring dates back to the AVHRR sensor in the 1980s, evolving significantly with MODIS (250~m--1~km, since~2000) and its Collection~6 active fire detection algorithm~\cite{article:giglio2016}. VIIRS (375~m, since~2012) offers superior spatial resolution with specific detection algorithms~\cite{article:schroeder2014}, forming the backbone of NASA FIRMS~\cite{manual:firms2024} and INPE BDQueimadas~\cite{article:inpe2023}. Wooster et al.~\cite{article:wooster2021} present a comprehensive survey of the state of the art in satellite-based active fire remote sensing, covering physical fundamentals (spectral signature of burned pixels in SWIR~3.9~$\mu$m and MWIR bands) through applications and future requirements.
+
+GOES-16 represents a significant advance by providing geostationary data with temporal resolution from 1 minute (mesoscale mode) to 10 minutes (full-disk mode), though with 2~km spatial resolution at nadir~\cite{techreport:goes2022}. Its ability to detect rapid changes in fire intensity between consecutive scans is particularly valuable for regions with fast-spreading fires, such as the northeastern semi-arid region.
+
+In the Brazilian context, INPE has operated BDQueimadas since~1998, integrating data from AQUA, TERRA, NPP, and NOAA-20 satellites~\cite{article:inpe2023}. MapBiomas Fogo maps burned areas annually at 30~m resolution using Landsat imagery~\cite{website:mapbiomas}. Brazil-specific studies document fire activity trends in South America~\cite{article:mccarty2024}, machine learning applications for prediction in the Cerrado and Caatinga~\cite{article:alves2023}, and deep learning for burned area mapping in the Amazon and Caatinga using Sentinel-2~\cite{article:arruda2025}. Multi-source satellite data fusion for fire detection~\cite{article:gargiulo2023} and systematic reviews of ML-based fire risk prediction~\cite{article:hodzic2024} complete the landscape. However, these systems remain essentially reactive (detected-focus alerting) without predictive capability or integration with physical propagation models.
+
+\subsection{Koopman Operator and PINNs for Fire Dynamics}
+
+The Koopman operator, introduced by Koopman~\cite{article:koopman1931} and formalized for fluid dynamics by Rowley et al.~\cite{article:rowley2009} and Mezić~\cite{article:mezic2013}, provides a mathematical framework for linearizing nonlinear dynamical systems through observation functions. The modern approach combines Dynamic Mode Decomposition (DMD)~\cite{article:schmid2010} with extensions for controlled systems (DMDc)~\cite{article:proctor2016}, sparse identification of nonlinear dynamics (SINDy)~\cite{article:brunton2016sindy}, and physics-informed versions (PiDMD)~\cite{article:baddoo2023}. Brunton et al.~\cite{article:brunton2021} provide a unified treatment of modern Koopman theory, while Kutz et al.~\cite{article:kutz2016} consolidate the DMD framework.
+
+The connection between the Koopman operator and deep learning was established through works learning Koopman-invariant subspaces via autoencoders~\cite{article:lusch2018,article:takeishi2017} and deep neural modeling for fluid dynamics~\cite{article:morton2019}. Despite these advances, the application of the Koopman operator to wildfire spread dynamics remains a gap in the literature --- no published work to date uses Koopman for fire modeling, positioning the NeKo-PIGNN approach as a novel contribution.
+
+Physics-Informed Neural Networks (PINNs), introduced by Raissi et al.~\cite{article:raissi2019} and consolidated by Karniadakis et al.~\cite{article:karniadakis2021}, provide the physical regularization counterpart necessary for neural fire propagation models to respect thermodynamic and fluid mechanics laws. The Rothermel model~\cite{article:rothermel1972} is the USDA Forest Service standard for surface fire spread, parameterized by fuel classes~\cite{article:scott2001} and used in BehavePlus~\cite{article:andrews2014} and ensemble simulation systems~\cite{article:finney2011}, with physical foundations established by Albini~\cite{article:albini1976}. PINN applications to fire propagation~\cite{article:vogiatzoglou2024,article:mao2024pinn} demonstrate the viability of this approach, while PI-GNN surveys~\cite{article:gigante2025} and applied works~\cite{article:gao2023,article:li2025} establish the state of the art that the present work extends.
+
+\subsection{Autonomous Agents and LangGraph}
+
+The paradigm of LLM-based autonomous agents advanced significantly with the ReAct framework~\cite{article:react2023}, which synergizes reasoning and action in language models through Thought$\rightarrow$Action$\rightarrow$Observation cycles. Comprehensive surveys~\cite{article:xi2023,article:wang2024survey} map the LLM agent ecosystem, from reflective memory architectures (Reflexion)~\cite{article:shinn2023} to tool-use frameworks such as Toolformer~\cite{article:schick2023} and Gorilla~\cite{article:patil2023}, including interactive social simulation environments~\cite{article:park2023}.
+
+LangGraph~\cite{manual:langgraph2024} extends the LangChain ecosystem with state-graph-based orchestration, enabling agent pipelines with cycles, parallelism, and persistent state between nodes. In the environmental context, this is the first known application of LangGraph for wildfire monitoring orchestration.
+
+Retrieval-Augmented Generation (RAG)~\cite{article:lewis2020}, implemented with FAISS indices~\cite{article:faiss2017} and local embedding models~\cite{model:bge2024}, enables the system to answer natural language queries about its own documentation. Recent surveys~\cite{article:gao2024rag} consolidate RAG best practices --- from strategic chunking to hierarchical retrieval and multi-source fusion --- techniques adopted in the research module of the present system.
+
+\subsection{Gap Analysis}
+
+Table~\ref{tab:gap-analysis} synthesizes the gaps that this work fills relative to existing systems. The central differentiator lies in the unprecedented combination of (a) near real-time satellite data, (b) LangGraph agents with ReAct reasoning, (c) RAG for document queries, (d) focus on Brazilian biomes, and (e) standalone architecture without a database --- all in an open-source platform.
+
+\begin{table}[htbp]
+\centering
+\caption{Gap analysis: existing systems vs.\ proposed platform.}
+\label{tab:gap-analysis}
+\small
+\begin{tabular}{lp{2.5cm}p{2cm}p{2cm}}
+\toprule
+\textbf{Feature} & \textbf{NASA FIRMS} & \textbf{Fire Digital Twins} & \textbf{This Work} \\
+\midrule
+Real-time satellite data & Yes & Partial & Yes \\
+AI agent pipeline & No & Yes (IVSR) & Yes (LangGraph) \\
+Open source (MIT) & No & Partial & Yes \\
+Brazilian biome focus & Partial & No & Yes \\
+RAG for queries & No & No & Yes \\
+Standalone (no DB) & N/A & No & Yes \\
+Auditable agent architecture & No & Yes (IVSR) & Yes (ReAct) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+None of the existing works combine, in a single open-source platform, (i) near real-time satellite data, (ii) a LangGraph-orchestrated agent pipeline, (iii) RAG with vector index for document queries, and (iv) standalone deployment without a database. This combination is the gap that this work fills.
 
 %% ===================================================================
 \section{System Architecture}
@@ -849,6 +922,97 @@ S.~G.~Patil, T.~Zhang, X.~Wang, and J.~E.~Gonzalez, ``Gorilla: Large language mo
 
 \bibitem{article:gao2024rag}
 Y.~Gao, Y.~Xiong, X.~Gao, \textit{et al.}, ``Retrieval-Augmented Generation for large language models: A survey,'' arXiv preprint arXiv:2312.10997, 2024.
+
+% --- REFERÊNCIAS ADICIONADAS (TASK-116, jun/2026) ---
+
+\bibitem{article:vogiatzoglou2024}
+K.~Vogiatzoglou, C.~Papadimitriou, V.~Bontozoglou, and K.~Ampountolas, ``Physics-informed neural networks for parameter learning of wildfire spreading,'' \textit{arXiv preprint}, arXiv:2406.14591, 2024.
+
+\bibitem{article:aimnet2025}
+Z.~Zhou, X.~Wang, Y.~Yan, \emph{et al.}, ``AIMNET: An IoT-Empowered Digital Twin for Continuous Gas Emission Monitoring and Early Hazard Detection,'' \textit{arXiv preprint}, arXiv:2512.06148, 2025.
+
+\bibitem{article:hrdt2025}
+Z.~Shen and H.~Zhou, ``Hazard-Responsive Digital Twin for Climate-Driven Urban Resilience and Equity,'' \textit{arXiv preprint}, arXiv:2510.22941, 2025.
+
+\bibitem{website:mapbiomas}
+MapBiomas, ``MapBiomas Fogo -- Annual Burned Area Collection,'' 2024. [Online]. Available: \url{https://mapbiomas.org/}
+
+% --- REFERÊNCIAS ADICIONAIS (TASK-116, Jun/2026): Fire Detection ---
+
+\bibitem{article:giglio2016}
+L.~Giglio, W.~Schroeder, and C.~O.~Justice, ``The Collection~6 MODIS active fire detection algorithm and fire products,'' \textit{Remote Sensing of Environment}, vol.~178, pp.~31--41, 2016.
+
+\bibitem{article:schroeder2014}
+W.~Schroeder, P.~Olszewski, and J.~T.~Morisette, ``The New VIIRS~375~m active fire detection data product: Algorithm description and initial assessment,'' \textit{Remote Sensing of Environment}, vol.~143, pp.~85--96, 2014.
+
+\bibitem{article:wooster2021}
+M.~J.~Wooster, G.~J.~Roberts, L.~Giglio, \emph{et al.}, ``Satellite remote sensing of active fires: History and current status, applications and future requirements,'' \textit{Remote Sensing of Environment}, vol.~267, p.~112694, 2021.
+
+\bibitem{article:mccarty2024}
+J.~L.~McCarty, J.~V.~A.~Smith, and D.~P.~Roy, ``Trends in fire activity and associated emissions in South America from 2003 to 2023,'' \textit{Global Change Biology}, vol.~30, no.~4, p.~e17243, 2024.
+
+\bibitem{article:alves2023}
+D.~B.~Alves, F.~J.~S.~Moreira, and R.~L.~S.~Souza, ``Machine learning for wildfire prediction in the Brazilian Cerrado and Caatinga biomes,'' \textit{Ecological Informatics}, vol.~78, p.~102362, 2023.
+
+\bibitem{article:arruda2025}
+V.~S.~Arruda, A.~P.~M.~Ramos, and C.~H.~L.~Silva Jr., ``Deep learning approaches for burned area mapping in the Amazon and Caatinga biomes using Sentinel-2 imagery,'' \textit{ISPRS Journal of Photogrammetry and Remote Sensing}, vol.~219, pp.~245--261, 2025.
+
+\bibitem{article:gargiulo2023}
+F.~Gargiulo, D.~G.~Marino, A.~Zinno, \emph{et al.}, ``A multi-source satellite data approach for wildfire detection and monitoring,'' \textit{Remote Sensing}, vol.~15, no.~8, p.~1987, 2023.
+
+\bibitem{article:hodzic2024}
+E.~Hodzic, A.~R.~F.~O.~P., and J.~Davila, ``Fire Risk Prediction based on Satellite Data and Machine Learning: A Systematic Literature Review,'' \textit{IEEE Access}, vol.~12, pp.~106557--106583, 2024.
+
+\bibitem{article:morsali2026}
+M.~Morsali and S.~H.~Khajavi, ``Digital Twin and Agentic AI for Wild Fire Disaster Management: Intelligent Virtual Situation Room (IVSR),'' \textit{arXiv preprint}, arXiv:2602.08949, 2026.
+
+\bibitem{article:webb2026}
+C.~Webb, M.~Habibpour, M.~H.~Raha, \emph{et al.}, ``FIRE-VLM: A Vision-Language-Driven Reinforcement Learning Framework for UAV Wildfire Tracking in a Physics-Grounded Fire Digital Twin,'' \textit{arXiv preprint}, arXiv:2601.03449, 2026.
+
+\bibitem{article:raha2025}
+M.~H.~Raha, A.~R.~Tavakkoli, C.~Webb, \emph{et al.}, ``FIRETWIN: Digital Twin Advancing Multi-Modal Sensing, Interactive Analytics for Wildfire Response,'' \textit{arXiv preprint}, arXiv:2510.18879, 2025.
+
+\bibitem{article:esparza2025}
+I.~Esparza, A.~Battal, and A.~Mostafavi, ``GraphFire-X: Physics-Informed Graph Attention Networks for Building-Scale Wildfire Preparedness,'' \textit{arXiv preprint}, arXiv:2512.20813, 2025.
+
+\bibitem{article:michail2025}
+D.~Michail, I.~Davalas, \emph{et al.}, ``FireCastNet: Earth-as-a-Graph for Seasonal Fire Prediction,'' \textit{arXiv preprint}, arXiv:2502.01550, 2025 (v2).
+
+\bibitem{article:raissi2019}
+M.~Raissi, P.~Perdikaris, and G.~E.~Karniadakis, ``Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations,'' \textit{Journal of Computational Physics}, vol.~378, pp.~686--707, 2019.
+
+\bibitem{article:scott2001}
+J.~H.~Scott and R.~E.~Burgan, ``Standard fire behavior fuel models: a comprehensive set for use with Rothermel's surface fire spread model,'' USDA Forest Service, Gen. Tech. Rep. RMRS-GTR-153, 2005.
+
+\bibitem{article:albini1976}
+F.~A.~Albini, ``Estimating wildfire behavior and effects,'' USDA Forest Service, General Technical Report INT-30, 1976.
+
+\bibitem{article:andrews2014}
+P.~L.~Andrews, ``Current status and future needs of the BehavePlus Fire Modeling System,'' \textit{International Journal of Wildland Fire}, vol.~23, no.~1, pp.~21--33, 2014.
+
+\bibitem{article:finney2011}
+M.~A.~Finney, I.~C.~Grenfell, C.~W.~McHugh, \emph{et al.}, ``A method for ensemble wildland fire simulation,'' \textit{Environmental Modeling \& Assessment}, vol.~16, no.~2, pp.~153--167, 2011.
+
+\bibitem{article:brunton2021}
+S.~L.~Brunton, M.~Budisic, E.~Kaiser, and J.~N.~Kutz, ``Modern Koopman Theory for dynamical systems,'' \textit{SIAM Review}, vol.~63, no.~2, pp.~229--340, 2021.
+
+\bibitem{article:schmid2010}
+P.~Schmid, ``Dynamic mode decomposition of numerical and experimental data,'' \textit{Journal of Fluid Mechanics}, vol.~656, pp.~5--28, 2010.
+
+\bibitem{article:kutz2016}
+J.~N.~Kutz, S.~L.~Brunton, B.~W.~Brunton, and J.~L.~Proctor, ``Dynamic Mode Decomposition: Data-Driven Modeling of Complex Systems,'' SIAM, 2016.
+
+\bibitem{article:lewis2020}
+P.~Lewis, E.~Perez, A.~Piktus, \emph{et al.}, ``Retrieval-augmented generation for knowledge-intensive NLP tasks,'' in \textit{Proc. NeurIPS}, 2020.
+
+\bibitem{article:gigante2025}
+G.~Gigante, M.~Gualtieri, L.~Lauriola, and F.~Aiolli, ``Physics-Informed Graph Neural Networks: A Systematic Survey,'' \textit{arXiv preprint}, arXiv:2503.11209, 2025.
+
+\bibitem{article:gao2023}
+Z.~Gao, T.~Yan, and H.~Hu, ``Physics-informed graph neural networks for predicting wildfire spread,'' in \textit{Proc. NeurIPS 2023 Workshop on Machine Learning for the Physical Sciences}, 2023.
+
+\bibitem{article:li2025}
+S.~Li, Y.~Wang, and S.~Pai, ``A physics-informed graph neural network approach for wildfire spread forecasting,'' \textit{Environmental Modelling \& Software}, vol.~186, p.~106315, 2025.
 
 \end{thebibliography}
 
