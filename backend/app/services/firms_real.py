@@ -2,19 +2,20 @@
 Coleta REAL de focos via NASA FIRMS (API com chave ou CSV público fallback).
 
 Suporta:
-  - API oficial FIRMS (NRT) com MAP_KEY via variável de ambiente FIRMS_MAP_KEY
+  - API oficial FIRMS (NRT) com MAP_KEY via settings.NASA_FIRMS_API_KEY
   - CSV público sem autenticação como fallback
 """
 
 import csv
 import io
 import logging
-import os
 from datetime import datetime, timezone
 from typing import Optional
 import hashlib
 
 import httpx
+
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +23,8 @@ logger = logging.getLogger(__name__)
 LAT_MIN, LAT_MAX = -7.85, -2.78
 LON_MIN, LON_MAX = -41.42, -37.25
 
-# MAP_KEY da NASA FIRMS (opcional — obtida em https://firms.modaps.eosdis.nasa.gov/api/map_key/)
-FIRMS_MAP_KEY = os.environ.get("FIRMS_MAP_KEY", "")
+# MAP_KEY da NASA FIRMS (via settings — obtida em https://firms.modaps.eosdis.nasa.gov/api/map_key/)
+FIRMS_MAP_KEY = settings.NASA_FIRMS_API_KEY
 
 # API FIRMS (requer MAP_KEY) — endpoint NRT (Near Real Time) para área
 # Formato: api/area/csv/{key}/{SOURCE}/{area}/{day_range}
