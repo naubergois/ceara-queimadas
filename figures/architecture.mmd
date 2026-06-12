@@ -1,53 +1,63 @@
-graph TD
-    subgraph "Fontes de Dados"
-        A1[NASA FIRMS<br/>VIIRS/MODIS]
-        A2[Open-Meteo<br/>Clima]
-        A3[Nominatim OSM<br/>Geocodificação]
-        A4[GOES-16 NOAA S3<br/>ABI-L2-FDCF]
+---
+title: Ceará Digital Twin — System Architecture
+---
+graph TB
+    subgraph DataSources["Data Sources<br/><i>Open Data APIs</i>"]
+        A1["NASA FIRMS<br/>VIIRS SNPP/N20 + MODIS"]
+        A2["GOES-16 NOAA S3<br/>ABI-L2-FDCF"]
+        A3["Open-Meteo<br/>Climate API"]
+        A4["Nominatim OSM<br/>Reverse Geocoding"]
     end
 
-    subgraph "Backend FastAPI Python 3.12"
-        B1[Cache em Memória<br/>TTL 5min]
-        B2[LangGraph Pipeline<br/>10 nós]
-        B3[Agente ReAct<br/>DeepSeek]
-        B4[FAISS RAG<br/>bge-small-en-v1.5]
+    subgraph Backend["FastAPI Backend — Python 3.12"]
+        B1["REST API Endpoints<br/>/api/v1/real/*"]
+        B2["In-Memory Cache<br/>TTL 5 min"]
+        B3["LangGraph Pipeline<br/>12 Nodes"]
+        B4["ReAct Agent<br/>DeepSeek Chat"]
+        B5["RAG Module<br/>FAISS + bge-small"]
+        B6["LLM Factory<br/>Dependency Injection"]
     end
 
-    subgraph "Frontend React TS + Vite"
-        C1[MapLibre + deck.gl<br/>Mapa Interativo]
-        C2[Dashboard<br/>KPIs & Timeline]
-        C3[Chat ReAct<br/>Diagnóstico]
-        C4[Boletim<br/>Relatório Técnico]
+    subgraph Frontend["React Frontend — TypeScript + Vite"]
+        C1["MapLibre + deck.gl<br/>Geospatial Map"]
+        C2["Dashboard<br/>KPIs & Timeline"]
+        C3["Chat Interface<br/>ReAct Agent + RAG"]
+        C4["Alerts Panel<br/>4 Severity Levels"]
+        C5["Report Generator<br/>Technical Bulletin"]
     end
 
-    subgraph "Proxy"
-        D1[Nginx<br/>Produção EC2]
+    subgraph Deployment["Deployment — EC2 t2.medium"]
+        D1["Nginx Reverse Proxy<br/>Static + /api/ → uvicorn"]
+        D2["Systemd Service<br/>unifor-backend"]
     end
 
-    A1 --> B1
-    A2 --> B1
-    A3 --> B1
-    A4 --> B1
-    B1 --> B2
+    A1 --> B2
+    A2 --> B2
+    A3 --> B2
+    A4 --> B2
     B2 --> B3
-    B3 --> C2
-    B3 --> C3
+    B3 --> B4
+    B3 --> B5
     B4 --> C3
+    B5 --> C3
+    B2 --> B1
+    B1 --> C1
+    B1 --> C2
+    B1 --> C4
+    B1 --> C5
     C1 --> D1
     C2 --> D1
     C3 --> D1
     C4 --> D1
+    C5 --> D1
+    D1 --> D2
 
-    style A1 fill:#2E86AB,color:#fff
-    style A2 fill:#2E86AB,color:#fff
-    style A3 fill:#2E86AB,color:#fff
-    style A4 fill:#2E86AB,color:#fff
-    style B1 fill:#A23B72,color:#fff
-    style B2 fill:#A23B72,color:#fff
-    style B3 fill:#A23B72,color:#fff
-    style B4 fill:#A23B72,color:#fff
-    style C1 fill:#F18F01,color:#fff
-    style C2 fill:#F18F01,color:#fff
-    style C3 fill:#F18F01,color:#fff
-    style C4 fill:#F18F01,color:#fff
-    style D1 fill:#6B5CA5,color:#fff
+    classDef data fill:#1B4965,color:#fff,stroke:#62B6CB,stroke-width:2px
+    classDef backend fill:#3D348B,color:#fff,stroke:#7678ED,stroke-width:2px
+    classDef frontend fill:#1A5B3A,color:#fff,stroke:#2DC653,stroke-width:2px
+    classDef deploy fill:#7F2D2D,color:#fff,stroke:#E85D5D,stroke-width:2px
+
+    class A1,A2,A3,A4 data
+    class B1,B2,B3,B4,B5,B6 backend
+    class C1,C2,C3,C4,C5 frontend
+    class D1,D2 deploy
