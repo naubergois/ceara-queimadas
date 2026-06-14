@@ -761,9 +761,11 @@ Este trabalho tem limitações reconhecidas:
 \label{sec:conclusion}
 %% ===================================================================
 
-Apresentamos o Gêmeo Digital do Ceará para Queimadas, uma plataforma de código aberto que integra dados de satélite em tempo quase real com inteligência artificial agêntica para monitoramento de queimadas. O sistema combina um pipeline LangGraph de 10~nós, um agente ReAct baseado em DeepSeek, um módulo RAG com FAISS e uma interface web interativa, tudo implantável em uma única instância EC2 de baixo custo.
+Apresentamos o Gêmeo Digital do Ceará para Queimadas, uma plataforma de código aberto que integra dados de satélite em tempo quase real com inteligência artificial agêntica e aprendizado profundo informado por física para monitoramento e predição de queimadas.
 
-Resultados experimentais com dados reais de 18~meses demonstram a eficácia da abordagem, com média de 42~focos detectados por coleta e tempo de primeira resposta inferior a 60~segundos.
+As contribuições principais são: (1)~um sistema de detecção em três classes (NÃO/INCERTO/SIM) que alcança 82--92\% de precisão em alertas de fogo com apenas 1--5 falsos positivos; (2)~o modelo NeKo-PIGNN combinando Neural Koopman Operator com Physics-Informed GNN e regularização de Rothermel, que atinge R\textsuperscript{2}=0,972 em dados sintéticos e 91,7\% de precisão em detecção real de fogo; (3)~o mecanismo de prior de persistência que captura a tendência física de incêndios em semiárido persistirem por dias consecutivos; e (4)~um pipeline operacional completo, da ingestão de dados à geração de alertas, implantável em uma única instância EC2 de baixo custo.
+
+O mecanismo de abstenção em três classes resolve o tradeoff fundamental entre precisão e recall em detecção de eventos raros: a cobertura combinada das classes SIM (alerta) e INCERTO (monitoramento) identifica 88\% de todos os eventos de fogo, mantendo 82\% de precisão nos alertas.
 
 Trabalhos futuros incluem:
 
