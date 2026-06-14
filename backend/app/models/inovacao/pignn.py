@@ -323,7 +323,6 @@ class PhysicsInformedGNN(nn.Module):
         num_layers: int = 4,
         output_dim: int = 3,
         dropout: float = 0.1,
-        edge_dim: int | None = None,
     ):
         super().__init__()
         self.num_layers = num_layers
@@ -340,7 +339,7 @@ class PhysicsInformedGNN(nn.Module):
 
         # Message Passing layers
         self.mp_layers = nn.ModuleList([
-            FireMessagePassing(hidden_dim, edge_dim=edge_dim) for _ in range(num_layers)
+            FireMessagePassing(hidden_dim) for _ in range(num_layers)
         ])
         self.layer_norms = nn.ModuleList([
             nn.LayerNorm(hidden_dim) for _ in range(num_layers)
