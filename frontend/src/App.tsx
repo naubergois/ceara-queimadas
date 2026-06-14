@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
-import { Flame, Map, BarChart3, Bell, MessageSquare, FileText, Satellite } from 'lucide-react'
+import { Flame, Map, BarChart3, Bell, MessageSquare, FileText, Satellite, Upload } from 'lucide-react'
 import MascoteGuia, { NOME_MASCOTE } from './components/MascoteGuia'
 import DashboardPage from './pages/DashboardPage'
 import InovacaoPage from './pages/InovacaoPage'
@@ -9,6 +9,7 @@ import MapaRealPage from './pages/MapaRealPage'
 import AlertasPage from './pages/AlertasPage'
 import ChatPage from './pages/ChatPage'
 import BoletimPage from './pages/BoletimPage'
+import DataUploadPage from './pages/DataUploadPage'
 import DialogoGuiaPesquisa from './components/DialogoGuiaPesquisa'
 import { clsx } from 'clsx'
 
@@ -16,6 +17,7 @@ const navItems = [
   { to: '/',          label: 'Dashboard',    icon: BarChart3 },
   { to: '/mapa-real', label: 'Mapa Real',    icon: Satellite },
   { to: '/mapa',      label: 'Mapa',         icon: Map },
+  { to: '/upload',    label: 'Upload',       icon: Upload },
   { to: '/alertas',   label: 'Alertas',      icon: Bell },
   { to: '/inovacao',  label: 'Predição IA',  icon: Flame },
   { to: '/chat',      label: 'Chat IA',      icon: MessageSquare },
@@ -129,6 +131,7 @@ function AppShell() {
           <Route path="/chat"      element={<ChatPage />} />
           <Route path="/boletim"   element={<BoletimPage />} />
           <Route path="/inovacao"  element={<InovacaoPage />} />
+          <Route path="/upload"    element={<DataUploadPage />} />
         </Routes>
       </main>
 

@@ -247,3 +247,37 @@ export const chatPesquisa = (pergunta: string) =>
 
 export const getStatusPesquisa = () =>
   api.get<StatusPesquisa>('/pesquisa/status').then(r => r.data)
+
+// ---------------------------------------------------------------------------
+// Upload de dados e inferência (Koopman + PI-GNN)
+// ---------------------------------------------------------------------------
+
+export interface UploadPayload {
+  registros: Array<{
+    lat: number
+    lon: number
+    temperatura_k: number | null
+    frp: number | null
+  }>
+  modelo: string
+  horas_frente: number
+}
+
+export interface UploadResultado {
+  municipio: string
+  indice_risco: number
+  classificacao: string
+  componente_koopman: number
+  componente_rothermel: number
+  classe_deteccao: 'SIM' | 'INCERTEZA' | 'NAO'
+  probabilidade_sim: number
+}
+
+export const uploadDadosInferencia = (payload: UploadPayload) =>
+  apiReal.post<{ resultados: UploadResultado[] }>('/real/inferencia/upload', payload).then(r => r.data)
+
+export const uploadArquivoCSV = (formData: FormData) =>
+  apiReal.post<{ total: number; preview: any[]; mensagem: string }>('/real/inferencia/upload-csv', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 120_000,
+  }).then(r => r.data)
