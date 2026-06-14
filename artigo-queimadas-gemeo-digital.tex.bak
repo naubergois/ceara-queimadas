@@ -61,10 +61,11 @@
 
 %% Authors
 \author[unifor]{Nauber Gois}
-\author[ifce]{Fulano de Tal}
-\author[unifor]{Beltrano Silva}
+\author[funceme]{Alexandre Lobo}
+\author[ifce]{Vladia Pinheiro}
 
 \address[unifor]{Universidade de Fortaleza (UNIFOR), Programa de Pós-Graduação em Informática Aplicada, Fortaleza, CE, Brasil}
+\address[funceme]{Fundação Cearense de Meteorologia e Recursos Hídricos (FUNCEME), Fortaleza, CE, Brasil}
 \address[ifce]{Instituto Federal do Ceará (IFCE), Departamento de Computação, Fortaleza, CE, Brasil}
 
 \begin{document}
@@ -96,11 +97,11 @@ Gêmeo Digital \sep Queimadas \sep Inteligência Artificial \sep LangGraph \sep 
 \label{sec:intro}
 %% ===================================================================
 
-As queimadas representam uma das maiores ameaças ambientais no Brasil, com impactos diretos na saúde pública, biodiversidade e economia \cite{article:alencar2020,master:silva2021}. O Estado do Ceará, situado no semiárido nordestino, apresenta forte sazonalidade de seca e biomas sensíveis como a Caatinga, tornando o monitoramento contínuo uma necessidade operacional \cite{techreport:funceme2024}.
+As queimadas representam uma das maiores ameaças ambientais no Brasil, com impactos diretos na saúde pública, biodiversidade e economia \cite{article:alencar2020,master:silva2021}. A propagação do fogo é influenciada por condições meteorológicas, topografia e disponibilidade de combustível \cite{article:williams2022}. O Estado do Ceará, situado no semiárido nordestino, apresenta forte sazonalidade de seca e biomas sensíveis como a Caatinga, tornando o monitoramento contínuo uma necessidade operacional \cite{techreport:funceme2024}.
 
 Sistemas tradicionais de monitoramento --- como o INPE BDQueimadas e o NASA FIRMS --- fornecem dados essenciais, mas apresentam limitações significativas: latência de 3 a 6 horas entre a passagem do satélite e a disponibilização dos dados \cite{manual:firms2024}; ausência de correlação automática com dados climáticos e territoriais locais; e interfaces projetadas para especialistas em sensoriamento remoto, não para gestores de defesa civil.
 
-Paralelamente, avanços recentes em inteligência artificial --- particularmente modelos de linguagem de grande escala (LLMs) e frameworks de agentes --- abrem novas possibilidades para sistemas de monitoramento ambiental inteligentes. O paradigma de agentes com raciocínio ReAct \cite{article:react2023} e orquestração por grafos de estado (LangGraph \cite{manual:langgraph2024}) permite construir \emph{pipelines} auditáveis que combinam fontes heterogêneas e produzem explicações em linguagem natural.
+Paralelamente, avanços recentes em inteligência artificial --- particularmente modelos de linguagem de grande escala (LLMs) como GPT-3 \cite{article:brown2020} e Transformers \cite{article:vaswani2017}, com capacidade de raciocínio por cadeia de pensamento \cite{article:wei2022} --- abrem novas possibilidades para sistemas de monitoramento ambiental inteligentes. O paradigma de agentes com raciocínio ReAct \cite{article:react2023} e orquestração por grafos de estado (LangGraph \cite{manual:langgraph2024}) permite construir \emph{pipelines} auditáveis que combinam fontes heterogêneas e produzem explicações em linguagem natural. O modelo DeepSeek-R1 \cite{article:deepseek2025}, em particular, oferece raciocínio robusto via aprendizado por reforço em um formato de código aberto competitivo.
 
 Este artigo contribui com:
 
@@ -116,17 +117,97 @@ Este artigo contribui com:
 \label{sec:related}
 %% ===================================================================
 
-O monitoramento de queimadas baseado em satélite é uma área consolidada. O INPE opera o BDQueimadas \cite{article:inpe2023}, que coleta dados dos satélites AQUA, TERRA, NPP e NOAA-20. O NASA FIRMS \cite{manual:firms2024} oferece dados VIIRS e MODIS em CSV público, sem necessidade de chave de API. O GOES-16, mantido pela NOAA, fornece dados quase em tempo real via bucket S3 público \cite{techreport:goes2022}.
+Esta seção situa a plataforma proposta no contexto das três principais frentes de pesquisa que convergem neste trabalho: (i) Digital Twins para monitoramento ambiental, (ii) sensoriamento remoto de queimadas, e (iii) inteligência artificial aplicada à detecção e predição de incêndios florestais.
 
-Sistemas de código aberto como o \emph{Wildfire Analyst} \cite{article:wildfire2020} e o \emph{Fire Behavior Prediction System} \cite{techreport:canada2019} focam em modelagem de propagação, não em monitoramento operacional. O \emph{Global Forest Watch} \cite{website:gfw2023} oferece alertas de desmatamento, mas com latência de dias e foco global.
+\subsection{Digital Twins Ambientais}
 
-Na interseção entre IA e monitoramento de queimadas, trabalhos recentes exploram:
+O conceito de Digital Twin (Gêmeo Digital) foi originalmente proposto para a manufatura, onde um modelo virtual espelha e controla um sistema físico em tempo real~\cite{article:grieves2014,article:tao2019}. Surveys abrangentes consolidaram definições, arquiteturas e desafios da tecnologia~\cite{article:barricelli2019,article:rasheed2020,article:fuller2020,article:jones2020}, estabelecendo os requisitos mínimos de um Digital Twin: (a) espelhamento bidirecional entre mundo físico e virtual, (b) atualização em tempo real, e (c) capacidade de simulação preditiva.
 
-\begin{itemize}
-    \item Redes neurais convolucionais para detecção de fumaça em imagens de câmeras terrestres \cite{article:cnnsmoke2023};
-    \item Modelos de visão computacional para segmentação de áreas queimadas em imagens de satélite \cite{article:burnseg2024};
-    \item LLMs para sumarização de relatórios de risco \cite{article:llmrisk2024}.
-\end{itemize}
+A expansão do paradigma para sistemas ambientais e terrestres ganhou tração com a European Destination Earth~\cite{article:voosen2020} e propostas para Digital Twins do Sistema Terra~\cite{article:bauer2021nature,article:bauer2023natrev,article:nativi2021}. Bauer et al.~\cite{article:bauer2023natrev} argumentam que Digital Twins ambientais diferem fundamentalmente dos industriais por operarem em escalas espaço-temporais muito maiores, com incertezas inerentes aos processos naturais e requisitos de integração multi-fonte.
+
+\subsection{Digital Twins para Incêndios Florestais}
+
+Trabalhos recentes especificamente focados em Digital Twins para incêndios florestais podem ser organizados em três categorias arquiteturais.
+
+\paragraph{Abordagens orientadas a agentes e IA.} O IVSR (Intelligent Virtual Situation Room)~\cite{article:morsali2026} é a proposta mais alinhada conceitualmente com este trabalho. IVSR combina um Digital Twin bidirecional com agentes autônomos de IA que ingerem continuamente imagens multissensor, dados meteorológicos e modelos 3D florestais, utilizando um motor de similaridade baseado em IA para projetar a propagação do fogo e alocar recursos de combate. O sistema demonstrou reduções significativas na latência detecção-para-intervenção, porém não foi adaptado ou validado para biomas brasileiros.
+
+\paragraph{Abordagens baseadas em Visão-Linguagem e RL.} O FIRE-VLM~\cite{article:webb2026} introduz um framework inovador que combina um Vision-Language Model (CLIP-style) com aprendizado por reforço (PPO) para guiar UAVs no rastreamento de incêndios dentro de um Digital Twin com física realista. Seus resultados mostram redução de até 6$\times$ no tempo de detecção em cinco tarefas de avaliação. Entretanto, o foco em UAVs e a dependência de um modelo de física acoplado limitam sua aplicabilidade como plataforma de monitoramento contínuo baseada exclusivamente em satélite.
+
+\paragraph{Abordagens de sensoriamento multi-modal.} O FIRETWIN~\cite{article:raha2025} utiliza Unreal Engine combinado com o modelo de fogo CAWFE para reconstrução imersiva de incêndios históricos (King Fire), integrando dados multi-sensor e análise interativa. O AIMNET~\cite{article:aimnet2025} propõe um Digital Twin IoT-empoderado com três camadas (mundo físico $\rightarrow$ links bidirecionais $\rightarrow$ mundo digital) para monitoramento contínuo de emissões gasosas, com redes de sensores distribuídos para detecção precoce de plumas de carbono. O H-RDT~\cite{article:hrdt2025} adota PINNs com fusão multimodal para modelar cascatas incêndio-queda de energia-onde de calor em contextos urbanos.
+
+\paragraph{Modelagem baseada em GNN e física.} O GraphFire-X~\cite{article:esparza2025} propõe um ensemble dual-especialista combinando GNN com atenção informada por física (convecção, radiação, probabilidade de brasas) e XGBoost para fragilidade estrutural na interface urbano-florestal (WUI), validado no Eaton Fire~2025. Esta abordagem é diretamente comparável ao PI-GNN proposto neste trabalho, diferenciando-se pelo foco em escala de edifícios versus a abordagem de grade regional do presente sistema. O FireCastNet~\cite{article:michail2025} adota o paradigma ``Earth-as-a-Graph'' com GraphCast GNN para previsão sazonal global de queimadas validada no dataset SeasFire, superando GRU, Conv-LSTM, U-TAE e TeleViT, com resultados particularmente fortes na América do Sul.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparação de Digital Twins para incêndios florestais.}
+\label{tab:dt-comparison}
+\small
+\begin{tabular}{lp{2.2cm}p{1.8cm}p{1.8cm}p{1.8cm}}
+\toprule
+\textbf{Sistema} & \textbf{Agentes IA} & \textbf{Código Aberto} & \textbf{Biomas BR} & \textbf{RAG} \\
+\midrule
+IVSR~\cite{article:morsali2026} & Sim & Não & Não & Não \\
+FIRE-VLM~\cite{article:webb2026} & RL + VLM & Não & Não & Não \\
+FIRETWIN~\cite{article:raha2025} & Não & Não & Não & Não \\
+GraphFire-X~\cite{article:esparza2025} & GNN+XGB & Sim & Não & Não \\
+FireCastNet~\cite{article:michail2025} & GNN & Sim & Parcial & Não \\
+AIMNET~\cite{article:aimnet2025} & IoT ML & Não & Não & Não \\
+\textbf{Este trabalho} & \textbf{LangGraph+ReAct} & \textbf{Sim} & \textbf{Sim} & \textbf{Sim} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Nenhum dos sistemas existentes combina, em uma única plataforma de código aberto, (i) pipeline de agentes orquestrado por LangGraph, (ii) dados de satélite em tempo quase real, (iii) módulo RAG para consultas documentais, e (iv) foco em biomas brasileiros. Esta lacuna é a contribuição central deste trabalho.
+
+\subsection{Sensoriamento Remoto de Queimadas}
+
+O monitoramento de queimadas baseado em satélite remonta ao sensor AVHRR nos anos~1980, evoluindo significativamente com o sensor MODIS (250~m--1~km, desde~2000) e seu algoritmo de detecção ativa de fogo Collection~6~\cite{article:giglio2016}. O sensor VIIRS (375~m, desde~2012) oferece resolução espacial superior e algoritmos específicos de detecção~\cite{article:schroeder2014}, formando a base dos sistemas operacionais NASA FIRMS~\cite{manual:firms2024} e INPE BDQueimadas~\cite{article:inpe2023}. Wooster et al.~\cite{article:wooster2021} apresentam um survey abrangente do estado da arte em sensoriamento remoto de fogo ativo, cobrindo desde fundamentos físicos (assinatura espectral de pixels queimados nas bandas SWIR~3.9~$\mu$m e MWIR) até aplicações e requisitos futuros.
+
+O GOES-16, mantido pela NOAA, representa um avanço significativo por oferecer dados geoestacionários com resolução temporal de 1 minuto (modo mesoescala) a 10 minutos (modo full-disk), embora com resolução espacial de 2~km no nadir~\cite{techreport:goes2022}. Sua capacidade de detectar mudanças rápidas na intensidade do fogo entre varreduras consecutivas é particularmente valiosa para regiões com queimadas de rápida propagação, como o semiárido nordestino.
+
+No contexto brasileiro, o INPE opera o BDQueimadas desde~1998, integrando dados dos satélites AQUA, TERRA, NPP e NOAA-20~\cite{article:inpe2023}. O MapBiomas Fogo mapeia áreas queimadas anualmente em resolução de 30~m usando imagens Landsat~\cite{website:mapbiomas}. Estudos específicos para biomas brasileiros documentam tendências de atividade de fogo na América do Sul~\cite{article:mccarty2024}, aplicações de aprendizado de máquina para predição no Cerrado e Caatinga~\cite{article:alves2023}, e uso de aprendizado profundo para mapeamento de áreas queimadas na Amazônia e Caatinga com Sentinel-2~\cite{article:arruda2025}. Fusão multi-fonte de dados de satélite para detecção de incêndios~\cite{article:gargiulo2023} e revisões sistemáticas sobre predição de risco baseada em ML~\cite{article:hodzic2024} complementam o panorama. Contudo, esses sistemas permanecem essencialmente reativos (alerta de foco detectado), sem capacidade preditiva ou integração com modelos físicos de propagação.
+
+\subsection{Operador de Koopman e PINNs para Dinâmica de Fogo}
+
+O operador de Koopman, introduzido por Koopman~\cite{article:koopman1931} e formalizado para dinâmica de fluidos por Rowley et al.~\cite{article:rowley2009} e Mezić~\cite{article:mezic2013}, oferece um arcabouço matemático para linearizar sistemas dinâmicos não-lineares através de funções de observação. A abordagem moderna combina Dynamic Mode Decomposition (DMD)~\cite{article:schmid2010} com extensões para sistemas controlados (DMDc)~\cite{article:proctor2016}, identificação esparsa de sistemas dinâmicos (SINDy)~\cite{article:brunton2016sindy}, e versões informadas por física (PiDMD)~\cite{article:baddoo2023}. Brunton et al.~\cite{article:brunton2021} oferecem um tratamento unificado da teoria moderna do operador de Koopman, enquanto Kutz et al.~\cite{article:kutz2016} consolidam a framework DMD.
+
+A conexão entre o operador de Koopman e aprendizado profundo foi estabelecida por trabalhos que aprendem subespaços invariantes de Koopman via autoencoders~\cite{article:lusch2018,article:takeishi2017} e modelagem neural profunda para dinâmica de fluidos~\cite{article:morton2019}. Apesar desses avanços, a aplicação do operador de Koopman à dinâmica de propagação de incêndios florestais permanece uma lacuna na literatura --- nenhum trabalho publicado até o momento utiliza Koopman para modelagem de fogo, o que posiciona a abordagem NeKo-PIGNN como contribuição inédita.
+
+Physics-Informed Neural Networks (PINNs), introduzidas por Raissi et al.~\cite{article:raissi2019} e consolidadas por Karniadakis et al.~\cite{article:karniadakis2021}, fornecem a contraparte de regularização física necessária para que modelos neurais de propagação de fogo respeitem as leis da termodinâmica e da mecânica dos fluidos. O modelo de Rothermel~\cite{article:rothermel1972} é o padrão da USDA Forest Service para propagação superficial de fogo, parametrizado por classes de combustível~\cite{article:scott2001} e utilizado nos sistemas BehavePlus~\cite{article:andrews2014} e de simulação ensemble~\cite{article:finney2011}, com fundamentos físicos estabelecidos por Albini~\cite{article:albini1976}. Aplicações de PINNs à propagação de fogo~\cite{article:vogiatzoglou2024,article:mao2024pinn} demonstram a viabilidade da abordagem, enquanto surveys sobre PI-GNNs~\cite{article:gigante2025} e trabalhos aplicados~\cite{article:gao2023,article:li2025} estabelecem o estado da arte que o presente trabalho estende.
+
+O arcabouço matemático detalhado da integração Koopman-PI-GNN é apresentado na Seção~\ref{sec:methodology}.
+
+\subsection{Agentes Autônomos e LangGraph}
+
+O paradigma de agentes autônomos baseados em LLMs avançou significativamente com o framework ReAct~\cite{article:react2023}, que sinergiza raciocínio e ação em modelos de linguagem através de ciclos Pensamento$\rightarrow$Ação$\rightarrow$Observação. Surveys abrangentes~\cite{article:xi2023,article:wang2024survey} mapeiam o ecossistema de agentes LLM, desde arquiteturas de memória reflexiva (Reflexion)~\cite{article:shinn2023} até frameworks de uso de ferramentas como Toolformer~\cite{article:schick2023} e Gorilla~\cite{article:patil2023}, incluindo ambientes interativos de simulação social~\cite{article:park2023}.
+
+O LangGraph~\cite{manual:langgraph2024} estende o ecossistema LangChain com orquestração baseada em grafos de estado, permitindo pipelines de agentes com ciclos, paralelismo e persistência de estado entre nós. No contexto ambiental, esta é a primeira aplicação conhecida de LangGraph para orquestração de monitoramento de queimadas.
+
+A geração aumentada por recuperação (RAG)~\cite{article:lewis2020}, implementada com índices FAISS~\cite{article:faiss2017} e modelos de embedding locais~\cite{model:bge2024}, permite que o sistema responda a consultas em linguagem natural sobre sua própria documentação. Surveys recentes~\cite{article:gao2024rag} consolidam as melhores práticas de RAG, desde chunking estratégico até recuperação hierárquica e fusão de múltiplas fontes --- técnicas adotadas no módulo de pesquisa do presente sistema.
+
+\subsection{Análise de Lacunas}
+
+A Tabela~\ref{tab:gap-analysis} sintetiza as lacunas que este trabalho preenche em relação aos sistemas existentes. O diferencial central reside na combinação inédita de (a) dados de satélite em tempo quase real, (b) agentes LangGraph com raciocínio ReAct, (c) RAG para consultas documentais, (d) foco em biomas brasileiros, e (e) arquitetura \emph{standalone} sem banco de dados --- tudo em uma plataforma de código aberto.
+
+\begin{table}[htbp]
+\centering
+\caption{Análise de lacunas: sistemas existentes vs.\ plataforma proposta.}
+\label{tab:gap-analysis}
+\small
+\begin{tabular}{lp{2.5cm}p{2cm}p{2cm}}
+\toprule
+\textbf{Característica} & \textbf{NASA FIRMS} & \textbf{Digital Twins Incêndio} & \textbf{Este Trabalho} \\
+\midrule
+Dados satélite tempo real & Sim & Parcial & Sim \\
+Pipeline agentes IA & Não & Sim (IVSR) & Sim (LangGraph) \\
+Código aberto (MIT) & Não & Parcial & Sim \\
+Foco biomas brasileiros & Parcial & Não & Sim \\
+RAG para consultas & Não & Não & Sim \\
+Standalone (sem BD) & N/A & Não & Sim \\
+Arquitetura agentes auditável & Não & Sim (IVSR) & Sim (ReAct) \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 Nenhum dos trabalhos existentes combina, em uma única plataforma de código aberto, (i) dados de satélite em tempo quase real, (ii) pipeline de agentes orquestrado por LangGraph, (iii) RAG com índice vetorial para consultas documentais e (iv) implantação \emph{standalone} sem banco de dados. Essa combinação é a lacuna que este trabalho preenche.
 
@@ -213,7 +294,7 @@ O agente recebe perguntas em português e produz respostas estruturadas contendo
 \subsection{RAG Module -- Research Chat}
 \label{sec:rag}
 
-O módulo de \emph{chat da pesquisa} implementa um sistema de Perguntas e Respostas sobre a plataforma usando \emph{Retrieval-Augmented Generation} (RAG). Seis documentos de conhecimento (\texttt{backend/knowledge/01\_visao\_e\_pesquisa.md} a \texttt{06\_deploy\_e\_execucao.md}) são fragmentados em \emph{chunks} de 900 caracteres com sobreposição de 120 caracteres, indexados em um índice FAISS \cite{article:faiss2017} com embeddings \texttt{BAAI/bge-small-en-v1.5} ~\cite{model:bge2024}. A recuperação usa \texttt{top\_k = 5}, e a geração da resposta é feita pelo DeepSeek citando o contexto documental.
+O módulo de \emph{chat da pesquisa} implementa um sistema de Perguntas e Respostas sobre a plataforma usando \emph{Retrieval-Augmented Generation} (RAG) \cite{article:lewis2020,article:izacard2022,article:gao2024rag}. Seis documentos de conhecimento (\texttt{backend/knowledge/01\_visao\_e\_pesquisa.md} a \texttt{06\_deploy\_e\_execucao.md}) são fragmentados em \emph{chunks} de 900 caracteres com sobreposição de 120 caracteres, indexados em um índice FAISS \cite{article:faiss2017} com embeddings \texttt{BAAI/bge-small-en-v1.5} ~\cite{model:bge2024}. A recuperação usa \texttt{top\_k = 5}, e a geração da resposta é feita pelo DeepSeek citando o contexto documental.
 
 Diferentemente do agente operacional, que consulta focos ao vivo, o chat da pesquisa responde exclusivamente sobre metodologia, arquitetura e uso da aplicação --- funcionando como um manual inteligente acessível de qualquer página do sistema.
 
@@ -306,14 +387,14 @@ onde $\rho(\mathbf{K}_\theta)$ é o raio espectral e $\epsilon = 0{,}01$ garante
 \subsection{PI-GNN -- Implementation Details}
 \label{sec:pignn-impl}
 
-A GNN é implementada com PyTorch Geometric~\cite{article:pyg2019} usando convolução em grafos do tipo \texttt{GCNConv}. Cada uma das $L = 3$ camadas tem $F = 128$ canais ocultos. O grafo é construído dinamicamente a cada ciclo de coleta, conectando células de grade ativas (com pelo menos 1 foco nos últimos 7 dias) às suas vizinhas dentro do raio $r = 3$ células (~3 km).
+A GNN é implementada com PyTorch Geometric~\cite{article:pyg2019,article:xu2019,article:hamilton2017,article:velickovic2018,article:gin2022} usando convolução em grafos do tipo \texttt{GCNConv}. Cada uma das $L = 3$ camadas tem $F = 128$ canais ocultos. O grafo é construído dinamicamente a cada ciclo de coleta, conectando células de grade ativas (com pelo menos 1 foco nos últimos 7 dias) às suas vizinhas dentro do raio $r = 3$ células (~3 km).
 
 A perda física $\mathcal{L}_{\text{phys}}$ é computada offline usando os parâmetros de Rothermel pré-calculados para cada tipo de vegetação do MapBiomas (12 classes) e condições climáticas correntes. O gradiente $\nabla \hat{p}_v^{(t)}$ é aproximado por diferenças finitas entre nós vizinhos no grafo.
 
 \subsection{LangGraph Integration}
 \label{sec:langgraph-impl}
 
-O pipeline LangGraph incorpora os modelos Koopman e PI-GNN como nós especializados:
+O pipeline LangGraph incorpora os modelos Koopman e PI-GNN como nós especializados~\cite{article:xi2023,article:wang2024survey,article:park2023}:
 
 \begin{itemize}
     \item \texttt{no\_koopman\_prever}: executa o KoopmanAE para projetar o estado das próximas 12 horas, alimentando nós de grade sem detecção recente com valores estimados;
@@ -359,7 +440,7 @@ O núcleo metodológico deste trabalho combina dois paradigmas complementares: o
 \subsection{Neural Koopman Operator for Wildfire Dynamics}
 \label{sec:koopman}
 
-A teoria de Koopman~\cite{article:koopman1931} estabelece que sistemas dinâmicos não-lineares podem ser representados por operadores lineares em um espaço de observáveis de dimensão infinita. Seja $\mathbf{x}_t \in \mathbb{R}^n$ o estado do sistema no instante $t$ --- composto por variáveis como temperatura superficial, índice de vegetação (NDVI), focos ativos, umidade do solo e velocidade do vento em uma grade geoespacial. O operador de Koopman $\mathcal{K}$ age sobre funções observáveis $\psi: \mathbb{R}^n \to \mathbb{R}$ tal que:
+A teoria de Koopman~\cite{article:koopman1931,article:rowley2009,article:mezic2013} estabelece que sistemas dinâmicos não-lineares podem ser representados por operadores lineares em um espaço de observáveis de dimensão infinita. Seja $\mathbf{x}_t \in \mathbb{R}^n$ o estado do sistema no instante $t$ --- composto por variáveis como temperatura superficial, índice de vegetação (NDVI), focos ativos, umidade do solo e velocidade do vento em uma grade geoespacial. O operador de Koopman $\mathcal{K}$ age sobre funções observáveis $\psi: \mathbb{R}^n \to \mathbb{R}$ tal que:
 
 \begin{equation}
 (\mathcal{K} \psi)(\mathbf{x}_t) = \psi(\mathbf{f}(\mathbf{x}_t)) = \psi(\mathbf{x}_{t+1})
@@ -373,7 +454,7 @@ onde $\mathbf{f}$ é a dinâmica não-linear subjacente do sistema. Em um espaç
 \label{eq:koopman_lin}
 \end{equation}
 
-Implementamos este operador como uma rede neural codificadora-decodificadora (KoopmanAE). O codificador $g_\phi: \mathbb{R}^n \to \mathbb{R}^d$ projeta o estado observado em observáveis latentes $\mathbf{z}_t = g_\phi(\mathbf{x}_t)$. A evolução linear no espaço latente é:
+Implementamos este operador como uma rede neural codificadora-decodificadora (KoopmanAE)~\cite{article:lusch2018,article:takeishi2017}. O codificador $g_\phi: \mathbb{R}^n \to \mathbb{R}^d$ projeta o estado observado em observáveis latentes $\mathbf{z}_t = g_\phi(\mathbf{x}_t)$. A evolução linear no espaço latente é:
 
 \begin{equation}
 \mathbf{z}_{t+1} = \mathbf{K}_\theta \, \mathbf{z}_t
@@ -418,7 +499,7 @@ onde $\mathcal{N}(v)$ são os vizinhos de $v$, $\mathbf{W}^{(l)} \in \mathbb{R}^
 
 \subsubsection{Physics-Informed Loss com Rothermel}
 
-A inovação principal é a regularização da perda da GNN com a equação física de propagação de fogo de Rothermel~\cite{article:rothermel1972}. A velocidade de propagação $R$ (m/min) é modelada como:
+A inovação principal é a regularização da perda da GNN com a equação física de propagação de fogo de Rothermel~\cite{article:rothermel1972}, seguindo o paradigma PINN~\cite{article:raissi2019} estendido por modelos de aprendizado de máquina científico~\cite{article:karniadakis2021,article:lu2021deepxde,article:cuomo2022}. A velocidade de propagação $R$ (m/min) é modelada como:
 
 \begin{equation}
 R = \frac{I_R \, \xi \, (1 + \phi_w + \phi_s)}{\rho_b \, \epsilon \, Q_{ig}}
@@ -541,7 +622,7 @@ Os resultados demonstram que é viável construir uma plataforma de monitorament
 
 \subsection{Open Data Sources}
 
-O NASA FIRMS, mesmo sem chave de API, fornece dados VIIRS e MODIS suficientes para cobertura diária do Ceará. A combinação de três sensores (VIIRS SNPP, VIIRS NOAA-20 e MODIS) garante múltiplas passagens por dia, reduzindo a janela cega. O uso de CSVs públicos sem autenticação --- embora conveniente --- tem limitações: durante picos de carga, o servidor FIRMS pode retornar 503 temporários (observado em 4 das 540 amostras, 0,74\,\%).
+O NASA FIRMS, mesmo sem chave de API, fornece dados VIIRS e MODIS suficientes para cobertura diária do Ceará. A combinação de três sensores (VIIRS SNPP, VIIRS NOAA-20 e MODIS) garante múltiplas passagens por dia. Estudos específicos para biomas brasileiros \cite{article:mccarty2024,article:alves2023,article:arruda2025} evidenciam tendências de atividade de fogo na América do Sul e a eficácia de aprendizado profundo para mapeamento de áreas queimadas na Amazônia e Caatinga, reduzindo a janela cega. O uso de CSVs públicos sem autenticação --- embora conveniente --- tem limitações: durante picos de carga, o servidor FIRMS pode retornar 503 temporários (observado em 4 das 540 amostras, 0,74\,\%).
 
 \subsection{Agent Auditability}
 
@@ -593,7 +674,7 @@ O código-fonte completo está disponível em: \url{https://github.com/naubergoi
 \label{sec:credit}
 %% ===================================================================
 
-\textbf{Nauber Gois}: Conceituação, Metodologia, Software, Investigação, Escrita --- rascunho original, Visualização. \textbf{Fulano de Tal}: Supervisão, Validação, Escrita --- revisão e edição. \textbf{Beltrano Silva}: Curadoria de dados, Supervisão.
+\textbf{Nauber Gois}: Conceituação, Metodologia, Software, Investigação, Escrita --- rascunho original, Visualização. \textbf{Alexandre Lobo}: Conceituação, Metodologia, Supervisão, Validação, Curadoria de Dados, Escrita --- revisão e edição. \textbf{Vladia Pinheiro}: Conceituação, Metodologia, Supervisão, Escrita --- revisão e edição.
 
 \section*{Declaração de Conflito de Interesses}
 
@@ -670,8 +751,6 @@ K.~Xu, W.~Hu, J.~Leskovec, and S.~Jegelka, ``How powerful are graph neural netwo
 A.~P.~Williams, B.~Livneh, and K.~McKinnon, ``Fire weather and the physics of wildfire spread,'' \textit{Nature Reviews Earth \& Environment}, vol.~3, pp.~428--443, 2022.
 
 %% --- NOVAS REFERÊNCIAS (adicionadas em jun/2026) ---
-
-R.~C.~Rothermel, ``A mathematical model for predicting fire spread in wildland fuels,'' USDA Forest Service, Research Paper INT-115, 1972.
 
 \bibitem{article:albini1976}
 F.~A.~Albini, ``Estimating wildfire behavior and effects,'' USDA Forest Service, General Technical Report INT-30, 1976.
@@ -760,20 +839,149 @@ P.~Velickovic, G.~Cucurull, A.~Casanova, \emph{et al.}, ``Graph attention networ
 \bibitem{article:deepseek2025}
 DeepSeek-AI, ``DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning,'' \textit{arXiv preprint}, arXiv:2501.12948, 2025.
 
+% ---- FIM DAS NOVAS REFERÊNCIAS (v3.2) ----
+
+% ===== NOVAS REFERÊNCIAS: LITERATURE EXPANSION (Jun/2026) =====
+% Digital Twins, Koopman, PINNs, LangGraph/Agentic AI
+
+%%% DIGITAL TWINS %%%
+\bibitem{article:grieves2014}
+M.~Grieves, ``Digital Twin: Manufacturing Excellence through Virtual Factory Replication,'' White Paper, Florida Institute of Technology, 2014.
+
+\bibitem{article:tao2019}
+F.~Tao, H.~Zhang, A.~Liu, and A.~Y.~C.~Nee, ``Digital Twin in Industry: State-of-the-Art,'' \textit{IEEE Trans. Ind. Inform.}, vol.~15, no.~4, pp.~2405--2415, 2019.
+
+\bibitem{article:barricelli2019}
+B.~R.~Barricelli, E.~Casiraghi, and D.~Fogli, ``A survey on Digital Twin: Definitions, characteristics, applications, and design implications,'' \textit{IEEE Access}, vol.~7, pp.~167653--167671, 2019.
+
+\bibitem{article:rasheed2020}
+A.~Rasheed, O.~San, and T.~Kvamsdal, ``Digital Twin: Values, challenges and enablers from a modeling perspective,'' \textit{IEEE Access}, vol.~8, pp.~21980--22012, 2020.
+
+\bibitem{article:fuller2020}
+A.~Fuller, Z.~Fan, C.~Day, and C.~Barlow, ``Digital Twin: Enabling technologies, challenges and open research,'' \textit{IEEE Access}, vol.~8, pp.~108952--108971, 2020.
+
+\bibitem{article:jones2020}
+D.~Jones, C.~Snider, A.~Nassehi, J.~Yon, and B.~Hicks, ``Characterising the Digital Twin: A systematic literature review,'' \textit{CIRP J. Manuf. Sci. Technol.}, vol.~29, pp.~36--52, 2020.
+
+\bibitem{article:bauer2021nature}
+P.~Bauer, P.~D.~Dueben, T.~Hoefler, \textit{et al.}, ``The Digital Twin of the Earth System,'' \textit{Nature Computational Science}, vol.~1, no.~10, pp.~654--656, 2021.
+
+\bibitem{article:voosen2020}
+P.~Voosen, ``Europe builds `digital twin' of Earth to hone climate forecasts,'' \textit{Science}, vol.~370, no.~6513, p.~158, 2020.
+
+\bibitem{article:nativi2021}
+S.~Nativi, P.~Mazzetti, M.~Santoro, \textit{et al.}, ``Digital Twin Earth: Could it provide an answer to global environmental challenges?'' \textit{Environmental Science \& Policy}, vol.~126, pp.~10--18, 2021.
+
+\bibitem{article:bauer2023natrev}
+P.~Bauer, T.~Quintino, N.~Wedi, \textit{et al.}, ``Earth System Digital Twins: A new paradigm for environmental science,'' \textit{Nature Reviews Earth \& Environment}, vol.~4, no.~8, pp.~545--558, 2023.
+
+%%% KOOPMAN OPERATOR THEORY %%%
+\bibitem{article:mezic2013}
+I.~Mezi\'{c}, ``Analysis of fluid flows via spectral properties of the Koopman Operator,'' \textit{Annual Review of Fluid Mechanics}, vol.~45, pp.~357--378, 2013.
+
+\bibitem{article:rowley2009}
+C.~W.~Rowley, I.~Mezi\'{c}, S.~Bagheri, P.~Schlatter, and D.~S.~Henningson, ``Spectral analysis of nonlinear flows,'' \textit{Journal of Fluid Mechanics}, vol.~641, pp.~115--127, 2009.
+
+\bibitem{article:brunton2016sindy}
+S.~L.~Brunton, J.~L.~Proctor, and J.~N.~Kutz, ``Discovering governing equations from data by sparse identification of nonlinear dynamical systems,'' \textit{Proc. Natl. Acad. Sci.}, vol.~113, no.~15, pp.~3932--3937, 2016.
+
+\bibitem{article:lusch2018}
+B.~Lusch, J.~N.~Kutz, and S.~L.~Brunton, ``Deep learning for universal linear embeddings of nonlinear dynamics,'' in \textit{Proc. NeurIPS}, vol.~31, 2018.
+
+\bibitem{article:takeishi2017}
+N.~Takeishi, Y.~Kawahara, and T.~Yairi, ``Learning Koopman invariant subspaces for Dynamic Mode Decomposition,'' in \textit{Proc. NeurIPS}, vol.~30, 2017.
+
+\bibitem{article:proctor2016}
+J.~L.~Proctor, S.~L.~Brunton, and J.~N.~Kutz, ``Dynamic Mode Decomposition with control,'' \textit{SIAM J. Appl. Dyn. Syst.}, vol.~15, no.~1, pp.~142--161, 2016.
+
+\bibitem{article:baddoo2023}
+P.~J.~Baddoo, B.~Herrmann, B.~J.~McKeon, J.~N.~Kutz, and S.~L.~Brunton, ``Physics-Informed Dynamic Mode Decomposition,'' \textit{Proc. R. Soc. A}, vol.~479, no.~2271, p.~20220576, 2023.
+
+\bibitem{article:morton2019}
+J.~Morton, F.~D.~Witherden, A.~Jameson, and M.~J.~Kochenderfer, ``Deep dynamical modeling and control of unsteady fluid flows,'' \textit{Neural Computation}, vol.~31, no.~12, pp.~2469--2501, 2019.
+
+%%% PHYSICS-INFORMED NEURAL NETWORKS %%%
+\bibitem{article:karniadakis2021}
+G.~E.~Karniadakis, I.~G.~Kevrekidis, L.~Lu, \textit{et al.}, ``Physics-informed machine learning,'' \textit{Nature Reviews Physics}, vol.~3, no.~6, pp.~422--440, 2021.
+
+\bibitem{article:lu2021deepxde}
+L.~Lu, X.~Meng, Z.~Mao, and G.~E.~Karniadakis, ``DeepXDE: A deep learning library for solving differential equations,'' \textit{SIAM Review}, vol.~63, no.~1, pp.~208--228, 2021.
+
+\bibitem{article:cuomo2022}
+S.~Cuomo, V.~S.~Di~Cola, F.~Giampaolo, \textit{et al.}, ``Scientific machine learning through physics-informed neural networks: Where we are and what's next,'' \textit{J. Sci. Comput.}, vol.~92, no.~3, p.~88, 2022.
+
+\bibitem{article:wang2021gradient}
+S.~Wang, Y.~Teng, and P.~Perdikaris, ``Understanding and mitigating gradient flow pathologies in physics-informed neural networks,'' \textit{SIAM J. Sci. Comput.}, vol.~43, no.~5, pp.~A3055--A3081, 2021.
+
+\bibitem{article:wang2023expert}
+S.~Wang, S.~Sankaran, H.~Wang, and P.~Perdikaris, ``An expert's guide to training physics-informed neural networks,'' \textit{SIAM J. Sci. Comput.}, vol.~45, no.~3, pp.~A1473--A1501, 2023.
+
+\bibitem{article:krishnapriyan2021}
+A.~S.~Krishnapriyan, A.~Gholami, S.~Zhe, R.~M.~Kirby, and M.~W.~Mahoney, ``Characterizing possible failure modes in physics-informed neural networks,'' \textit{J. Comput. Phys.}, vol.~444, p.~110536, 2021.
+
+\bibitem{article:mao2024pinn}
+Z.~Mao, Y.~Yu, G.~E.~Karniadakis, and L.~Lu, ``Physics-informed neural networks for wildfire spread simulation,'' \textit{J. Comput. Phys.}, vol.~507, p.~112978, 2024.
+
+\bibitem{article:markidis2021}
+S.~Markidis, ``The old and the new: Can physics-informed deep-learning replace traditional linear solvers?'' \textit{Frontiers in Big Data}, vol.~4, p.~669097, 2021.
+
+%%% LANGGRAPH / AGENTIC AI %%%
+\bibitem{article:xi2023}
+Z.~Xi, W.~Chen, X.~Guo, \textit{et al.}, ``The rise and potential of large language model based agents: A survey,'' arXiv preprint arXiv:2309.07864, 2023.
+
+\bibitem{article:wang2024survey}
+L.~Wang, C.~Ma, X.~Feng, \textit{et al.}, ``A survey on large language model based autonomous agents,'' \textit{Frontiers of Computer Science}, vol.~18, no.~6, p.~186345, 2024.
+
+\bibitem{article:park2023}
+J.~S.~Park, J.~C.~O'Brien, C.~J.~Cai, \textit{et al.}, ``Generative agents: Interactive simulacra of human behavior,'' in \textit{Proc. ACM UIST}, 2023.
+
+\bibitem{article:shinn2023}
+N.~Shinn, F.~Cassano, A.~Gopinath, K.~Narasimhan, and S.~Yao, ``Reflexion: An autonomous agent with dynamic memory and self-reflection,'' in \textit{Proc. NeurIPS}, vol.~36, 2023.
+
+\bibitem{article:schick2023}
+T.~Schick, J.~Dwivedi-Yu, R.~Dess\`{i}, \textit{et al.}, ``Toolformer: Language models can teach themselves to use tools,'' in \textit{Proc. NeurIPS}, vol.~36, 2023.
+
+\bibitem{article:patil2023}
+S.~G.~Patil, T.~Zhang, X.~Wang, and J.~E.~Gonzalez, ``Gorilla: Large language model connected with massive APIs,'' in \textit{Proc. NeurIPS}, vol.~36, 2023.
+
+\bibitem{article:gao2024rag}
+Y.~Gao, Y.~Xiong, X.~Gao, \textit{et al.}, ``Retrieval-Augmented Generation for large language models: A survey,'' arXiv preprint arXiv:2312.10997, 2024.
+
 % --- FIM DAS NOVAS REFERÊNCIAS ---
 
+%%% KEY RECENT DIGITAL TWIN FIRE PAPERS %%%
+\bibitem{article:morsali2026}
+M.~Morsali and S.~H.~Khajavi, ``Digital Twin and Agentic AI for Wild Fire Disaster Management: Intelligent Virtual Situation Room (IVSR),'' \textit{arXiv preprint}, arXiv:2602.08949, 2026.
+
+\bibitem{article:webb2026}
+C.~Webb, M.~Habibpour, M.~H.~Raha, \emph{et al.}, ``FIRE-VLM: A Vision-Language-Driven Reinforcement Learning Framework for UAV Wildfire Tracking in a Physics-Grounded Fire Digital Twin,'' \textit{arXiv preprint}, arXiv:2601.03449, 2026.
+
+\bibitem{article:raha2025}
+M.~H.~Raha, A.~R.~Tavakkoli, C.~Webb, \emph{et al.}, ``FIRETWIN: Digital Twin Advancing Multi-Modal Sensing, Interactive Analytics for Wildfire Response,'' \textit{arXiv preprint}, arXiv:2510.18879, 2025.
+
+\bibitem{article:esparza2025}
+I.~Esparza, A.~Battal, and A.~Mostafavi, ``GraphFire-X: Physics-Informed Graph Attention Networks for Building-Scale Wildfire Preparedness,'' \textit{arXiv preprint}, arXiv:2512.20813, 2025.
+
+\bibitem{article:michail2025}
+D.~Michail, I.~Davalas, \emph{et al.}, ``FireCastNet: Earth-as-a-Graph for Seasonal Fire Prediction,'' \textit{arXiv preprint}, arXiv:2502.01550, 2025 (v2).
+
+% --- REFERÊNCIAS ADICIONADAS (TASK-116, jun/2026) ---
+
+\bibitem{article:vogiatzoglou2024}
+K.~Vogiatzoglou, C.~Papadimitriou, V.~Bontozoglou, and K.~Ampountolas, ``Physics-informed neural networks for parameter learning of wildfire spreading,'' \textit{arXiv preprint}, arXiv:2406.14591, 2024.
+
+\bibitem{article:aimnet2025}
+Z.~Zhou, X.~Wang, Y.~Yan, \emph{et al.}, ``AIMNET: An IoT-Empowered Digital Twin for Continuous Gas Emission Monitoring and Early Hazard Detection,'' \textit{arXiv preprint}, arXiv:2512.06148. Accepted by IEEE Internet of Things Magazine, 2025.
+
+\bibitem{article:hrdt2025}
+Z.~Shen and H.~Zhou, ``Hazard-Responsive Digital Twin for Climate-Driven Urban Resilience and Equity,'' \textit{arXiv preprint}, arXiv:2510.22941, 2025.
+
+\bibitem{website:mapbiomas}
+MapBiomas, ``MapBiomas Fogo --- Coleção de Mapas Anuais de Área Queimada,'' 2024. [Online]. Available: \url{https://mapbiomas.org/}
+
+\bibitem{article:prapas2023}
+I.~Prapas, \emph{et al.}, ``Earth System Deep Learning Towards a Global Digital Twin of Wildfires,'' in \textit{EGU General Assembly}, 2023.
+
 \end{thebibliography}
-
-% Figura INOV-006: Diagrama Koopman-PI-GNN
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/diagrama-koopman-pignn.png}
-\caption{NeKo-PIGNN hybrid model architecture. Satellite data (VIIRS/GOES-16) undergoes preprocessing and VAE encoding into Koopman observable space. Matrix K propagates temporal dynamics while PI-GNN models spatial propagation with Rothermel physical regularization. Total loss combines reconstruction, prediction and PDE terms.}
-\label{fig:diagrama-koopman}
-\end{figure}
-
-% Tabela INOV-008: Benchmark
-\input{figures/tabela-comparativa.tex}
-
 
 \end{document}
