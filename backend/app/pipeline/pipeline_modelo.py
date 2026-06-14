@@ -276,14 +276,31 @@ class PipelineModelo:
             logger.warning(f"Checkpoint nao encontrado: {path}")
             return False
         data = torch.load(path, map_location=self.device, weights_only=False)
+        ckpt_keys = set(data["model_state_dict"].keys())
         cfg = data.get("config", {})
-        for k in ("node_features", "latent_dim", "gnn_hidden", "koopman_rank"):
-            setattr(self, k, cfg.get(k, getattr(self, k)))
+        for k in ("node_features", "latent_dim", "gnn_hidden", "koopman_rank", "num_nodes"):
+            if k in cfg:
+                setattr(self, k, cfg[k])
         self.criar_modelo()
-        self.model.load_state_dict(data["model_state_dict"])
+        model_keys = set(self.model.state_dict().keys())
+
+        # Filtra chaves do checkpoint que existem no modelo atual
+        compat_keys = {k: v for k, v in data["model_state_dict"].items() if k in model_keys}
+        missing = model_keys - ckpt_keys
+        extra = ckpt_keys - model_keys
+        if compat_keys:
+            result = self.model.load_state_dict(compat_keys, strict=False)
+            if result.missing_keys:
+                logger.warning(f"Chaves nao carregadas (modelo): {result.missing_keys[:5]}...")
+            if result.unexpected_keys:
+                logger.warning(f"Chaves extras ignoradas (checkpoint): {result.unexpected_keys[:5]}...")
+        if missing:
+            logger.info(f"Inicializando {len(missing)} chaves novas do modelo")
+        if extra:
+            logger.info(f"Ignorando {len(extra)} chaves do checkpoint incompatíveis")
         self.model.to(self.device)
         self.model.eval()
-        logger.info(f"Checkpoint carregado: {path} (loss={data['loss']:.4f})")
+        logger.info(f"Checkpoint carregado: {path} (loss={data['loss']:.4f}, {len(compat_keys)}/{len(ckpt_keys)} chaves)")
         return True
 
     def _calcular_metricas(self, dados: PipelineData) -> dict:

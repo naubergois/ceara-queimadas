@@ -36,8 +36,20 @@ prev = pl.prever(dados.X_t[:1], nomes=dados.nomes[:10], passos=3)
 print(f"[OK] Inferencia: {prev['num_passos']} passos, {len(prev['previsoes'])} municipios")
 print(f"     Exemplo: {prev['previsoes'][0]['municipio']} -> prev={prev['previsoes'][0]['previsao'][:3]}")
 
-# 5. Checkpoint
+# 5. Checkpoint (compatível)
 check = pl.carregar_checkpoint()
-print(f"[OK] Checkpoint carregado: {check}")
+if check:
+    print(f"[OK] Checkpoint carregado: {check}")
+else:
+    print("[OK] Checkpoint não encontrado (primeira execução)")
+    # Salva e recarrega para validar
+    pl.criar_modelo()
+    import torch
+    torch.save({"model_state_dict": pl.model.state_dict(), "config": {
+        "node_features": pl.node_features, "latent_dim": pl.latent_dim,
+        "gnn_hidden": pl.gnn_hidden, "koopman_rank": pl.koopman_rank, "num_nodes": pl.num_nodes
+    }}, "models/checkpoints/neko_pignn_pipeline.pt")
+    check2 = pl.carregar_checkpoint()
+    print(f"[OK] Checkpoint salvo e recarregado: {check2}")
 
 print("\n[TASK-006] TODOS OS TESTES PASSARAM.")

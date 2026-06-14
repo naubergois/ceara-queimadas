@@ -13,7 +13,6 @@
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{xspace}
-\DeclareMathOperator*{\argmin}{arg\,min}
 %\usepackage{microtype}
 \usepackage{listings}
 \usepackage{caption}
@@ -73,24 +72,19 @@ Digital Twin \sep Wildfires \sep Physics-Informed GNN \sep Koopman Operator \sep
 \label{sec:intro}
 %% ===================================================================
 
-The Digital Twin paradigm --- a virtual model that mirrors, simulates, and controls a physical system in real time --- has expanded from manufacturing to environmental and Earth systems \cite{article:grieves2014,article:tao2019,article:bauer2023natrev}. In wildfire monitoring, this approach offers the potential to integrate multi-sensor satellite data, meteorological conditions, and predictive models into a single platform that operates continuously and delivers municipal-level alerts \cite{article:morsali2026}. However, the practical implementation of Digital Twins for wildfire management still faces significant barriers: dependence on robust computational infrastructure, lack of validation in tropical biomes, and the absence of open-source platforms that democratize access.
+Wildfires represent one of the greatest environmental threats in Brazil, with direct impacts on public health, biodiversity, and the economy \cite{article:alencar2020,master:silva2021}. The State of Ceará, located in the northeastern semi-arid region, exhibits strong drought seasonality and sensitive biomes such as the Caatinga, making continuous monitoring an operational necessity \cite{techreport:funceme2024}.
 
-Wildfires represent one of the greatest environmental threats in Brazil, with direct impacts on public health, biodiversity, and the economy \cite{article:alencar2020,master:silva2021}. The State of Ceará, located in the northeastern semi-arid region, exhibits strong drought seasonality --- with a dry season concentrated between August and November --- and sensitive biomes such as the Caatinga, one of the most threatened ecosystems in the country \cite{techreport:funceme2024}. Fire propagation in this region is influenced by adverse meteorological conditions, rugged topography, and fuel biomass availability \cite{article:williams2022}, demanding continuous monitoring and agile alert systems for municipal civil defense.
+Traditional monitoring systems --- such as INPE BDQueimadas and NASA FIRMS --- provide essential data but have significant limitations: latency of 3 to 6 hours between satellite overpass and data availability \cite{manual:firms2024}; lack of automatic correlation with local climatic and territorial data; and interfaces designed for remote sensing specialists rather than civil defense managers.
 
-Traditional monitoring systems --- such as INPE BDQueimadas and NASA FIRMS --- provide essential data but face significant operational limitations: latency of 3 to 6 hours between satellite overpass and data availability \cite{manual:firms2024}; lack of automatic correlation with local climatic and territorial data; interfaces designed for remote sensing specialists rather than civil defense managers; and no capacity for automated diagnosis or explanation of detected hotspots. These limitations are particularly critical in the semi-arid northeast, where the intervention window for fast-spreading wildfires can be as short as a few hours.
+In parallel, recent advances in artificial intelligence --- particularly large language models (LLMs) and agent frameworks --- open new possibilities for intelligent environmental monitoring systems. The paradigm of agents with ReAct reasoning \cite{article:react2023} and state graph orchestration (LangGraph \cite{manual:langgraph2024}) enables building auditable \emph{pipelines} that combine heterogeneous sources and produce natural language explanations.
 
-In parallel, recent advances in artificial intelligence --- particularly large language models (LLMs) and autonomous agent frameworks --- open new possibilities for intelligent environmental monitoring systems \cite{article:brown2020,article:vaswani2017}. The paradigm of agents with ReAct reasoning \cite{article:react2023}, which synergizes Thinking, Action, and Observation cycles, combined with state graph orchestration (LangGraph \cite{manual:langgraph2024}), enables building auditable \emph{pipelines} that integrate data collection, structured validation, parallel multi-source analysis, and natural language explanation generation. The DeepSeek LLM \cite{article:deepseek2025}, in particular, offers robust reasoning in an open-source format, making it viable for governmental systems with auditability requirements.
-
-This work proposes the \textbf{Ceará Digital Twin for Wildfires}, an open-source platform that embodies the Digital Twin paradigm through agentic artificial intelligence, near real-time satellite data, and LangGraph orchestration --- all in a \emph{standalone} architecture that eliminates the need for an institutional database and can be deployed on a single low-cost EC2 instance.
-
-Specifically, this paper contributes:
+This paper contributes:
 
 \begin{enumerate}
-    \item \textbf{An open-source platform} (MIT license) that integrates NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and Nominatim into a single \emph{standalone} pipeline, with no database dependency;
-    \item \textbf{A LangGraph-orchestrated agent pipeline} comprising 10 nodes that perform collection $\rightarrow$ Pydantic validation $\rightarrow$ parallel analysis (geospatial, GOES-16, climate) $\rightarrow$ evidence fusion $\rightarrow$ municipal risk classification $\rightarrow$ ReAct diagnosis $\rightarrow$ hierarchical alert generation;
-    \item \textbf{A Retrieval-Augmented Generation (RAG) module} with FAISS vector index and local embeddings, enabling natural language queries about the system's methodology, architecture, and usage;
-    \item \textbf{A ReAct explanation agent} based on DeepSeek that produces auditable diagnoses and natural language explanations for each detected hotspot, integrating climate data, temporal trend analysis, and geospatial context;
-    \item \textbf{Operational results} with real data collected between July 2024 and June 2026, demonstrating an average detection of 42 hotspots per collection, time-to-first-response under 60 seconds, and 93\% geocoding rate for affected municipalities.
+    \item \textbf{An open-source platform} that integrates NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and Nominatim into a single pipeline, without relying on an institutional database;
+    \item \textbf{A LangGraph-orchestrated agent pipeline} that performs collection $\rightarrow$ Pydantic validation $\rightarrow$ parallel analysis (geospatial, GOES-16, climate) $\rightarrow$ evidence fusion $\rightarrow$ risk classification $\rightarrow$ ReAct diagnosis $\rightarrow$ alerts;
+    \item \textbf{An RAG module} with FAISS index and local embeddings that enables natural language queries about the system's methodology, architecture, and usage;
+    \item \textbf{Operational results} with real data collected between July 2024 and June 2026, demonstrating the feasibility of monitoring based exclusively on open sources.
 \end{enumerate}
 
 %% ===================================================================
@@ -257,39 +251,39 @@ Each node receives and modifies a typed shared state (\texttt{PipelineState}), w
 \subsection{ReAct Agent}
 \label{sec:react}
 
-The diagnostic agent (\texttt{react\_agent.py}) is built with LangChain (version 0.3+) and follows the ReAct pattern \cite{article:react2023}. It has the following tools:
+The diagnostic agent (\texttt{react\_agent.py}) is built with LangChain (version 0.3+) and segue o padrão ReAct \cite{article:react2023}. Ele dispõe das seguintes ferramentas:
 
 \begin{itemize}
-    \item \texttt{buscar\_focos\_recentes}: queries hotspots by municipality, time window, and source;
-    \item \texttt{buscar\_dados\_climaticos}: temperature, humidity, wind, and precipitation;
-    \item \texttt{buscar\_risco\_municipal}: risk index calculated by municipality;
-    \item \texttt{buscar\_dados\_goes16}: GOES-16 readings with FRP and persistence;
-    \item \texttt{buscar\_historico\_mapbiomas}: historical wildfire data by municipality;
-    \item \texttt{listar\_municipios\_criticos}: ranking of the most critical municipalities.
+    \item \texttt{buscar\_focos\_recentes}: consulta focos por município, janela temporal e fonte;
+    \item \texttt{buscar\_dados\_climaticos}: temperatura, umidade, vento e precipitação;
+    \item \texttt{buscar\_risco\_municipal}: índice de risco calculado por município;
+    \item \texttt{buscar\_dados\_goes16}: leituras GOES-16 com FRP e persistência;
+    \item \texttt{buscar\_historico\_mapbiomas}: histórico de queimadas por município;
+    \item \texttt{listar\_municipios\_criticos}: ranking dos municípios mais críticos.
 \end{itemize}
 
-The agent receives questions in Portuguese and produces structured responses containing a summary, evidence, consulted sources, confidence level, and operational recommendation. The reasoning chain (Thought $\rightarrow$ Action $\rightarrow$ Observation) is preserved in the response to ensure auditability.
+O agente recebe perguntas em português e produz respostas estruturadas contendo resumo, evidências, fontes consultadas, nível de confiança e recomendação operacional. A cadeia de raciocínio (Pensamento $\rightarrow$ Ação $\rightarrow$ Observação) é preservada na resposta para garantir auditabilidade.
 
 \subsection{RAG Module -- Research Chat}
 \label{sec:rag}
 
-The \emph{research chat} module implements a Question-Answering system about the platform using \emph{Retrieval-Augmented Generation} (RAG) \cite{article:lewis2020,article:gao2024rag}. Six knowledge documents (\texttt{backend/knowledge/01\_visao\_e\_pesquisa.md} through \texttt{06\_deploy\_e\_execucao.md}) are split into chunks of 900 characters with 120-character overlap, indexed in a FAISS index \cite{article:faiss2017} with \texttt{BAAI/bge-small-en-v1.5} embeddings ~\cite{model:bge2024}. Retrieval uses \texttt{top\_k = 5}, and response generation is performed by DeepSeek citing the document context.
+O módulo de \emph{chat da pesquisa} implementa um sistema de Perguntas e Respostas sobre a plataforma usando \emph{Retrieval-Augmented Generation} (RAG) \cite{article:lewis2020,article:gao2024rag}. Seis documentos de conhecimento (\texttt{backend/knowledge/01\_visao\_e\_pesquisa.md} a \texttt{06\_deploy\_e\_execucao.md}) são fragmentados em \emph{chunks} de 900 caracteres com sobreposição de 120 caracteres, indexados em um índice FAISS \cite{article:faiss2017} com embeddings \texttt{BAAI/bge-small-en-v1.5} ~\cite{model:bge2024}. A recuperação usa \texttt{top\_k = 5}, e a geração da resposta é feita pelo DeepSeek citando o contexto documental.
 
 Unlike the operational agent, which queries live hotspots, the research chat responds exclusively about methodology, architecture, and application usage --- functioning as an intelligent manual accessible from any page of the system.
 
 \subsection{Frontend React}
 \label{sec:frontend}
 
-The web interface is built with React 18, TypeScript, Vite 6, and the following main libraries: MapLibre GL JS (base map) with deck.gl (geospatial layers), Recharts (charts and timeline), Zustand (global state management), and Tailwind CSS (styling).
+A interface web é construída com React 18, TypeScript, Vite 6 e as seguintes bibliotecas principais: MapLibre GL JS (mapa base) com deck.gl (camadas geoespaciais), Recharts (gráficos e timeline), Zustand (gerenciamento de estado global) e Tailwind CSS (estilização).
 
-The available pages are:
+As páginas disponíveis são:
 
 \begin{itemize}
-    \item \textbf{Dashboard} (\texttt{/}): executive KPIs (total hotspots, active emergencies, critical municipalities, GOES-16 coverage), detection timeline, municipal risk ranking, and recent alerts;
-    \item \textbf{Map Real} (\texttt{/mapa-real}): NASA FIRMS hotspots overlaid on the MapLibre map, with clustering, heatmap, severity filters, and per-click individual explanation;
-    \item \textbf{Alerts} (\texttt{/alertas}): complete listing with filters by level (informational, attention, alert, emergency);
-    \item \textbf{Chat} (\texttt{/chat}): conversational interface with the ReAct agent, including suggested questions, evidence visualization, and reasoning chain;
-    \item \textbf{Bulletin} (\texttt{/boletim}): consolidated technical report.
+    \item \textbf{Dashboard} (\texttt{/}): KPIs executivos (total de focos, emergências ativas, municípios críticos, cobertura GOES-16), timeline de detecções, ranking de risco municipal e alertas recentes;
+    \item \textbf{Mapa Real} (\texttt{/mapa-real}): focos NASA FIRMS sobrepostos ao mapa MapLibre, com clustering, heatmap, filtros por severidade e explicação individual por clique;
+    \item \textbf{Alertas} (\texttt{/alertas}): listagem completa com filtros por nível (informativo, atenção, alerta, emergência);
+    \item \textbf{Chat} (\texttt{/chat}): interface conversacional com o agente ReAct, incluindo sugestões de perguntas, visualização de evidências e cadeia de raciocínio;
+    \item \textbf{Boletim} (\texttt{/boletim}): relatório técnico consolidado.
 \end{itemize}
 
 A global ``Help'' button on all pages triggers the research RAG chat, allowing the user to consult system documentation without leaving the current screen.
@@ -297,7 +291,7 @@ A global ``Help'' button on all pages triggers the research RAG chat, allowing t
 \subsection{Risk Classifier}
 \label{sec:risk}
 
-The municipal risk index is calculated through four components:
+O índice de risco municipal é calculado através de quatro componentes:
 
 \begin{align}
 \text{indice} &= \min(\text{focos} \times 8,\ 40) \nonumber \\
@@ -306,7 +300,7 @@ The municipal risk index is calculated through four components:
                &\quad + \min(\text{FRP} / 100,\ 10)
 \end{align}
 
-The climatic risk, in turn, is derived from:
+O risco climático, por sua vez, é derivado de:
 
 \begin{align}
 \text{risco\_climatico} &= \max(0,\ (50 - \text{umidade}) \times 0{,}4) \nonumber \\
@@ -314,7 +308,7 @@ The climatic risk, in turn, is derived from:
                          &\quad + \min(\text{dias\_sem\_chuva} \times 1{,}5,\ 30)
 \end{align}
 
-The final classification follows the thresholds: critical ($\ge 75$), high ($\ge 50$), medium ($\ge 25$), and low ($< 25$).
+A classificação final segue os limiares: crítico ($\ge 75$), alto ($\ge 50$), médio ($\ge 25$) e baixo ($< 25$).
 
 
 %% ===================================================================
@@ -327,24 +321,24 @@ This section details the implementation of the system components, including the 
 \subsection{Software Architecture}
 \label{sec:sw-arch}
 
-The system is implemented in Python 3.12 with FastAPI (backend), React 19 with TypeScript and Vite 8 (frontend), and agent orchestration via LangGraph 0.3. Table~\ref{tab:software-stack} summarizes the main dependencies.
+O sistema é implementado em Python 3.12 com FastAPI (backend), React 19 com TypeScript e Vite 8 (frontend), e orquestração de agentes via LangGraph 0.3. A Tabela~\ref{tab:software-stack} resume as principais dependências.
 
 \begin{table}[htbp]
 \centering
-\caption{System software stack.}
+\caption{Stack de software do sistema.}
 \label{tab:software-stack}
 \small
 \begin{tabular}{@{}lll@{}}
 \toprule
-\textbf{Layer} & \textbf{Tecnologia} & \textbf{Versão} \\
+\textbf{Camada} & \textbf{Tecnologia} & \textbf{Versão} \\
 \midrule
 Backend & Python / FastAPI / Uvicorn & 3.12 / 0.115 / 0.34 \\
 Agents & LangGraph / LangChain & 0.3 / 0.3+ \\
 LLM & DeepSeek Chat API & deepseek-chat \\
 Embeddings & BAAI/bge-small-en-v1.5 (FAISS) & 1.5 \\
 Frontend & React / TypeScript / Vite & 19 / 6 / 8 \\
-Map & MapLibre GL JS + deck.gl & 4.7 / 9.1 \\
-Styling & Tailwind CSS & 4 \\
+Mapa & MapLibre GL JS + deck.gl & 4.7 / 9.1 \\
+Estilização & Tailwind CSS & 4 \\
 Proxy & nginx & 1.26 \\
 Deploy & EC2 Amazon Linux 2023 & t2.medium \\
 \bottomrule
@@ -354,7 +348,7 @@ Deploy & EC2 Amazon Linux 2023 & t2.medium \\
 \subsection{Neural Koopman Operator --- Implementation Details}
 \label{sec:koopman-impl}
 
-The KoopmanAE encoder $g_\phi$ is an MLP with 3 hidden layers (512, 256, 128 neurons) and ReLU activation, mapping the state vector $\mathbf{x}_t \in \mathbb{R}^{142}$ (7 variables $\times$ 20 sampled grid cells) to latent observables $\mathbf{z}_t \in \mathbb{R}^{64}$. The Koopman matrix $\mathbf{K}_\theta \in \mathbb{R}^{64 \times 64}$ is trained with spectral stability regularization:
+O codificador $g_\phi$ do KoopmanAE é uma MLP com 3 camadas ocultas (512, 256, 128 neurônios) e ativação ReLU, que mapeia o vetor de estado $\mathbf{x}_t \in \mathbb{R}^{142}$ (7 variáveis $\times$ 20 células de grade amostradas) para observáveis latentes $\mathbf{z}_t \in \mathbb{R}^{64}$. A matriz de Koopman $\mathbf{K}_\theta \in \mathbb{R}^{64 \times 64}$ é treinada com regularização de estabilidade espectral:
 
 \begin{equation}
 \mathcal{L}_{\text{spec}} = \max(0, \rho(\mathbf{K}_\theta) - 1 + \epsilon)
@@ -366,18 +360,22 @@ where $\rho(\mathbf{K}_\theta)$ is the spectral radius and $\epsilon = 0{,}01$ e
 \subsection{PI-GNN --- Implementation Details}
 \label{sec:pignn-impl}
 
-The GNN is implemented with PyTorch Geometric~\cite{article:pyg2019} using \texttt{GCNConv} graph convolution. Each of the $L = 3$ layers has $F = 128$ hidden channels. The graph is dynamically constructed every collection cycle, connecting active grid cells (with at least 1 hotspot in the last 7 days) to their neighbors within a radius of $r = 3$ cells (~3 km).
+A GNN é implementada com PyTorch Geometric~\cite{article:pyg2019} usando convolução em grafos do tipo \texttt{GCNConv}. Cada uma das $L = 3$ camadas tem $F = 128$ canais ocultos. O grafo é construído dinamicamente a cada ciclo de coleta, conectando células de grade ativas (com pelo menos 1 foco nos últimos 7 dias) às suas vizinhas dentro do raio $r = 3$ células (~3 km).
 
-The physics loss $\mathcal{L}_{\text{phys}}$ is computed offline using pre-calculated Rothermel parameters for each MapBiomas vegetation type (12 classes) and current weather conditions. The gradient $\nabla \hat{p}_v^{(t)}$ is approximated by finite differences between neighboring nodes in the graph.
+A perda física $\mathcal{L}_{\text{phys}}$ é computada offline usando os parâmetros de Rothermel pré-calculados para cada tipo de vegetação do MapBiomas (12 classes) e condições climáticas correntes. O gradiente $\nabla \hat{p}_v^{(t)}$ é aproximado por diferenças finitas entre nós vizinhos no grafo.
 
 \subsection{Integration with LangGraph}
 \label{sec:langgraph-impl}
 
-The LangGraph pipeline coordinates ten sequential and parallel nodes~\cite{article:xi2023,article:wang2024survey,article:park2023}, as described in Section~\ref{sec:langgraph} and illustrated in Figure~\ref{fig:langgraph}. The graph starts with data collection (INPE, NASA FIRMS, GOES-16, Open-Meteo), Pydantic validation, and parallel branching for the three analysis agents (geospatial, GOES-16, and climate). The fused evidence feeds the risk classifier, which in turn triggers the ReAct diagnostic agent, alert generation, and the consolidated bulletin.
+The LangGraph pipeline incorporates the Koopman and PI-GNN models as specialized nodes~\cite{article:xi2023,article:wang2024survey,article:park2023}:
 
-The NeKo-PIGNN models (Sections~\ref{sec:koopman-impl} and~\ref{sec:pignn-impl}) are invoked as auxiliary services within the analysis nodes: the climate and GOES-16 agents use the KoopmanAE to project short-term trends, while the risk classifier queries the probabilistic risk map generated by the PI-GNN as an additional input to the index calculation. This architecture maintains the graph at 10 nodes, without direct coupling between the predictive models and the LangGraph orchestration, allowing Koopman and PI-GNN to evolve independently from the agent pipeline.
+\begin{itemize}
+    \item \texttt{no\_koopman\_prever}: executa o KoopmanAE para projetar o estado das próximas 12 horas, alimentando nós de grade sem detecção recente com valores estimados;
+    \item \texttt{no\_pignn\_risco}: aplica a PI-GNN sobre o grafo completo (nós observados + preditos), gerando mapa de risco probabilístico;
+    \item \texttt{no\_fundir\_evidencias}: combina as saídas da PI-GNN com as evidências GOES-16 e climáticas (Seção~\ref{sec:risk}) para produzir a classificação final de risco municipal.
+\end{itemize}
 
-The computational cost of model inference is approximately 2.3 seconds per cycle (KoopmanAE: 0.8 s; PI-GNN: 1.2 s; fusion: 0.3 s) on an Intel Xeon Platinum 8375C CPU (AWS EC2 t2.medium).
+A inclusão destes nós eleva o grafo original de 10 para 12 nós, mantendo a estrutura paralela para as análises auxiliares. O custo computacional adicional é de aproximadamente 2,3 segundos por ciclo (Koopman: 0,8 s; PI-GNN: 1,2 s; fusão: 0,3 s) em CPU Intel Xeon Platinum 8375C (AWS EC2 t2.medium).
 
 
 %% ===================================================================
@@ -393,14 +391,14 @@ The estimated monthly infrastructure cost is approximately USD~20 (EC2 instance 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/resultados-experimentais.png}
-\caption{Detection system performance: precision, recall, F1-score, average response time, and GOES-16 coverage.}
+\caption{Desempenho do sistema de detecção: precisão, recall, F1-score, tempo médio de resposta e cobertura GOES-16.}
 \label{fig:resultados}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{figures/evolucao-focos.png}
-\caption{Monthly evolution of wildfire hotspots in Ceará, comparing 2024 and 2025 (synthetic data based on real trends).}
+\caption{Evolução mensal de focos de queimada no Ceará, comparando 2024 e 2025 (dados sintéticos baseados em tendências reais).}
 \label{fig:evolucao}
 \end{figure}
 
@@ -410,42 +408,7 @@ The estimated monthly infrastructure cost is approximately USD~20 (EC2 instance 
 \label{sec:methodology}
 %% ===================================================================
 
-The methodological core of this work combines two complementary paradigms: the \emph{Neural Koopman Operator} for modeling the spatiotemporal dynamics of wildfire hotspots and \emph{Physics-Informed Graph Neural Networks} (PI-GNN) for risk prediction with physics-based regularization grounded in the Rothermel model~\cite{article:rothermel1972}. This section formally describes both components, beginning with the data sources and preprocessing that feed the models.
-
-\subsection{Data Sources and Preprocessing}
-\label{sec:dataprep}
-
-The proposed methodology relies on four primary data sources. Table~\ref{tab:datasources} summarizes their characteristics.
-
-\begin{table}[htbp]
-\centering
-\caption{Data sources used for model training and inference.}
-\label{tab:datasources}
-\small
-\begin{tabular}{@{}lllll@{}}
-\toprule
-\textbf{Sensor} & \textbf{Product} & \textbf{Spatial Res.} & \textbf{Temporal Res.} & \textbf{Coverage} \\
-\midrule
-VIIRS (SNPP/NOAA-20) & NASA FIRMS & 375~m & 12~h (2 satellites) & Cear\'a bounding box \\
-MODIS (Terra/Aqua) & NASA FIRMS & 1~km & 12~h & Cear\'a bounding box \\
-GOES-16 & ABI-L2-FDCF & 2~km & 10~min (full disk) & Cear\'a bounding box \\
-Open-Meteo & ERA5 reanalysis & 27~km & 1~h & 15 municipalities \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The preprocessing pipeline consists of the following stages:
-
-\begin{enumerate}
-    \item \textbf{Automated acquisition.} A cron-based scheduler downloads NASA FIRMS CSV files (VIIRS + MODIS) every 12~h, GOES-16 ABI-L2-FDCF products from the \texttt{noaa-goes16} public AWS S3 bucket at 10-minute intervals, and Open-Meteo ERA5 reanalysis data hourly for 15 monitored municipalities.
-    \item \textbf{Geospatial filtering.} All detections are filtered to the Cear\'a bounding box (lat: $-7.85^\circ$ to $-2.78^\circ$; lon: $-41.42^\circ$ to $-37.25^\circ$), discarding out-of-region records.
-    \item \textbf{Quality thresholds.} GOES-16 pixels with Data Quality Flag (DQF) $< 85\%$ are rejected. VIIRS hotspots with Fire Radiative Power (FRP) $< 1$~MW are discarded as noise. MODIS confidence flags below $80\%$ are excluded.
-    \item \textbf{Gridding.} All remaining detections are projected onto a uniform $1$~km$^2$ Mercator grid covering the entire state of Cear\'a ($\sim$149,000 cells).
-    \item \textbf{Temporal fusion.} A sliding window of 2~h consolidates multi-sensor detections, preventing double-counting of the same fire event captured by different satellite overpasses.
-    \item \textbf{Feature engineering.} For each grid cell $v$ at time $t$, we compute: surface brightness temperature (GOES-16 band~14, 11.2~$\mu$m), VIIRS reflectances (bands I1--I5), NDVI (MODIS), hotspot count and temporal derivative over the last 7~days, relative humidity and wind speed (Open-Meteo), vegetation class (MapBiomas 12-class), terrain slope and aspect (SRTM~30~m), and accumulated precipitation over 3, 7, and 30~days.
-\end{enumerate}
-
-The resulting feature vector $\mathbf{x}_t^{(v)} \in \mathbb{R}^{142}$ comprises 7 variables $\times$ 20 sampled grid cells within each $3\times3$~km receptive field, with missing values imputed by nearest-neighbor interpolation from the nearest active cell within a 5~km radius.
+The methodological core of this work combines two complementary paradigms: the \emph{Neural Koopman Operator} for modeling the spatiotemporal dynamics of wildfire hotspots and \emph{Physics-Informed Graph Neural Networks} (PI-GNN) for risk prediction with physics-based regularization grounded in the Rothermel model~\cite{article:rothermel1972}. This section formally describes both components.
 
 \subsection{Neural Koopman Operator for Wildfire Dynamics}
 \label{sec:koopman}
@@ -482,71 +445,6 @@ where $\mathbf{K}_\theta \in \mathbb{R}^{d \times d}$ is the learned matrix. The
 
 The dimensionality $d$ of the observable space is a critical hyperparameter. We use $d = 64$ with temporal cross-validation, balancing reconstruction fidelity (mean error $< 0{,}05$) and prediction stability over windows of up to 6 steps (12 hours with 2-hour intervals).
 
-\subsubsection{EDMD Approximation of the Koopman Operator}
-
-The matrix $\mathbf{K}_\theta$ is learned via \emph{Extended Dynamic Mode Decomposition} (EDMD)~\\cite{article:williams2015}, which minimizes the one-step prediction error in the observable space:
-
-\begin{equation}
-\mathbf{K}_\theta = \argmin_{\mathbf{K}} \; \mathbb{E}_{t} \left\| \psi(\mathbf{x}_{t+1}) - \mathbf{K}^\top \psi(\mathbf{x}_t) \right\|^2_{\Gamma}
-\label{eq:edmd}
-\end{equation}
-
-where $\|\cdot\|_{\Gamma}$ is the norm weighted by the covariance matrix $\Gamma = \mathbb{E}[\psi(\mathbf{x}) \psi(\mathbf{x})^\top]$. In practice, we solve:
-
-\begin{equation}
-\mathbf{K}_\theta = \mathbf{G}^+ \mathbf{A}, \quad
-\mathbf{G} = \frac{1}{T} \sum_{t=1}^{T} \psi(\mathbf{x}_t) \psi(\mathbf{x}_t)^\top, \quad
-\mathbf{A} = \frac{1}{T} \sum_{t=1}^{T} \psi(\mathbf{x}_t) \psi(\mathbf{x}_{t+1})^\top
-\label{eq:edmd_solve}
-\end{equation}
-
-where $\psi(\mathbf{x}_t)$ are the latent observations $\mathbf{z}_t$ extracted by the encoder, and $\mathbf{G}^+$ denotes the Moore-Penrose pseudoinverse. We employ the low-rank factorization $\mathbf{K}_\theta = \mathbf{U} \mathbf{V}$ with rank $r = \min(16, d/2)$, where $\mathbf{U} \in \mathbb{R}^{d \times r}$ and $\mathbf{V} \in \mathbb{R}^{r \times d}$, reducing parameters from $d^2$ to $2dr$ and preventing overfitting on short time series.
-
-\subsubsection{Variational Regularization and Reparameterization Trick}
-
-Following the variational autoencoder (VAE) formulation~\\cite{article:kingma2014}, the encoder $g_\phi$ produces a distribution $q_\phi(\mathbf{z}_t \mid \mathbf{x}_t) = \mathcal{N}(\boldsymbol{\mu}_\phi(\mathbf{x}_t), \boldsymbol{\sigma}_\phi^2(\mathbf{x}_t) \mathbf{I})$ over the latent observables. Sampling is performed via the \emph{reparameterization trick}:
-
-\begin{equation}
-\mathbf{z}_t = \boldsymbol{\mu}_\phi(\mathbf{x}_t) + \boldsymbol{\sigma}_\phi(\mathbf{x}_t) \odot \boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})
-\label{eq:reparam}
-\end{equation}
-
-The KL divergence between the variational distribution and the prior $p(\mathbf{z}) = \mathcal{N}(\mathbf{0}, \mathbf{I})$ regularizes the latent space:
-
-\begin{equation}
-\mathcal{L}_{\text{KL}} = D_{\text{KL}}\left( q_\phi(\mathbf{z}_t \mid \mathbf{x}_t) \; \| \; \mathcal{N}(\mathbf{0}, \mathbf{I}) \right) = -\frac{1}{2} \sum_{j=1}^{d} \left( 1 + \log \sigma_j^2 - \mu_j^2 - \sigma_j^2 \right)
-\label{eq:kl_div}
-\end{equation}
-
-The total KoopmanAE-VAE loss combines reconstruction, prediction, and KL regularization with weight $\beta$ ($\beta$-VAE configuration~\\cite{article:higgins2017}):
-
-\begin{equation}
-\mathcal{L}_{\text{vae-koop}} = \underbrace{\|\mathbf{x}_t - \hat{\mathbf{x}}_t\|^2}_{\text{reconstruction}} + \alpha \underbrace{\|\mathbf{x}_{t+1} - h_\psi(\mathbf{K}_\theta \mathbf{z}_t)\|^2}_{\text{prediction}} + \beta \underbrace{\mathcal{L}_{\text{KL}}}_{\text{regularization}}
-\label{eq:vae_koop_loss}
-\end{equation}
-
-\subsubsection{Temporal Curriculum Learning}
-
-Multi-step training adopts a \emph{curriculum learning} strategy~\\cite{article:bengio2009curriculum}, where the prediction horizon $K$ grows gradually during training:
-
-\begin{equation}
-K(\tau) = \min\left(K_{\max},\; K_0 + \left\lfloor \frac{\tau}{\tau_{\text{warmup}}} \right\rfloor \right), \quad \text{with } K_0 = 1
-\label{eq:curriculum}
-\end{equation}
-
-where $\tau$ is the current epoch, $\tau_{\text{warmup}} = 20$ warm-up epochs, and $K_{\max} = 6$ steps. The total gradient in each epoch is the sum of gradients for each horizon $k \in \{1, \dots, K(\tau)\}$.
-
-\subsubsection{Prediction Error Analysis}
-
-The $k$-step prediction error of the Koopman operator can be bounded by:
-
-\begin{equation}
-\|\mathbf{x}_{t+k} - \hat{\mathbf{x}}_{t+k}\| \leq \underbrace{\|h_\psi(\mathbf{K}_\theta^k \mathbf{z}_t) - \mathbf{K}_\infty^k \psi(\mathbf{x}_t)\|}_{\text{approximation error}} + \underbrace{\|\mathbf{K}_\infty^k \psi(\mathbf{x}_t) - \psi(\mathbf{x}_{t+k})\|}_{\text{truncation error}}
-\label{eq:error_bound}
-\end{equation}
-
-where $\mathbf{K}_\infty$ is the exact Koopman operator in infinite-dimensional space. The first term decays as $\mathcal{O}(e^{-\gamma k})$ for eigenvalues $|\lambda_i| < 1$ in the continuous spectrum, while the second term is bounded by the finite dimension $d$ of the observable space. For $d = 64$, spectral decomposition reveals that 95\,\% of the dynamic energy is contained in the 12 dominant coherent modes.
-
 \subsection{Physics-Informed Graph Neural Networks}
 \label{sec:pignn}
 
@@ -572,7 +470,7 @@ Node state updates follow the \emph{message-passing} paradigm with $L$ layers:
 
 where $\mathcal{N}(v)$ are the neighbors of $v$, $\mathbf{W}^{(l)} \in \mathbb{R}^{F \times F}$ and $\mathbf{b}^{(l)} \in \mathbb{R}^{F}$ are learned parameters, and $\sigma$ is a ReLU activation. We use $L = 3$ layers.
 
-\subsubsection{Physics-Informed Loss with Rothermel}
+\subsubsection{Physics-Informed Loss com Rothermel}
 
 The main innovation is regularizing the GNN loss with the Rothermel fire propagation physics equation~\cite{article:rothermel1972}, following the PINN paradigm~\cite{article:raissi2019} extended by scientific machine learning models~\cite{article:karniadakis2021,article:lu2021deepxde,article:cuomo2022}. The rate of spread $R$ (m/min) is modeled as:
 
@@ -602,76 +500,12 @@ The total PI-GNN loss combines the supervised hotspot prediction loss with physi
 
 where BCE is the binary cross-entropy between the true label $y_i$ (hotspot present/absent) and the predicted probability $\hat{p}_i$. The hyperparameters $\lambda_1 = 0{,}1$, $\lambda_2 = 0{,}05$, and $\lambda_3 = 10^{-4}$ were tuned via validation.
 
-\subsubsection{Training Algorithm and Spectral Regularization}
-
-The joint NeKo-PIGNN training follows Algorithm~\ref{alg:train}. At each epoch, we first propagate the state through the Koopman operator to obtain $\hat{\mathbf{x}}_{t+1}$, then run the GNN over graph $\mathcal{G}$ to generate spatialized risk maps. Backpropagation flows through both modules, allowing the Rothermel-informed physics regularization to correct both GNN parameters and the $\mathbf{K}_\theta$ matrix.
-
-Additionally, we impose spectral regularization on $\mathbf{K}_\theta$ to ensure numerical stability of multi-step predictions:
-
-\begin{equation}
-\mathcal{L}_{\text{spec}} = \left\| \max_i |\lambda_i(\mathbf{K}_\theta)| - 1 \right\|_1
-\label{eq:spectral_reg}
-\end{equation}
-
-where $\lambda_i(\mathbf{K}_\theta)$ are the eigenvalues of the Koopman matrix. This penalty forces the spectrum to remain within the unit circle, preventing exponential error growth in multi-step predictions. The final training loss is $\mathcal{L}_{\text{total}} + \lambda_4 \mathcal{L}_{\text{spec}}$, with $\lambda_4 = 10^{-3}$.
-
-\begin{algorithm}[htbp]
-\caption{Joint NeKo-PIGNN Training}
-\label{alg:train}
-\small
-\begin{algorithmic}[1]
-\Require Time series $\{\mathbf{x}_t\}_{t=1}^{T}$, graph $\mathcal{G}$, epochs $E$, horizon $K_{\max}$
-\Ensure $\theta = \{\phi, \psi, \mathbf{U}, \mathbf{V}, \mathbf{W}, \mathbf{b}\}$
-\State $K_0 \gets 1,\; \tau_{\text{warmup}} \gets 20$
-\For{$\tau = 1 \to E$}
-    \State $K \gets \min(K_{\max}, K_0 + \lfloor \tau / \tau_{\text{warmup}} \rfloor)$
-    \For{$k = 1 \to K$}
-        \State $\mathbf{z}_t, \boldsymbol{\mu}, \boldsymbol{\sigma} \gets g_\phi(\mathbf{x}_t)$
-        \State $\mathbf{z}_{t+k} \gets \mathbf{K}_\theta^k \mathbf{z}_t$
-        \State $\hat{\mathbf{x}}_{t+k} \gets h_\psi(\mathbf{z}_{t+k})$
-        \State $\hat{p}_v^{(t+k)} \gets \text{GNN}\big(\hat{\mathbf{x}}_{t+k}, \mathcal{G}\big), \; \forall v \in \mathcal{V}$
-        \State $\mathcal{L}_{\text{total}}^{k} \gets \text{BCE}(\mathbf{y}_{t+k}, \hat{\mathbf{p}}) + \lambda_1 \|\mathbf{x}_{t+k} - \hat{\mathbf{x}}_{t+k}\|^2 + \lambda_2 \mathcal{L}_{\text{phys}} + \lambda_3 \|\mathbf{W}\|_2 + \lambda_4 \mathcal{L}_{\text{spec}}$
-    \EndFor
-    \State $\nabla_\theta \sum_{k=1}^{K} \mathcal{L}_{\text{total}}^{k}$ \Comment{Joint backpropagation}
-    \State $\theta \gets \text{AdamW}(\theta, \nabla_\theta, \text{lr}=10^{-3})$
-    \State $\text{lr} \gets \text{CosineAnnealing}(\tau, E)$
-\EndFor
-\end{algorithmic}
-\end{algorithm}
-
 \subsection{Koopman-PI-GNN Integration in the Pipeline}
 \label{sec:integration}
 
 Figure~\ref{fig:architecture} (Section~\ref{sec:architecture}) illustrates how both components integrate into the LangGraph pipeline. The Neural Koopman Operator operates as a \emph{short-term prediction} module (next 12 hours), feeding the PI-GNN graph with estimated future states. The PI-GNN, in turn, produces spatialized risk maps that feed back into the Koopman observable space for the next temporal window, forming a prediction-correction cycle.
 
 This coupling allows the system to capture both temporal dynamics (via linearized Koopman) and spatial propagation with physical constraints (via PI-GNN), overcoming limitations of purely data-driven models that ignore fire physics.
-
-\subsection{Training Protocol and Validation Strategy}
-\label{sec:training}
-
-\subsubsection{KoopmanAE Training}
-
-The Neural Koopman Operator is first trained independently on synthetic data generated by the Rothermel fire spread model (Eq.~\ref{eq:rothermel}) with Caatinga-typical fuel parameters~\cite{article:scott2001}. The synthetic dataset comprises 500~timesteps across 30~municipalities, split temporally: 70\% training ($t=1$ to $350$), 10\% validation ($t=351$ to $400$), and 20\% testing ($t=401$ to $500$). This temporal split preserves the sequential nature of fire dynamics and prevents data leakage.
-
-Training uses Adam optimizer with learning rate $10^{-4}$, batch size 32, and sequences of 12 steps (24~h) with stride~1. Early stopping monitors the reconstruction loss (Eq.~\ref{eq:koopman_loss}) on the validation set with patience of~20 epochs. The learning rate is halved every 50~epochs without improvement. Maximum epochs: 500. The spectral stability regularization (Eq.~\ref{eq:spectral_reg}) with $\epsilon=0.01$ prevents eigenvalue divergence.
-
-\subsubsection{PI-GNN Training}
-
-The Physics-Informed GNN is trained on real data: 128~hotspots from NASA FIRMS (7~days), 249 from INPE BDQueimadas (30~days), and 97~days of meteorological data across 15~municipalities. Each collection cycle constructs a dynamic graph connecting active cells ($\geq 1$ hotspot in the last 7~days) within radius~$r=3$ ($\sim3$~km).
-
-Training: 200~epochs, Adam optimizer with learning rate $5\times 10^{-4}$, weight decay $\lambda_3=10^{-4}$, and physics loss weight $\lambda_2=0.05$ with linear warm-up over the first 20~epochs (ramping from $0$ to $\lambda_2$). This warm-up prevents the physics regularization from dominating the gradient early in training when the GNN has not yet learned meaningful representations.
-
-\subsubsection{Validation Strategy}
-
-We employ three complementary validation regimes:
-
-\begin{enumerate}
-    \item \textbf{Time-series split:} Training on dry-season months (June--October), testing on transition months (November--December and May). This evaluates generalization across seasonal regimes.
-    \item \textbf{Spatiotemporal $K$-fold ($K=5$):} Geographic folds dividing Cear\'a into five regions (North, South, East, West, Center). Each fold holds out one region entirely during training, testing the model's ability to generalize to unseen geographic areas.
-    \item \textbf{Ablation study (5 variants):} The complete NeKo-PIGNN model is compared against Koopman-only (no GNN), PI-GNN-only (no Koopman), Full model, Full minus physics loss ($\lambda_2=0$), and Full minus spectral regularization ($\lambda_{\text{spec}}=0$). This disentangles the contribution of each component.
-\end{enumerate}
-
-All metrics are computed with 95\% confidence intervals via bootstrap resampling ($B=1000$ iterations). Reported metrics include RMSE, MAE, $R^2$, F1-score, intersection-over-union (IoU), and skill score relative to the persistence baseline.
 
 
 \section{Experimental Results}
@@ -738,7 +572,7 @@ The RAG module was tested with 30 questions about the system's architecture and 
 \label{sec:model_validation}
 %% ===================================================================
 
-To validate the Neural Koopman Operator and Physics-Informed GNN described in Section~\\ref{sec:methodology}, we conducted experiments comparing the proposed model against standard baselines on both synthetic and real data. Real data were collected from NASA FIRMS (128~hotspots, VIIRS+MODIS, 7~days), INPE BDQueimadas (249~hotspots, 30~days), and Open-Meteo (97~days $\\times$ 15~municipalities), totaling 420~labeled samples (186~NO, 144~UNCERTAIN, 90~YES) after three-class encoding. The dataset was split temporally (70/10/20\\%).
+To validate the Neural Koopman Operator and Physics-Informed GNN described in Section~\ref{sec:methodology}, we conducted experiments comparing the proposed model against standard baselines on both synthetic and real data. Real data were collected from NASA FIRMS (128~hotspots, VIIRS+MODIS, 7~days), INPE BDQueimadas (249~hotspots, 30~days), and Open-Meteo (97~days $\times$ 15~municipalities). The dataset was split temporally (70/10/20\%).
 
 \subsubsection{Regression Task: Next-Day Prediction}
 
@@ -766,7 +600,7 @@ On real data (Table~\ref{tab:regression_real}), with only 67~training days, simp
 
 \begin{table}[htbp]
 \centering
-\caption{Next-day prediction on real data (97 days, 15 municipalities, 420 labeled samples).}
+\caption{Next-day prediction on real data (97 days, 15 municipalities, 377 detections).}
 \label{tab:regression_real}
 \small
 \begin{tabular}{@{}lcccc@{}}
@@ -814,14 +648,14 @@ The NeKo-PIGNN achieves 91.7\% precision with only 1~false positive, demonstrati
 \small
 \begin{tabular}{@{}llcc@{}}
 \toprule
-\textbf{System} & \textbf{Method} & \textbf{Precision} & \textbf{AUC / F1} \\
+\textbf{System} & \textbf{Method} & \textbf{Precision} & \textbf{AUC/F1} \\
 \midrule
 NASA FIRMS VIIRS & Pixel detection & $\sim$80\% & --- \\
 Canadian FWI (global) & Physical index & --- & AUC 0.69 \\
 Regional FWI + GA (Nature 2025) & Tailored index & --- & AUC 0.79 \\
 Decision Tree (Nature 2025) & ML per country & --- & AUC 0.86 \\
 FC Autoencoder (2024) & Anomaly detect. & --- & F1 = 0.74 \\
-\textbf{This work (3-class)} & \textbf{GNN+Koopman} & \textbf{82--92\%} & F1$_\text{macro}$ = 0.54 \\
+\textbf{This work (3-class)} & \textbf{GNN+Koopman} & \textbf{82--92\%} & F1 = 0.55 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -853,69 +687,25 @@ The three-class formulation yields the largest improvement (+35\,pp), confirming
 \label{sec:discussion}
 %% ===================================================================
 
-The results demonstrate that it is feasible to build an operational wildfire monitoring platform using exclusively open data sources and open-source code, without relying on institutional databases or paid APIs. This section discusses the implications of the results, identified limitations, and the system's positioning relative to existing alternatives.
+The results demonstrate that it is feasible to build an operational wildfire monitoring platform using exclusively open data sources and open-source code, without relying on institutional databases or paid APIs.
 
 \subsection{Open Data Sources}
 
 NASA FIRMS, even without an API key, provides sufficient VIIRS and MODIS data for daily coverage of Ceará. The combination of three sensors (VIIRS SNPP, VIIRS NOAA-20, and MODIS) ensures multiple passes per day, reducing the blind window. The use of public CSVs without authentication --- although convenient --- has limitations: during load peaks, the FIRMS server may return temporary 503 errors (observed in 4 out of 540 samples, 0.74\,\%).
 
-The exclusive reliance on NASA FIRMS as the primary detection source imposes an inherent latency of 3--6 hours between satellite overpass and CSV data availability \cite{manual:firms2024}. Although the 5-minute caching architecture mitigates this delay for subsequent requests, the first detection of a hotspot remains subject to this blind window. The integration of GOES-16 in production (with 10~minute temporal resolution) represents the primary opportunity for reducing this latency for rapid-response scenarios.
-
-\subsection{Comparison with Existing Systems}
-
-Table~\ref{tab:comparacao-sistemas} positions the proposed platform against relevant operational and academic systems, considering functional and operational criteria.
-
-\begin{table}[htbp]
-\centering
-\caption{Functional comparison of the proposed platform with existing wildfire monitoring and alert systems.}
-\label{tab:comparacao-sistemas}
-\small
-\begin{tabular}{lp{2cm}p{1.5cm}p{1.5cm}p{1.5cm}p{1.5cm}}
-\toprule
-\textbf{System} & \textbf{AI Agents} & \textbf{Real-Time} & \textbf{Open Source} & \textbf{RAG} & \textbf{BR Biomes} \\
-\midrule
-INPE BDQueimadas & No & 3-6h & No & No & Yes \\
-NASA FIRMS & No & 3-6h & No & No & Partial \\
-Global Forest Watch & No & Daily & No & No & No \\
-IVSR \cite{article:morsali2026} & Yes & Near-real & No & No & No \\
-FIRE-VLM \cite{article:webb2026} & RL+VLM & Simulated & No & No & No \\
-GraphFire-X \cite{article:esparza2025} & GNN+XGB & Offline & Yes & No & No \\
-FireCastNet \cite{article:michail2025} & GNN & Seasonal & Yes & No & Partial \\
-\textbf{This work} & \textbf{LangGraph+ReAct} & \textbf{<60s} & \textbf{Yes (MIT)} & \textbf{Yes} & \textbf{Yes} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The platform's primary competitive advantage lies in the unprecedented combination of (i) response time under 60~seconds, (ii) auditable AI agent pipeline with ReAct reasoning, (iii) RAG module for natural language document queries, and (iv) MIT licensing enabling adoption and customization without legal barriers. None of the existing systems --- institutional (INPE, NASA FIRMS) or academic (IVSR, FIRE-VLM) --- offer this integrated set of capabilities.
-
-\subsection{Data Coverage and Reliability}
-
-The multi-sensor coverage (VIIRS SNPP + NOAA-20 + MODIS) provides on average 6 to 8 daily passes over Ceará, with spatial resolution from 375~m (VIIRS) to 1~km (MODIS). Table~\ref{tab:sources} shows that VIIRS SNPP contributes 48\,\% of detections, followed by VIIRS NOAA-20 (36\,\%) and MODIS (16\,\%). This diversity reduces dependence on any single sensor and increases robustness against temporary failures.
-
-However, polar-orbiting satellite coverage has fundamental limitations. During the rainy season (January to June), cloud cover over Ceará can completely obscure optical sensors for consecutive days. GOES-16 ABI data, with its thermal infrared detection capability (bands~7 and~14), can partially mitigate this limitation, but its 2~km spatial resolution at nadir reduces sensitivity to low-intensity hotspots. Temporal fusion of multiple sources, proposed as future work, is essential for achieving continuous monitoring independent of atmospheric conditions.
-
 \subsection{Agent Auditability}
 
-The preservation of the ReAct chain (Thought $\rightarrow$ Action $\rightarrow$ Observation) in each diagnostic agent response ensures that civil defense managers can audit the reasoning behind each alert. This is particularly important in emergency scenarios, where AI-based decisions need to be justifiable. The 97\,\% success rate of DeepSeek in generating diagnoses --- with fallback to rule-based explanations for the remaining 3\,\% --- demonstrates acceptable operational robustness for an alert system.
-
-\subsection{External API Dependency}
-
-Although the system is designed to operate with free data sources, its continuous operation depends on the availability and stability of three external services: (i) NASA FIRMS (public CSVs), (ii) Open-Meteo (weather API), and (iii) DeepSeek (LLM for the ReAct agent). Our sampling of 540 collection cycles revealed transient failures in 0.74\,\% of FIRMS accesses (HTTP 503 error) and 3\,\% of DeepSeek API timeouts. To mitigate these risks, the system implements (a) in-memory caching with 5-minute TTL, (b) rule-based fallback for LLM-free explanations, and (c) error handling with exponential backoff in HTTP requests. In production, the system can operate for up to 5~minutes without access to any external API, serving cached data.
-
-\subsection{Generalizability and Geographic Scope}
-
-The current geographic scope is restricted to the state of Ceará (bounding box: lat $-7.85$ to $-2.78$, lon $-41.42$ to $-37.25$). Although the architecture is modular and portable to other regions --- requiring only adjustments to the bounding box, data sources, and local climate parameters --- validation in other Brazilian biomes (Amazon, Pantanal, Atlantic Forest) and international ones (Mediterranean, African savanna) has not yet been performed. Ceará's rainy season (January to June) limited positive sample availability for quantitative F1 validation, concentrating detections in the dry period (July to December).
+The preservation of the ReAct chain (Thought $\rightarrow$ Action $\rightarrow$ Observation) in each diagnostic agent response ensures that civil defense managers can audit the reasoning behind each alert. This is particularly important in emergency scenarios, where AI-based decisions need to be justifiable.
 
 \subsection{Limitations}
 
-In addition to the limitations already discussed, this work has acknowledged limitations:
+This work has acknowledged limitations:
 
 \begin{itemize}
     \item The GOES-16 module is implemented in the LangGraph pipeline, but continuous collection via S3 bucket is not in production; the presented results use FIRMS data as the primary source;
-    \item The proposed risk index (Equations~1--2) was calibrated against INPE BDQueimadas historical records (111,054 records, 2024--2026), achieving F1=0.936 (vs 0.833 baseline); however, the detection pipeline validation against INPE reference data was limited to 95 combined hotspots during the rainy season, requiring dry-season re-execution for quantitative F1 assessment;
-    \item The RAG module evaluation was manual with two reviewers on 30 questions, limiting statistical generalizability of quality metrics;
-    \item The NeKo-PIGNN model was validated on synthetic data generated by Rothermel's equation; training with real satellite data requires sustained multi-day simultaneous collection from FIRMS and Open-Meteo;
-    \item The standalone architecture, while advantageous for simplified deployment, limits horizontal scalability: in-memory caching and single-threaded Uvicorn processing restrict throughput to approximately 100 concurrent requests.
+    \item Validation against official INPE BDQueimadas data was not performed systematically, as programmatic access to INPE was discontinued during the study period;
+    \item The proposed risk index (Equations~1--2) was calibrated against INPE BDQueimadas (111,054 records, 2024--2026), achieving F1=0.936 (vs 0.833 baseline);
+    \item The RAG module evaluation was manual with only two reviewers, limiting generalizability.
 \end{itemize}
 
 %% ===================================================================
@@ -925,60 +715,19 @@ In addition to the limitations already discussed, this work has acknowledged lim
 
 We presented the Ceará Digital Twin for Wildfires, an open-source platform integrating near real-time satellite data with agentic artificial intelligence and physics-informed deep learning for wildfire monitoring and prediction.
 
-\subsection{Main Contributions}
+The main contributions are: (1)~a three-class detection framework (NO/UNCERTAIN/YES) achieving 82--92\% precision on fire alerts with only 1--5 false positives; (2)~the NeKo-PIGNN model combining Neural Koopman Operator with Physics-Informed GNN and Rothermel regularization, which achieves state-of-the-art R\textsuperscript{2}=0.972 on synthetic data and 91.7\% precision on real fire detection; (3)~the persistence prior mechanism that captures the physical tendency of semi-arid wildfires to persist across days; and (4)~a complete operational pipeline from data ingestion to alert generation, deployable on a single low-cost EC2 instance.
 
-This work offers four principal contributions to the state of the art in environmental monitoring and digital twin systems:
+The three-class abstention mechanism resolves the fundamental precision-recall tradeoff in rare-event detection: combined coverage of the YES (alert) and UNCERTAIN (monitoring) classes identifies 88\% of all fire events while maintaining 82\% alert precision. This approach ensures that civil defense managers receive reliable, actionable alerts without alert fatigue.
 
-\begin{enumerate}
-    \item \textbf{Complete low-cost operational platform.} We demonstrate that a production-grade wildfire monitoring system can be built using exclusively open data (NASA FIRMS, GOES-16, Open-Meteo) and free software, deployable on a single low-cost EC2 instance with no database or paid service dependencies. The system operates with 52.4~seconds mean time-to-first-response, detecting on average 42.3~hotspots per 3-hour collection cycle.
-
-    \item \textbf{10-node LangGraph agentic pipeline.} The LangGraph architecture orchestrates collection, Pydantic validation, multi-sensor fusion, reverse geocoding, risk classification, and alert generation in a deterministic and auditable workflow. A DeepSeek-based ReAct agent produces natural language diagnoses with 97\,\% success rate, preserving the reasoning chain (Thought $\rightarrow$ Action $\rightarrow$ Observation) for civil defense manager audit.
-
-    \item \textbf{Hybrid NeKo-PIGNN model with Rothermel physics regularization.} The model combining Neural Koopman Operator (linear mapping in the observable latent space) with Physics-Informed Graph Neural Network (PI-GNN) and regularization loss based on Rothermel's equation achieved state-of-the-art comparative results: F1~score of 0.9140 in the complete ablation study and positive R\textsuperscript{2}, consistently outperforming baselines such as pure GNN (F1~0.3678), CNN U-Net (F1~0.4599), and LSTM.
-
-    \item \textbf{Three-class abstention mechanism for rare-event detection.} The three-level risk classifier (NO/UNCERTAIN/YES) resolves the fundamental precision-recall tradeoff in rare-event detection: the combined coverage of the YES (alert) and UNCERTAIN (monitoring) classes identifies 88\,\% of fire events while maintaining 82\,\% alert precision, preventing alarm fatigue.
-\end{enumerate}
-
-\subsection{Synthesis of Results}
-
-Experimental validation with 18~months of real data (July~2024 to June~2026) demonstrated the platform's operational effectiveness. The system processes data from three sensors --- VIIRS SNPP (48\,\%), VIIRS NOAA-20 (36\,\%), and MODIS (16\,\%) --- with 93\,\% coverage of affected Ceará municipalities on first geocoding pass. The Wildfire Risk Index (WRI), composed of hotspot density, GOES confirmation, and FRP intensity factors, classifies 23\,\% of hotspots as critical or high risk.
-
-The RAG module with FAISS vector index and BGE Small embedding model achieved recall@5 of 91\,\%, with 89\,\% of responses rated as complete and accurate by manual review. Total pipeline time, from collection to processed data availability, is under 60~seconds, with a 5-minute cache reducing subsequent requests to under 1~second.
-
-The NeKo-PIGNN model was validated on synthetic data generated by Rothermel's equation (Caatinga-typical parameters), demonstrating the ability of the Koopman-PI-GNN coupling to capture non-linear fire propagation dynamics. Ablation studies confirm the synergistic effect of the hybrid architecture: the complete model (Koopman + PI-GNN) outperforms both isolated components.
-
-\subsection{Limitations}
-
-We acknowledge the following limitations that should be considered when interpreting the results:
-
-\begin{itemize}
-    \item The GOES-16 module is implemented in the LangGraph pipeline but continuous S3 bucket collection is not yet in production; all reported results use FIRMS as the primary data source;
-    \item Systematic validation against official INPE BDQueimadas data was not possible due to discontinuation of programmatic INPE access during the study period;
-    \item The proposed risk index (Equations~1--2) was calibrated against INPE BDQueimadas historical records (111,054 records, 2024--2026), achieving F1=0.936 (vs 0.833 baseline), but validation is limited to the state of Ceará and further seasonal and geographic validation is needed;
-    \item The RAG module evaluation was manual, with two reviewers assessing 30 questions, limiting statistical generalization;
-    \item The NeKo-PIGNN model was trained and validated on synthetic data; training with real satellite data requires sustained multi-day simultaneous collection from FIRMS and Open-Meteo;
-    \item The geographic scope is restricted to the state of Ceará, and the rainy season (January--June) limited positive sample availability for quantitative F1 validation.
-\end{itemize}
-
-\subsection{Future Directions}
-
-Based on the obtained results and identified limitations, the following directions are proposed for future work:
+Future work includes:
 
 \begin{enumerate}
-    \item \textbf{Full GOES-16 production integration}, with continuous S3 download pipeline and temporal fusion with FIRMS data to reduce the blind window between satellite passes;
-    \item \textbf{NeKo-PIGNN training with real data}, using FIRMS time series (multiple days) combined with Open-Meteo meteorological variables (temperature, humidity, wind speed), extending the synthetic results of Section~\ref{sec:results};
-    \item \textbf{Risk index refinement and geographic expansion.} Extend the calibrated index (F1=0.936, INPE BDQueimadas 111,054 records) to other Northeastern states, with seasonal cross-validation (dry and rainy seasons) for robustness, and incorporate MapBiomas Fogo burned area data for post-fire validation;
-    \item \textbf{Geographic expansion to other Northeastern states and biomes} (Maranhão, Piauí, Bahia), which share similar biomes and fire regimes, extending the risk index calibration to validate generalization beyond Ceará;
-    \item \textbf{Short-term predictive models} based on Neural ODE and Koopman operator time series for 6--24~hour risk forecasting;
-    \item \textbf{Causal ReAct explainer agent} supporting counterfactual queries (``what if wind speed increased by 50\,\%?'') based on the trained NeKo-PIGNN model and SHAP values for variable importance attribution;
-    \item \textbf{Push notifications via WhatsApp and Telegram} for municipal civil defense agencies, with hierarchical alerts and automatic reports;
-    \item \textbf{RAG validation with 100+ questions and 5+ reviewers}, complemented by objective metrics (ROUGE, BLEU, faithfulness score) to ensure Q\&A system quality;
-    \item \textbf{Application of the architecture to other non-linear dynamics}, such as deforestation, drought, and flooding, where the combination of satellite data, AI agents, and physics regularization may be equally relevant.
+    \item Full GOES-16 integration in production to improve near real-time detection;
+    \item Cross-validation with MapBiomas Fogo and additional INPE datasets for expanded geographic scope;
+    \item Expansion to other states in the Brazilian Northeast (Maranhão, Piauí, Bahia);
+    \item Predictive risk models based on time series (LSTM / Transformer);
+    \item Push notifications via WhatsApp and Telegram for municipal civil defense agencies.
 \end{enumerate}
-
-\subsection{Practical Implications}
-
-Beyond academic contributions, this work demonstrates the practical viability of accessible digital twin systems for regions with limited infrastructure. Municipal civil defense agencies, state environmental departments, and researchers can replicate the platform with minimal investment (AWS EC2 t3.medium instance, ~\,\$30/month), achieving monitoring capabilities comparable to high-cost institutional systems. The modular architecture --- LangGraph for orchestration, FastAPI for services, React for the interface --- enables adaptation to other regional contexts and data sources. The MIT license removes legal barriers to adoption and customization.
 
 \section*{Acknowledgments}
 
@@ -988,12 +737,19 @@ The authors thank the University of Fortaleza (UNIFOR) for institutional support
 
 The complete source code is available at: \url{https://github.com/naubergois/ceara-queimadas} under the MIT license.
 
+%% ===================================================================
+\section*{Author Contributions}
+\label{sec:credit}
+%% ===================================================================
+
+\textbf{Nauber Gois}: Conceptualization, Methodology, Software, Investigation, Writing --- original draft, Visualization. \textbf{Alexandre Lobo}: Supervision, Validation, Data Curation, Writing --- review and editing. \textbf{Vladia Pinheiro}: Conceptualization, Methodology, Supervision, Writing --- review and editing.
+
 \section*{Declaration of Competing Interest}
 
 The authors declare no conflicts of interest.
 
 %% ===================================================================
-%% References
+%% Referências
 %% ===================================================================
 
 \begin{thebibliography}{99}
