@@ -806,24 +806,24 @@ The NeKo-PIGNN achieves 91.7\% precision with only 1~false positive, demonstrati
 
 \subsubsection{Comparison with State of the Art}
 
-\\begin{table}[htbp]
-\\centering
-\\caption{Comparison with published wildfire detection systems.}
-\\label{tab:sota}
-\\small
-\\begin{tabular}{@{}llcc@{}}
-\\toprule
-\\textbf{System} & \\textbf{Method} & \\textbf{Precision} & \\textbf{AUC / F1} \sim\
-\\midrule
-NASA FIRMS VIIRS & Pixel detection & $\\sim$80\\% & --- \sim\
-Canadian FWI (global) & Physical index & --- & AUC 0.69 \sim\
-Regional FWI + GA (Nature 2025) & Tailored index & --- & AUC 0.79 \sim\
-Decision Tree (Nature 2025) & ML per country & --- & AUC 0.86 \sim\
-FC Autoencoder (2024) & Anomaly detect. & --- & F1 = 0.74 \sim\
-\\textbf{This work (3-class)} & \\textbf{GNN+Koopman} & \\textbf{82--92\\%} & F1$_\\text{macro}$ = 0.54 \sim\
-\\bottomrule
-\\end{tabular}
-\\end{table}
+\begin{table}[htbp]
+\centering
+\caption{Comparison with published wildfire detection systems.}
+\label{tab:sota}
+\small
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{System} & \textbf{Method} & \textbf{Precision} & \textbf{AUC / F1} \\
+\midrule
+NASA FIRMS VIIRS & Pixel detection & $\sim$80\% & --- \\
+Canadian FWI (global) & Physical index & --- & AUC 0.69 \\
+Regional FWI + GA (Nature 2025) & Tailored index & --- & AUC 0.79 \\
+Decision Tree (Nature 2025) & ML per country & --- & AUC 0.86 \\
+FC Autoencoder (2024) & Anomaly detect. & --- & F1 = 0.74 \\
+\textbf{This work (3-class)} & \textbf{GNN+Koopman} & \textbf{82--92\%} & F1$_\text{macro}$ = 0.54 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsubsection{Ablation Study}
 

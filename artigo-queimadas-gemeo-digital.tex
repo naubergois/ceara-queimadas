@@ -672,6 +672,33 @@ A Figura~\ref{fig:architecture} (Seção~\ref{sec:architecture}) ilustra como am
 
 Este acoplamento permite que o sistema capture tanto a dinâmica temporal (via Koopman linearizado) quanto a propagação espacial com restrições físicas (via PI-GNN), superando limitações de modelos puramente baseados em dados que ignoram a física do fogo.
 
+\subsection{Protocolo de Treino e Estratégia de Validação}
+\label{sec:training}
+
+\subsubsection{Treino do KoopmanAE}
+
+O Neural Koopman Operator é primeiro treinado independentemente em dados sintéticos gerados pelo modelo de propagação de Rothermel (Eq.~\ref{eq:rothermel}) com parâmetros típicos de Caatinga~\cite{article:scott2001}. O conjunto sintético compreende 500~timesteps em 30~municípios, divididos temporalmente: 70\% treino ($t=1$ a $350$), 10\% validação ($t=351$ a $400$) e 20\% teste ($t=401$ a $500$). Esta divisão preserva a natureza sequencial da dinâmica do fogo e previne vazamento de dados.
+
+O treino utiliza Adam com taxa de aprendizado $10^{-4}$, batch size 32 e sequências de 12 passos (24~h) com stride~1. Early stopping monitora a perda de reconstrução (Eq.~\ref{eq:koopman_loss}) na validação com paciência de~20 épocas. A taxa de aprendizado é reduzida à metade a cada 50 épocas sem melhora. Épocas máximas: 500. A regularização de estabilidade espectral (Eq.~\ref{eq:spectral_reg}) com $\epsilon=0,01$ previne divergência de autovalores.
+
+\subsubsection{Treino do PI-GNN}
+
+A Physics-Informed GNN é treinada em dados reais: 128 focos do NASA FIRMS (7~dias), 249 do INPE BDQueimadas (30~dias) e 97~dias de dados meteorológicos em 15~municípios. Cada ciclo de coleta constrói um grafo dinâmico conectando células ativas ($\geq 1$ foco nos últimos 7~dias) com raio~$r=3$ ($\sim3$~km).
+
+Treino: 200~épocas, Adam com taxa de aprendizado $5\times 10^{-4}$, weight decay $\lambda_3=10^{-4}$, e peso da perda física $\lambda_2=0,05$ com warm-up linear nas primeiras 20 épocas (rampando de $0$ a $\lambda_2$). Este warm-up impede que a regularização física domine o gradiente no início do treino, quando a GNN ainda não aprendeu representações significativas.
+
+\subsubsection{Estratégia de Validação}
+
+Empregamos três regimes de validação complementares:
+
+\begin{enumerate}
+    \item \textbf{Split temporal:} Treino em meses secos (junho--outubro), teste em meses de transição (novembro--dezembro e maio). Isto avalia a generalização entre regimes sazonais.
+    \item \textbf{K-fold espaço-temporal ($K=5$):} Folds geográficos dividindo o Ceará em cinco regiões (Norte, Sul, Leste, Oeste, Centro). Cada fold retém uma região inteira durante o treino, testando a capacidade do modelo de generalizar para áreas geográficas não vistas.
+    \item \textbf{Ablation study (5 variantes):} O modelo NeKo-PIGNN completo é comparado contra Koopman-only (sem GNN), PI-GNN-only (sem Koopman), Full model, Full menos perda física ($\lambda_2=0$), e Full menos regularização espectral ($\lambda_{\text{spec}}=0$). Isto desentrelaça a contribuição de cada componente.
+\end{enumerate}
+
+Todas as métricas são computadas com intervalos de confiança de 95\% via bootstrap ($B=1000$ iterações). As métricas reportadas incluem RMSE, MAE, $R^2$, F1-score, interseção-sobre-união (IoU) e skill score relativo ao baseline de persistência.
+
 
 \section{Experimental Results}
 \label{sec:results}
