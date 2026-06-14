@@ -431,108 +431,11 @@ O custo mensal estimado da infraestrutura é de aproximadamente USD~20 (instânc
 
 
 %% ===================================================================
-\section{Methodology: Neural Koopman Operator and Physics-Informed GNN}
-\label{sec:methodology}
+%%  Metodologia Matemática — INOV-007 (TASK-026)
+%%  Seção completa com 19 equações + 1 algoritmo de treinamento
+%%  Incluída como artefato standalone em figures/metodologia-matematica.tex
 %% ===================================================================
-
-O núcleo metodológico deste trabalho combina dois paradigmas complementares: o \emph{Neural Koopman Operator} para modelagem da dinâmica espaço-temporal dos focos de queimada e \emph{Physics-Informed Graph Neural Networks} (PI-GNN) para predição de risco com regularização física baseada no modelo de Rothermel~\cite{article:rothermel1972}. Esta seção descreve formalmente ambos os componentes.
-
-\subsection{Neural Koopman Operator for Wildfire Dynamics}
-\label{sec:koopman}
-
-A teoria de Koopman~\cite{article:koopman1931,article:rowley2009,article:mezic2013} estabelece que sistemas dinâmicos não-lineares podem ser representados por operadores lineares em um espaço de observáveis de dimensão infinita. Seja $\mathbf{x}_t \in \mathbb{R}^n$ o estado do sistema no instante $t$ --- composto por variáveis como temperatura superficial, índice de vegetação (NDVI), focos ativos, umidade do solo e velocidade do vento em uma grade geoespacial. O operador de Koopman $\mathcal{K}$ age sobre funções observáveis $\psi: \mathbb{R}^n \to \mathbb{R}$ tal que:
-
-\begin{equation}
-(\mathcal{K} \psi)(\mathbf{x}_t) = \psi(\mathbf{f}(\mathbf{x}_t)) = \psi(\mathbf{x}_{t+1})
-\label{eq:koopman_def}
-\end{equation}
-
-onde $\mathbf{f}$ é a dinâmica não-linear subjacente do sistema. Em um espaço de observáveis de dimensão finita $d$, aproximamos $\mathcal{K}$ por uma matriz $\mathbf{K} \in \mathbb{R}^{d \times d}$:
-
-\begin{equation}
-\psi(\mathbf{x}_{t+1}) \approx \mathbf{K}^\top \psi(\mathbf{x}_t)
-\label{eq:koopman_lin}
-\end{equation}
-
-Implementamos este operador como uma rede neural codificadora-decodificadora (KoopmanAE)~\cite{article:lusch2018,article:takeishi2017}. O codificador $g_\phi: \mathbb{R}^n \to \mathbb{R}^d$ projeta o estado observado em observáveis latentes $\mathbf{z}_t = g_\phi(\mathbf{x}_t)$. A evolução linear no espaço latente é:
-
-\begin{equation}
-\mathbf{z}_{t+1} = \mathbf{K}_\theta \, \mathbf{z}_t
-\label{eq:latent_evolution}
-\end{equation}
-
-onde $\mathbf{K}_\theta \in \mathbb{R}^{d \times d}$ é a matriz aprendida. O decodificador $h_\psi: \mathbb{R}^d \to \mathbb{R}^n$ reconstrói o estado a partir dos observáveis: $\hat{\mathbf{x}}_t = h_\psi(\mathbf{z}_t)$. A função de perda do KoopmanAE combina três termos:
-
-\begin{align}
-\mathcal{L}_{\text{koop}} &= \underbrace{\|\mathbf{x}_t - h_\psi(g_\phi(\mathbf{x}_t))\|^2}_{\text{reconstrução}} \nonumber \\
-&\quad + \underbrace{\|\mathbf{x}_{t+1} - h_\psi(\mathbf{K}_\theta \, g_\phi(\mathbf{x}_t))\|^2}_{\text{predição de um passo}} \nonumber \\
-&\quad + \underbrace{\sum_{k=1}^{K} \|\mathbf{x}_{t+k} - h_\psi(\mathbf{K}_\theta^k \, g_\phi(\mathbf{x}_t))\|^2}_{\text{predição multi-passo}}
-\label{eq:koopman_loss}
-\end{align}
-
-A dimensionalidade $d$ do espaço de observáveis é um hiperparâmetro crítico. Utilizamos $d = 64$ com validação cruzada temporal, balanceando a fidelidade da reconstrução (erro médio $< 0{,}05$) e a estabilidade da predição em janelas de até 6 passos (12 horas com intervalos de 2 horas).
-
-\subsection{Physics-Informed Graph Neural Networks}
-\label{sec:pignn}
-
-Para modelar a propagação espacial do risco de queimada, construímos um grafo $\mathcal{G} = (\mathcal{V}, \mathcal{E}, \mathbf{A})$ onde os vértices $\mathcal{V}$ representam células de grade de $1\ \text{km}^2$ sobre o território do Ceará (aproximadamente $149.000$ células), e as arestas $\mathcal{E}$ conectam células vizinhas com pesos baseados em distância geodésica, tipo de vegetação e direção predominante do vento. A matriz de adjacência $\mathbf{A} \in \mathbb{R}^{|\mathcal{V}| \times |\mathcal{V}|}$ é esparsa com raio de vizinhança $r = 3$ células.
-
-O estado de cada nó $v \in \mathcal{V}$ no instante $t$ é um vetor de atributos $\mathbf{h}_v^{(t)} \in \mathbb{R}^{F}$ contendo:
-\begin{itemize}
-    \item Temperatura superficial (GOES-16 ABI banda 14, 11.2 $\mu$m);
-    \item Reflectância (VIIRS bandas I1--I5);
-    \item NDVI calculado a partir de MODIS;
-    \item Umidade relativa e velocidade do vento (Open-Meteo);
-    \item Histórico de focos nos últimos 7 dias;
-    \item Tipo de vegetação (MapBiomas);
-    \item Inclinação e aspecto do terreno (SRTM 30m).
-\end{itemize}
-
-A atualização dos estados dos nós segue o paradigma \emph{message-passing} com $L$ camadas:
-
-\begin{align}
-\mathbf{m}_v^{(l)} &= \sum_{u \in \mathcal{N}(v)} \mathbf{W}^{(l)} \, \mathbf{h}_u^{(l-1)} \cdot \mathbf{A}_{vu} \label{eq:message} \\
-\mathbf{h}_v^{(l)} &= \sigma\left( \mathbf{m}_v^{(l)} + \mathbf{b}^{(l)} \right) \label{eq:update}
-\end{align}
-
-onde $\mathcal{N}(v)$ são os vizinhos de $v$, $\mathbf{W}^{(l)} \in \mathbb{R}^{F \times F}$ e $\mathbf{b}^{(l)} \in \mathbb{R}^{F}$ são parâmetros aprendidos, e $\sigma$ é uma ativação ReLU. Utilizamos $L = 3$ camadas.
-
-\subsubsection{Physics-Informed Loss com Rothermel}
-
-A inovação principal é a regularização da perda da GNN com a equação física de propagação de fogo de Rothermel~\cite{article:rothermel1972}, seguindo o paradigma PINN~\cite{article:raissi2019} estendido por modelos de aprendizado de máquina científico~\cite{article:karniadakis2021,article:lu2021deepxde,article:cuomo2022}. A velocidade de propagação $R$ (m/min) é modelada como:
-
-\begin{equation}
-R = \frac{I_R \, \xi \, (1 + \phi_w + \phi_s)}{\rho_b \, \epsilon \, Q_{ig}}
-\label{eq:rothermel}
-\end{equation}
-
-onde $I_R$ é a intensidade da reação (kJ/m²·min), $\xi$ é o coeficiente de propagação, $\phi_w$ e $\phi_s$ são coeficientes de vento e inclinação, $\rho_b$ é a densidade aparente do combustível, $\epsilon$ é a fração efetiva de aquecimento, e $Q_{ig}$ é o calor de pré-ignição (kJ/kg).
-
-Definimos a \emph{perda física} como a discrepância entre o gradiente de risco predito pela GNN $\nabla \hat{p}_v^{(t)}$ e a direção de propagação esperada $R \cdot \mathbf{d}_v^{(t)}$, onde $\mathbf{d}_v^{(t)}$ é o vetor unitário na direção do vento no nó $v$:
-
-\begin{equation}
-\mathcal{L}_{\text{phys}} = \frac{1}{|\mathcal{V}|} \sum_{v \in \mathcal{V}} \left\| \nabla \hat{p}_v^{(t)} - R_v^{(t)} \cdot \mathbf{d}_v^{(t)} \right\|^2
-\label{eq:physics_loss}
-\end{equation}
-
-A perda total da PI-GNN combina a perda supervisionada de predição de focos com a regularização física:
-
-\begin{align}
-\mathcal{L}_{\text{total}} &= \underbrace{\frac{1}{N} \sum_{i=1}^{N} \text{BCE}(y_i, \hat{p}_i)}_{\text{classificação}} \nonumber \\
-&\quad + \lambda_1 \underbrace{\frac{1}{N} \sum_{i=1}^{N} \| \mathbf{h}_i - \hat{\mathbf{h}}_i \|^2}_{\text{auto-codificação}} \nonumber \\
-&\quad + \lambda_2 \underbrace{\mathcal{L}_{\text{phys}}}_{\text{regularização física}} \nonumber \\
-&\quad + \lambda_3 \underbrace{\|\mathbf{W}\|_2}_{\text{regularização L2}}
-\label{eq:pignn_loss}
-\end{align}
-
-onde BCE é a entropia cruzada binária entre o rótulo real $y_i$ (foco presente/ausente) e a probabilidade predita $\hat{p}_i$. Os hiperparâmetros $\lambda_1 = 0{,}1$, $\lambda_2 = 0{,}05$ e $\lambda_3 = 10^{-4}$ foram ajustados por validação.
-
-\subsection{Koopman-PI-GNN Integration in the Pipeline}
-\label{sec:integration}
-
-A Figura~\ref{fig:architecture} (Seção~\ref{sec:architecture}) ilustra como ambos os componentes se integram ao pipeline LangGraph. O Neural Koopman Operator opera como um módulo de \emph{previsão de curto prazo} (próximas 12 horas), alimentando o grafo da PI-GNN com estados futuros estimados. A PI-GNN, por sua vez, produz mapas de risco espacializados que retroalimentam o espaço de observáveis do Koopman para a próxima janela temporal, formando um ciclo de previsão-correção.
-
-Este acoplamento permite que o sistema capture tanto a dinâmica temporal (via Koopman linearizado) quanto a propagação espacial com restrições físicas (via PI-GNN), superando limitações de modelos puramente baseados em dados que ignoram a física do fogo.
+\input{figures/metodologia-matematica.tex}
 
 
 \section{Experimental Results}
