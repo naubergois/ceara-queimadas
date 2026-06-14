@@ -436,7 +436,42 @@ O custo mensal estimado da infraestrutura é de aproximadamente USD~20 (instânc
 \label{sec:methodology}
 %% ===================================================================
 
-O núcleo metodológico deste trabalho combina dois paradigmas complementares: o \emph{Neural Koopman Operator} para modelagem da dinâmica espaço-temporal dos focos de queimada e \emph{Physics-Informed Graph Neural Networks} (PI-GNN) para predição de risco com regularização física baseada no modelo de Rothermel~\cite{article:rothermel1972}. Esta seção descreve formalmente ambos os componentes.
+O núcleo metodológico deste trabalho combina dois paradigmas complementares: o \emph{Neural Koopman Operator} para modelagem da dinâmica espaço-temporal dos focos de queimada e \emph{Physics-Informed Graph Neural Networks} (PI-GNN) para predição de risco com regularização física baseada no modelo de Rothermel~\cite{article:rothermel1972}. Esta seção descreve formalmente ambos os componentes, começando pelas fontes de dados e pré-processamento.
+
+\subsection{Fontes de Dados e Pré-processamento}
+\label{sec:dataprep}
+
+A metodologia proposta utiliza quatro fontes de dados primárias. A Tabela~\ref{tab:datasources} resume suas características.
+
+\begin{table}[htbp]
+\centering
+\caption{Fontes de dados utilizadas para treino e inferência do modelo.}
+\label{tab:datasources}
+\small
+\begin{tabular}{@{}lllll@{}}
+\toprule
+\textbf{Sensor} & \textbf{Produto} & \textbf{Res. Espacial} & \textbf{Res. Temporal} & \textbf{Cobertura} \\
+\midrule
+VIIRS (SNPP/NOAA-20) & NASA FIRMS & 375~m & 12~h (2 satélites) & Bounding box CE \\
+MODIS (Terra/Aqua) & NASA FIRMS & 1~km & 12~h & Bounding box CE \\
+GOES-16 & ABI-L2-FDCF & 2~km & 10~min (full disk) & Bounding box CE \\
+Open-Meteo & ERA5 reanalysis & 27~km & 1~h & 15 municípios \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O pipeline de pré-processamento consiste das seguintes etapas:
+
+\begin{enumerate}
+    \item \textbf{Aquisição automatizada.} Um cron scheduler baixa arquivos CSV do NASA FIRMS (VIIRS + MODIS) a cada 12~h, produtos GOES-16 ABI-L2-FDCF do bucket público AWS S3 \texttt{noaa-goes16} a cada 10 minutos, e dados de reanálise ERA5 do Open-Meteo a cada hora para 15 municípios monitorados.
+    \item \textbf{Filtragem geoespacial.} Todas as detecções são filtradas para a bounding box do Ceará (lat: $-7,85^\circ$ a $-2,78^\circ$; lon: $-41,42^\circ$ a $-37,25^\circ$), descartando registros fora da região.
+    \item \textbf{Limiares de qualidade.} Pixels GOES-16 com DQF (Data Quality Flag) $< 85\%$ são rejeitados. Focos VIIRS com FRP $< 1$~MW são descartados como ruído. Bandeiras de confiança MODIS abaixo de $80\%$ são excluídas.
+    \item \textbf{Gradeamento.} Todas as detecções remanescentes são projetadas em uma grade Mercator uniforme de $1$~km$^2$ cobrindo todo o estado do Ceará ($\sim$149.000 células).
+    \item \textbf{Fusão temporal.} Uma janela deslizante de 2~h consolida detecções multi-sensor, evitando dupla contagem do mesmo evento capturado por diferentes passagens de satélite.
+    \item \textbf{Feature engineering.} Para cada célula $v$ no tempo $t$, computamos: temperatura de brilho superficial (GOES-16 banda~14, 11,2~$\mu$m), reflectâncias VIIRS (bandas I1--I5), NDVI (MODIS), contagem de focos e derivada temporal nos últimos 7~dias, umidade relativa e velocidade do vento (Open-Meteo), classe de vegetação (MapBiomas), declividade e aspecto do terreno (SRTM~30~m), e precipitação acumulada em 3, 7 e 30~dias.
+\end{enumerate}
+
+O vetor de features resultante $\mathbf{x}_t^{(v)} \in \mathbb{R}^{142}$ compreende 7 variáveis $\times$ 20 células de grade amostradas dentro de cada campo receptivo de $3\times3$~km, com valores faltantes imputados por interpolação do vizinho mais próximo dentro de um raio de 5~km.
 
 \subsection{Neural Koopman Operator for Wildfire Dynamics}
 \label{sec:koopman}
