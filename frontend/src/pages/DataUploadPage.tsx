@@ -190,12 +190,12 @@ export default function DataUploadPage() {
           const detRes = await fetch(`${API}/deteccao-3class`)
           if (detRes.ok) {
             const detData = await detRes.json()
-            const detArr: Array<{ municipio: string; classe: string; p_sim: number }> = detData.municipios || []; const detMap = new Map<string, { classe: string; p_sim: number }>(detArr.map(m => [m.municipio, { classe: m.classe, p_sim: m.p_sim }]));
-            const detMap = new Map((detData.municipios || []).map((m: { municipio: string; classe: string; p_sim: number }) => [m.municipio, m]))
+            const detArr: Array<{ municipio: string; classe: string; p_sim: number }> = detData.municipios || []
+            const detMap = new Map<string, { classe: string; p_sim: number }>(detArr.map(m => [m.municipio, { classe: m.classe, p_sim: m.p_sim }]))
             for (const r of riscos) {
               const det = detMap.get(r.municipio)
               if (det) {
-                r.classe_deteccao = det.classe
+                r.classe_deteccao = det.classe as 'SIM' | 'INCERTEZA' | 'NAO'
                 r.probabilidade_sim = Math.round((det.p_sim || 0) * 100)
               }
             }
