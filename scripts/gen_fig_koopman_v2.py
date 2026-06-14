@@ -21,14 +21,14 @@ fig.patch.set_facecolor(C_BG); ax.set_facecolor(C_BG)
 
 fig.text(0.5, 0.97, "Figura 1 — Arquitetura NeKo-PIGNN: Neural Koopman Operator\nacoplado a Physics-Informed Graph Neural Network",
          ha='center', fontsize=16, fontweight='bold', color='white', transform=fig.transFigure)
-fig.text(0.5, 0.945, "g(z\u209c\u208a\u2081) = K\u00b7g(z\u209c)  \u2022  \u2202u/\u2202t = D\u2207\u00b2u + R(\u03b8,w,u)  \u2022  \u2112 = \u2112_data + \u03bb\u00b7\u2112_PDE(Rothermel)",
+fig.text(0.5, 0.945, "g(z\u209c\u208a\u2081) = K\u00b7g(z\u209c)  \u2022  \u2202u/\u2202t = D\u2207\u00b2u + R(\u03b8,w,u)  \u2022  L = L_data + \u03bb\u00b7L_PDE(Rothermel)",
          ha='center', fontsize=10, color=C_G, family='sans-serif', transform=fig.transFigure)
 
 def dbox(ax, x, y, w, h, cl, title, lines, fst=13, fsl=8):
     ax.add_patch(FancyBboxPatch((x,y), w, h, boxstyle="round,pad=0.15", facecolor=cl, edgecolor='white', linewidth=1.5, alpha=0.9))
     ax.text(x+w/2, y+h-0.35, title, ha='center', va='top', fontsize=fst, fontweight='bold', color=C_T)
     for i, l in enumerate(lines):
-        ax.text(x+w/2, y+h-0.75-i*0.30, l, ha='center', va='top', fontsize=fsl, color=C_T2, family='monospace')
+        ax.text(x+w/2, y+h-0.75-i*0.30, l, ha='center', va='top', fontsize=fsl, color=C_T2, family='sans-serif')
 
 def darr(ax, x1, y1, x2, y2, label='', cl='#8899aa', lw=2.0):
     ax.annotate('', xy=(x2,y2), xytext=(x1,y1),
@@ -79,9 +79,9 @@ dbox(ax, 13.0, 2.2, 3.5, 2.6, C_GR, "\u2464 PI-GNN (Physics-Informed)",
       "Sa\u00edda: u\u0302\u209c\u208a\u2081 (risco)"])
 darr(ax, 14.75, 2.2, 14.75, 1.0, "u\u0302, \u0177", cl=C_P)
 
-dbox(ax, 13.0, 0.1, 3.5, 1.3, C_P, "\u2465 Fun\u00e7\u00e3o de Perda Total \u2112",
-     ["\u2112 = \u2112_recon + \u2112_pred + \u2112_GNN + \u2112_PDE",
-      "\u2112_PDE = \u2225\u2202u/\u2202t \u2212 D\u2207\u00b2u \u2212 R(\u03b8,w,u)\u2225\u00b2"])
+dbox(ax, 13.0, 0.1, 3.5, 1.3, C_P, "\u2465 Fun\u00e7\u00e3o de Perda Total L",
+     ["L = L_recon + L_pred + L_GNN + L_PDE",
+      "L_PDE = ||\u2202u/\u2202t - D\u2207\u00b2u - R(\u03b8,w,u)||\u00b2"])
 
 bg = FancyBboxPatch((12.5, 0.0), 4.5, 8.8, boxstyle="round,pad=0.1",
                      facecolor=C_G, edgecolor='none', alpha=0.06)

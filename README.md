@@ -9,6 +9,10 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react)](https://react.dev)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16+PostGIS-336791?logo=postgresql)](https://postgis.net)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.5-EE4C2C?logo=pytorch)](https://pytorch.org)
+[![Koopman](https://img.shields.io/badge/Koopman-Neural-8B5CF6)](https://arxiv.org/abs/2305.18861)
+[![GNN](https://img.shields.io/badge/PI--GNN-Physics--Informed-10B981)](https://arxiv.org/abs/2106.09494)
+[![arXiv](https://img.shields.io/badge/arXiv-2604.05018-B31B1B)](https://arxiv.org/abs/2604.05018)
 
 ---
 
@@ -534,3 +538,14 @@ MIT © 2025 — Desenvolvido para monitoramento público de queimadas no Estado 
 - [FUNCEME](https://www.funceme.br) — dados climáticos do Ceará
 - [MapBiomas](https://mapbiomas.org) — histórico de uso e cobertura
 - [LangChain](https://langchain.com) e [LangGraph](https://langchain-ai.github.io/langgraph) — framework de agentes
+
+## 📚 Documentação Adicional
+
+| Documento | Descrição |
+|-----------|-----------|
+| [Guia de Instalação](docs/GUIA_DE_INSTALACAO.md) | Instalação do zero (Docker, manual, AWS) |
+| [Guia de Treinamento](docs/GUIA_TREINAMENTO.md) | Treinamento para operadores, analistas e devs |
+| [Changelog](docs/CHANGELOG.md) | Histórico de versões e evolução |
+| [Explicação do Sistema de Detecção](docs/EXPLICACAO_SISTEMA_DETECCAO.md) | Como funciona a detecção 3-classes |
+| [Documentação de Pesquisa](docs/DOCUMENTACAO_PESQUISA_E_TESTES.md) | Testes e resultados experimentais |
+| [Evolução da Pesquisa](docs/EVOLUCAO_PESQUISA.md) | Cronograma e evolução do projeto |

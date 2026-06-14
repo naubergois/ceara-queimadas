@@ -306,7 +306,7 @@ loss_items = [
     (0.8,   y6 + h6 - 1.75, r"\mathcal{L}_{\text{pred}} = \|\mathbf{x}_{t+1} - \hat{\mathbf{x}}_{t+1}\|^2", "Prediction error"),
     (6.2,   y6 + h6 - 0.85, r"\mathcal{L}_{\text{GNN}} = \|\mathbf{z}^{\text{GNN}}_{t+1} - \mathbf{z}^{\text{Koop}}_{t+1}\|^2", "Latent consistency"),
     (6.2,   y6 + h6 - 1.30, r"\mathcal{L}_{\text{PDE}} = \|\frac{\partial u}{\partial t} - D\nabla^2 u - R(\theta, u, w)\|^2", "Physics (Rothermel)"),
-    (6.2,   y6 + h6 - 1.75, r"\mathcal{L}_{\text{bnd}} = \text{BC}(u|_{\partial\Omega}) + \text{IC}(u|_{t=0})", "Boundary/Initial cond."),
+    (6.2,   y6 + h6 - 1.75, r"\mathcal{L}_{bnd} = \mathrm{BC}(u|_{\partial\Omega}) + \mathrm{IC}(u|_{t=0})", "Boundary/Initial cond."),
 ]
 
 for lx, ly, eq, label in loss_items:
@@ -321,7 +321,7 @@ total_eq_y = y6 + 0.25
 round_box(ax, total_eq_x - 1.5, total_eq_y, 5.0, 0.60, C_HIGHLIGHT,
           edgecolor=C_LOSS, lw=1.8, alpha=0.9)
 ax.text(total_eq_x + 1.0, total_eq_y + 0.30,
-        r"$\mathcal{L}_{\text{total}} = \underbrace{\mathcal{L}_{\text{recon}} + \beta\mathcal{L}_{\text{KL}} + \alpha\mathcal{L}_{\text{pred}}}_{\text{Koopman}} + \underbrace{\lambda_{\text{GNN}}\mathcal{L}_{\text{GNN}} + \lambda_{\text{PDE}}\mathcal{L}_{\text{PDE}}}_{\text{PI-GNN}}$",
+        r"$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{recon}} + \beta\mathcal{L}_{\text{KL}} + \alpha\mathcal{L}_{\text{pred}} + \lambda_{\text{GNN}}\mathcal{L}_{\text{GNN}} + \lambda_{\text{PDE}}\mathcal{L}_{\text{PDE}}$",
         ha='center', va='center', fontsize=12, color=C_LOSS,
         fontweight='bold', family='serif')
 
