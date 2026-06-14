@@ -570,6 +570,43 @@ The total PI-GNN loss combines the supervised hotspot prediction loss with physi
 
 where BCE is the binary cross-entropy between the true label $y_i$ (hotspot present/absent) and the predicted probability $\hat{p}_i$. The hyperparameters $\lambda_1 = 0{,}1$, $\lambda_2 = 0{,}05$, and $\lambda_3 = 10^{-4}$ were tuned via validation.
 
+\subsubsection{Training Algorithm and Spectral Regularization}
+
+The joint NeKo-PIGNN training follows Algorithm~\ref{alg:train}. At each epoch, we first propagate the state through the Koopman operator to obtain $\hat{\mathbf{x}}_{t+1}$, then run the GNN over graph $\mathcal{G}$ to generate spatialized risk maps. Backpropagation flows through both modules, allowing the Rothermel-informed physics regularization to correct both GNN parameters and the $\mathbf{K}_\theta$ matrix.
+
+Additionally, we impose spectral regularization on $\mathbf{K}_\theta$ to ensure numerical stability of multi-step predictions:
+
+\begin{equation}
+\mathcal{L}_{\text{spec}} = \left\| \max_i |\lambda_i(\mathbf{K}_\theta)| - 1 \right\|_1
+\label{eq:spectral_reg}
+\end{equation}
+
+where $\lambda_i(\mathbf{K}_\theta)$ are the eigenvalues of the Koopman matrix. This penalty forces the spectrum to remain within the unit circle, preventing exponential error growth in multi-step predictions. The final training loss is $\mathcal{L}_{\text{total}} + \lambda_4 \mathcal{L}_{\text{spec}}$, with $\lambda_4 = 10^{-3}$.
+
+\begin{algorithm}[htbp]
+\caption{Joint NeKo-PIGNN Training}
+\label{alg:train}
+\small
+\begin{algorithmic}[1]
+\Require Time series $\{\mathbf{x}_t\}_{t=1}^{T}$, graph $\mathcal{G}$, epochs $E$, horizon $K_{\max}$
+\Ensure $\theta = \{\phi, \psi, \mathbf{U}, \mathbf{V}, \mathbf{W}, \mathbf{b}\}$
+\State $K_0 \gets 1,\; \tau_{\text{warmup}} \gets 20$
+\For{$\tau = 1 \to E$}
+    \State $K \gets \min(K_{\max}, K_0 + \lfloor \tau / \tau_{\text{warmup}} \rfloor)$
+    \For{$k = 1 \to K$}
+        \State $\mathbf{z}_t, \boldsymbol{\mu}, \boldsymbol{\sigma} \gets g_\phi(\mathbf{x}_t)$
+        \State $\mathbf{z}_{t+k} \gets \mathbf{K}_\theta^k \mathbf{z}_t$
+        \State $\hat{\mathbf{x}}_{t+k} \gets h_\psi(\mathbf{z}_{t+k})$
+        \State $\hat{p}_v^{(t+k)} \gets \text{GNN}\big(\hat{\mathbf{x}}_{t+k}, \mathcal{G}\big), \; \forall v \in \mathcal{V}$
+        \State $\mathcal{L}_{\text{total}}^{k} \gets \text{BCE}(\mathbf{y}_{t+k}, \hat{\mathbf{p}}) + \lambda_1 \|\mathbf{x}_{t+k} - \hat{\mathbf{x}}_{t+k}\|^2 + \lambda_2 \mathcal{L}_{\text{phys}} + \lambda_3 \|\mathbf{W}\|_2 + \lambda_4 \mathcal{L}_{\text{spec}}$
+    \EndFor
+    \State $\nabla_\theta \sum_{k=1}^{K} \mathcal{L}_{\text{total}}^{k}$ \Comment{Joint backpropagation}
+    \State $\theta \gets \text{AdamW}(\theta, \nabla_\theta, \text{lr}=10^{-3})$
+    \State $\text{lr} \gets \text{CosineAnnealing}(\tau, E)$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{Koopman-PI-GNN Integration in the Pipeline}
 \label{sec:integration}
 
