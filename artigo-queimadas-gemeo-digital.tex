@@ -399,15 +399,11 @@ A perda física $\mathcal{L}_{\text{phys}}$ é computada offline usando os parâ
 \subsection{LangGraph Integration}
 \label{sec:langgraph-impl}
 
-O pipeline LangGraph incorpora os modelos Koopman e PI-GNN como nós especializados~\cite{article:xi2023,article:wang2024survey,article:park2023}:
+O pipeline LangGraph coordena dez nós seqüenciais e paralelos~\cite{article:xi2023,article:wang2024survey,article:park2023}, conforme descrito na Seção~\ref{sec:langgraph} e ilustrado na Figura~\ref{fig:langgraph}. O grafo inicia com a coleta de dados (INPE, NASA FIRMS, GOES-16, Open-Meteo), validação Pydantic e ramificação paralela para os três agentes de análise (geoespacial, GOES-16 e climático). As evidências fundidas alimentam o classificador de risco, que por sua vez aciona o agente ReAct de diagnóstico, a geração de alertas e o boletim consolidado.
 
-\begin{itemize}
-    \item \texttt{no\_koopman\_prever}: executa o KoopmanAE para projetar o estado das próximas 12 horas, alimentando nós de grade sem detecção recente com valores estimados;
-    \item \texttt{no\_pignn\_risco}: aplica a PI-GNN sobre o grafo completo (nós observados + preditos), gerando mapa de risco probabilístico;
-    \item \texttt{no\_fundir\_evidencias}: combina as saídas da PI-GNN com as evidências GOES-16 e climáticas (Seção~\ref{sec:risk}) para produzir a classificação final de risco municipal.
-\end{itemize}
+Os modelos NeKo-PIGNN (Seções~\ref{sec:koopman-impl} e~\ref{sec:pignn-impl}) são acionados como serviços auxiliares dentro dos nós de análise: o agente climático e o agente GOES-16 utilizam o KoopmanAE para projetar tendências de curto prazo, enquanto o classificador de risco consulta o mapa de risco probabilístico gerado pela PI-GNN como insumo adicional ao cálculo do índice. Esta arquitetura mantém o grafo em 10 nós, sem acoplamento direto entre os modelos preditivos e a orquestração LangGraph, permitindo que Koopman e PI-GNN evoluam independentemente do pipeline de agentes.
 
-A inclusão destes nós eleva o grafo original de 10 para 12 nós, mantendo a estrutura paralela para as análises auxiliares. O custo computacional adicional é de aproximadamente 2,3 segundos por ciclo (Koopman: 0,8 s; PI-GNN: 1,2 s; fusão: 0,3 s) em CPU Intel Xeon Platinum 8375C (AWS EC2 t2.medium).
+O custo computacional da inferência dos modelos é de aproximadamente 2,3 segundos por ciclo (KoopmanAE: 0,8 s; PI-GNN: 1,2 s; fusão: 0,3 s) em CPU Intel Xeon Platinum 8375C (AWS EC2 t2.medium).
 
 
 %% ===================================================================
