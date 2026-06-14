@@ -218,24 +218,35 @@ class FireMessagePassing(nn.Module):
     - Distância geográfica (arestas)
     - Direção do vento (influência direcional)
     - Carga de combustível (intensidade)
+
+    O edge_dim é inferido da primeira chamada forward, permitindo
+    uso com edge_attr de qualquer dimensão sem reconfiguração.
     """
 
     def __init__(self, hidden_dim: int = 64):
         super().__init__()
+        self.hidden_dim = hidden_dim
+        self._msg_dim = None
+        self._built = False
+
+    def _build(self, edge_dim: int, device: torch.device):
+        msg_dim = self.hidden_dim * 2 + edge_dim
         self.message_mlp = nn.Sequential(
-            nn.Linear(hidden_dim * 3, hidden_dim * 2),
+            nn.Linear(msg_dim, self.hidden_dim * 2),
             Swish(),
-            nn.Linear(hidden_dim * 2, hidden_dim),
-        )
+            nn.Linear(self.hidden_dim * 2, self.hidden_dim),
+        ).to(device)
         self.update_mlp = nn.Sequential(
-            nn.Linear(hidden_dim * 2, hidden_dim),
+            nn.Linear(self.hidden_dim * 2, self.hidden_dim),
             Swish(),
-            nn.Linear(hidden_dim, hidden_dim),
-        )
+            nn.Linear(self.hidden_dim, self.hidden_dim),
+        ).to(device)
         self.attention = nn.Sequential(
-            nn.Linear(hidden_dim * 3, 1),
+            nn.Linear(msg_dim, 1),
             nn.Sigmoid(),
-        )
+        ).to(device)
+        self._built = True
+        self._msg_dim = msg_dim
 
     def forward(
         self,
@@ -253,6 +264,13 @@ class FireMessagePassing(nn.Module):
         Returns:
             x_updated: Features atualizadas dos nós
         """
+        # Auto-build on first call — adapta ao edge_dim real
+        if not self._built:
+            self._build(edge_attr.shape[-1], x.device)
+        # Auto-build on first call
+        if not self._built:
+            self._build(edge_attr.shape[-1], x.device)
+
         src, dst = edge_index  # (E,)
 
         # Mensagens: concatena (sender, receiver, edge_attr)
@@ -305,6 +323,7 @@ class PhysicsInformedGNN(nn.Module):
         num_layers: int = 4,
         output_dim: int = 3,
         dropout: float = 0.1,
+        edge_dim: int | None = None,
     ):
         super().__init__()
         self.num_layers = num_layers
@@ -321,7 +340,7 @@ class PhysicsInformedGNN(nn.Module):
 
         # Message Passing layers
         self.mp_layers = nn.ModuleList([
-            FireMessagePassing(hidden_dim) for _ in range(num_layers)
+            FireMessagePassing(hidden_dim, edge_dim=edge_dim) for _ in range(num_layers)
         ])
         self.layer_norms = nn.ModuleList([
             nn.LayerNorm(hidden_dim) for _ in range(num_layers)
