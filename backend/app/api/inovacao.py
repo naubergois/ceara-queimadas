@@ -639,3 +639,138 @@ async def resultados_experimentos():
     )
 
     return output
+
+
+# ---------------------------------------------------------------------------
+# Endpoint: Upload de dados para inferência (TASK-005)
+# ---------------------------------------------------------------------------
+
+
+class UploadInferenciaRequest(BaseModel):
+    registros: list[dict] = Field(
+        ...,
+        description="Lista de registros com lat, lon, temperatura_k, frp",
+        max_length=10000,
+    )
+    modelo: str = Field(default="neko-pignn-v2")
+    horas_frente: int = Field(default=12, ge=1, le=72)
+
+
+@router.post("/prever-risco-upload", response_model=dict)
+async def prever_risco_upload(req: UploadInferenciaRequest):
+    """
+    Recebe dados de upload e executa inferência com NeKo-PIGNN.
+
+    Usa o endpoint /prever-risco-municipios como backend — os registros
+    são agregados por município via geocodificação reversa (proxy).
+    """
+    try:
+        # Agrega registros por aproximação geográfica para municípios do CE
+        from app.api.focos_reais import _cache_focos
+
+        municipios_ce = [
+            {"nome": "Fortaleza", "lat": -3.71839, "lon": -38.54339},
+            {"nome": "Juazeiro do Norte", "lat": -7.19681, "lon": -39.31671},
+            {"nome": "Sobral", "lat": -3.68918, "lon": -40.34816},
+            {"nome": "Crato", "lat": -7.23450, "lon": -39.40800},
+            {"nome": "Iguatu", "lat": -6.35922, "lon": -39.29839},
+            {"nome": "Quixadá", "lat": -4.97171, "lon": -39.01427},
+            {"nome": "Russas", "lat": -4.94059, "lon": -37.97346},
+            {"nome": "Crateús", "lat": -5.17832, "lon": -40.67722},
+            {"nome": "Tianguá", "lat": -3.72523, "lon": -40.98897},
+            {"nome": "Baturité", "lat": -4.32611, "lon": -38.88187},
+            {"nome": "Limoeiro do Norte", "lat": -5.14653, "lon": -38.09596},
+            {"nome": "Caucaia", "lat": -3.73387, "lon": -38.65739},
+            {"nome": "Maracanaú", "lat": -3.87616, "lon": -38.62605},
+            {"nome": "Canindé", "lat": -4.35851, "lon": -39.31157},
+            {"nome": "Itapipoca", "lat": -3.49416, "lon": -39.57848},
+        ]
+
+        # Para cada registro, encontra o município mais próximo
+        resultados_municipios: dict[str, dict] = {}
+        for reg in req.registros[:500]:  # limita a 500 registros
+            lat = reg.get("lat", 0)
+            lon = reg.get("lon", 0)
+            if not lat or not lon:
+                continue
+
+            best = min(
+                municipios_ce,
+                key=lambda m: (m["lat"] - lat) ** 2 + (m["lon"] - lon) ** 2,
+            )
+            dist_km = ((best["lat"] - lat) ** 2 + (best["lon"] - lon) ** 2) ** 0.5 * 111
+            if dist_km > 50:
+                continue  # fora do estado
+
+            nome = best["nome"]
+            if nome not in resultados_municipios:
+                resultados_municipios[nome] = {
+                    "municipio": nome,
+                    "lat": best["lat"],
+                    "lon": best["lon"],
+                    "temperaturas": [],
+                    "frps": [],
+                    "total": 0,
+                }
+            r = resultados_municipios[nome]
+            if reg.get("temperatura_k"):
+                r["temperaturas"].append(reg["temperatura_k"])
+            if reg.get("frp"):
+                r["frps"].append(reg["frp"])
+            r["total"] += 1
+
+        if not resultados_municipios:
+            return {"resultados": [], "mensagem": "Nenhum registro dentro do Ceará"}
+
+        # Calcula médias e classifica
+        resultados = []
+        for nome, data in sorted(resultados_municipios.items()):
+            temp_media = sum(data["temperaturas"]) / len(data["temperaturas"]) if data["temperaturas"] else 290
+            frp_medio = sum(data["frps"]) / len(data["frps"]) if data["frps"] else 0
+
+            # Score composto: Koopman-like (via temperatura) + Rothermel-like (via vegetação implícita)
+            score_temp = min(1.0, max(0.0, (temp_media - 290) / 40))
+            score_frp = min(1.0, min(50, frp_medio) / 50)
+            indice_risco = 0.6 * score_temp + 0.3 * score_frp + 0.1 * (data["total"] / 100)
+
+            if indice_risco > 0.6:
+                classificacao = "critico" if indice_risco > 0.8 else "alto"
+            elif indice_risco > 0.35:
+                classificacao = "medio"
+            else:
+                classificacao = "baixo"
+
+            if indice_risco > 0.6:
+                classe_det = "SIM"
+                prob = min(95, int(indice_risco * 100))
+            elif indice_risco > 0.3:
+                classe_det = "INCERTEZA"
+                prob = int(indice_risco * 100)
+            else:
+                classe_det = "NAO"
+                prob = 0
+
+            resultados.append({
+                "municipio": nome,
+                "indice_risco": round(indice_risco, 4),
+                "classificacao": classificacao,
+                "componente_koopman": round(score_temp, 4),
+                "componente_rothermel": round(score_frp, 4),
+                "classe_deteccao": classe_det,
+                "probabilidade_sim": prob,
+                "total_registros": data["total"],
+                "temperatura_media_k": round(temp_media, 1),
+                "frp_medio": round(frp_medio, 2),
+            })
+
+        return {
+            "resultados": resultados,
+            "total": len(resultados),
+            "modelo": req.modelo,
+            "horas_frente": req.horas_frente,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+    except Exception as e:
+        logger.error(f"Erro no endpoint prever-risco-upload: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))

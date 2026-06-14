@@ -27,7 +27,7 @@ import os
 plt.rcParams.update({
     'font.family': 'sans-serif',
     'font.sans-serif': ['Helvetica', 'Arial', 'DejaVu Sans'],
-    'mathtext.fontset': 'stix',
+    'mathtext.fontset': 'dejavusans',
     'mathtext.default': 'regular',
     'axes.edgecolor': '#cccccc',
     'axes.facecolor': '#ffffff',
@@ -306,7 +306,7 @@ loss_items = [
     (0.8,   y6 + h6 - 1.75, r"\mathcal{L}_{\text{pred}} = \|\mathbf{x}_{t+1} - \hat{\mathbf{x}}_{t+1}\|^2", "Prediction error"),
     (6.2,   y6 + h6 - 0.85, r"\mathcal{L}_{\text{GNN}} = \|\mathbf{z}^{\text{GNN}}_{t+1} - \mathbf{z}^{\text{Koop}}_{t+1}\|^2", "Latent consistency"),
     (6.2,   y6 + h6 - 1.30, r"\mathcal{L}_{\text{PDE}} = \|\frac{\partial u}{\partial t} - D\nabla^2 u - R(\theta, u, w)\|^2", "Physics (Rothermel)"),
-    (6.2,   y6 + h6 - 1.75, r"$\mathcal{L}_{\text{bnd}}$ = BC(u|∂Ω) + IC(u|t=0)", "Boundary/Initial cond."),
+    (6.2,   y6 + h6 - 1.75, r"\mathcal{L}_{\text{bnd}} = \text{BC}(u|_{\partial\Omega}) + \text{IC}(u|_{t=0})", "Boundary/Initial cond."),
 ]
 
 for lx, ly, eq, label in loss_items:

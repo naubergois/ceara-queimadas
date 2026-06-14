@@ -22,7 +22,7 @@ fig.patch.set_facecolor(C_BG); ax.set_facecolor(C_BG)
 fig.text(0.5, 0.97, "Figura 1 — Arquitetura NeKo-PIGNN: Neural Koopman Operator\nacoplado a Physics-Informed Graph Neural Network",
          ha='center', fontsize=16, fontweight='bold', color='white', transform=fig.transFigure)
 fig.text(0.5, 0.945, "g(z\u209c\u208a\u2081) = K\u00b7g(z\u209c)  \u2022  \u2202u/\u2202t = D\u2207\u00b2u + R(\u03b8,w,u)  \u2022  \u2112 = \u2112_data + \u03bb\u00b7\u2112_PDE(Rothermel)",
-         ha='center', fontsize=10, color=C_G, family='monospace', transform=fig.transFigure)
+         ha='center', fontsize=10, color=C_G, family='sans-serif', transform=fig.transFigure)
 
 def dbox(ax, x, y, w, h, cl, title, lines, fst=13, fsl=8):
     ax.add_patch(FancyBboxPatch((x,y), w, h, boxstyle="round,pad=0.15", facecolor=cl, edgecolor='white', linewidth=1.5, alpha=0.9))
