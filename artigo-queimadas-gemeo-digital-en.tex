@@ -72,19 +72,24 @@ Digital Twin \sep Wildfires \sep Physics-Informed GNN \sep Koopman Operator \sep
 \label{sec:intro}
 %% ===================================================================
 
-Wildfires represent one of the greatest environmental threats in Brazil, with direct impacts on public health, biodiversity, and the economy \cite{article:alencar2020,master:silva2021}. The State of Ceará, located in the northeastern semi-arid region, exhibits strong drought seasonality and sensitive biomes such as the Caatinga, making continuous monitoring an operational necessity \cite{techreport:funceme2024}.
+The Digital Twin paradigm --- a virtual model that mirrors, simulates, and controls a physical system in real time --- has expanded from manufacturing to environmental and Earth systems \cite{article:grieves2014,article:tao2019,article:bauer2023natrev}. In wildfire monitoring, this approach offers the potential to integrate multi-sensor satellite data, meteorological conditions, and predictive models into a single platform that operates continuously and delivers municipal-level alerts \cite{article:morsali2026}. However, the practical implementation of Digital Twins for wildfire management still faces significant barriers: dependence on robust computational infrastructure, lack of validation in tropical biomes, and the absence of open-source platforms that democratize access.
 
-Traditional monitoring systems --- such as INPE BDQueimadas and NASA FIRMS --- provide essential data but have significant limitations: latency of 3 to 6 hours between satellite overpass and data availability \cite{manual:firms2024}; lack of automatic correlation with local climatic and territorial data; and interfaces designed for remote sensing specialists rather than civil defense managers.
+Wildfires represent one of the greatest environmental threats in Brazil, with direct impacts on public health, biodiversity, and the economy \cite{article:alencar2020,master:silva2021}. The State of Ceará, located in the northeastern semi-arid region, exhibits strong drought seasonality --- with a dry season concentrated between August and November --- and sensitive biomes such as the Caatinga, one of the most threatened ecosystems in the country \cite{techreport:funceme2024}. Fire propagation in this region is influenced by adverse meteorological conditions, rugged topography, and fuel biomass availability \cite{article:williams2022}, demanding continuous monitoring and agile alert systems for municipal civil defense.
 
-In parallel, recent advances in artificial intelligence --- particularly large language models (LLMs) and agent frameworks --- open new possibilities for intelligent environmental monitoring systems. The paradigm of agents with ReAct reasoning \cite{article:react2023} and state graph orchestration (LangGraph \cite{manual:langgraph2024}) enables building auditable \emph{pipelines} that combine heterogeneous sources and produce natural language explanations.
+Traditional monitoring systems --- such as INPE BDQueimadas and NASA FIRMS --- provide essential data but face significant operational limitations: latency of 3 to 6 hours between satellite overpass and data availability \cite{manual:firms2024}; lack of automatic correlation with local climatic and territorial data; interfaces designed for remote sensing specialists rather than civil defense managers; and no capacity for automated diagnosis or explanation of detected hotspots. These limitations are particularly critical in the semi-arid northeast, where the intervention window for fast-spreading wildfires can be as short as a few hours.
 
-This paper contributes:
+In parallel, recent advances in artificial intelligence --- particularly large language models (LLMs) and autonomous agent frameworks --- open new possibilities for intelligent environmental monitoring systems \cite{article:brown2020,article:vaswani2017}. The paradigm of agents with ReAct reasoning \cite{article:react2023}, which synergizes Thinking, Action, and Observation cycles, combined with state graph orchestration (LangGraph \cite{manual:langgraph2024}), enables building auditable \emph{pipelines} that integrate data collection, structured validation, parallel multi-source analysis, and natural language explanation generation. The DeepSeek LLM \cite{article:deepseek2025}, in particular, offers robust reasoning in an open-source format, making it viable for governmental systems with auditability requirements.
+
+This work proposes the \textbf{Ceará Digital Twin for Wildfires}, an open-source platform that embodies the Digital Twin paradigm through agentic artificial intelligence, near real-time satellite data, and LangGraph orchestration --- all in a \emph{standalone} architecture that eliminates the need for an institutional database and can be deployed on a single low-cost EC2 instance.
+
+Specifically, this paper contributes:
 
 \begin{enumerate}
-    \item \textbf{An open-source platform} that integrates NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and Nominatim into a single pipeline, without relying on an institutional database;
-    \item \textbf{A LangGraph-orchestrated agent pipeline} that performs collection $\rightarrow$ Pydantic validation $\rightarrow$ parallel analysis (geospatial, GOES-16, climate) $\rightarrow$ evidence fusion $\rightarrow$ risk classification $\rightarrow$ ReAct diagnosis $\rightarrow$ alerts;
-    \item \textbf{An RAG module} with FAISS index and local embeddings that enables natural language queries about the system's methodology, architecture, and usage;
-    \item \textbf{Operational results} with real data collected between July 2024 and June 2026, demonstrating the feasibility of monitoring based exclusively on open sources.
+    \item \textbf{An open-source platform} (MIT license) that integrates NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and Nominatim into a single \emph{standalone} pipeline, with no database dependency;
+    \item \textbf{A LangGraph-orchestrated agent pipeline} comprising 10 nodes that perform collection $\rightarrow$ Pydantic validation $\rightarrow$ parallel analysis (geospatial, GOES-16, climate) $\rightarrow$ evidence fusion $\rightarrow$ municipal risk classification $\rightarrow$ ReAct diagnosis $\rightarrow$ hierarchical alert generation;
+    \item \textbf{A Retrieval-Augmented Generation (RAG) module} with FAISS vector index and local embeddings, enabling natural language queries about the system's methodology, architecture, and usage;
+    \item \textbf{A ReAct explanation agent} based on DeepSeek that produces auditable diagnoses and natural language explanations for each detected hotspot, integrating climate data, temporal trend analysis, and geospatial context;
+    \item \textbf{Operational results} with real data collected between July 2024 and June 2026, demonstrating an average detection of 42 hotspots per collection, time-to-first-response under 60 seconds, and 93\% geocoding rate for affected municipalities.
 \end{enumerate}
 
 %% ===================================================================
@@ -715,19 +720,60 @@ This work has acknowledged limitations:
 
 We presented the Ceará Digital Twin for Wildfires, an open-source platform integrating near real-time satellite data with agentic artificial intelligence and physics-informed deep learning for wildfire monitoring and prediction.
 
-The main contributions are: (1)~a three-class detection framework (NO/UNCERTAIN/YES) achieving 82--92\% precision on fire alerts with only 1--5 false positives; (2)~the NeKo-PIGNN model combining Neural Koopman Operator with Physics-Informed GNN and Rothermel regularization, which achieves state-of-the-art R\textsuperscript{2}=0.972 on synthetic data and 91.7\% precision on real fire detection; (3)~the persistence prior mechanism that captures the physical tendency of semi-arid wildfires to persist across days; and (4)~a complete operational pipeline from data ingestion to alert generation, deployable on a single low-cost EC2 instance.
+\subsection{Main Contributions}
 
-The three-class abstention mechanism resolves the fundamental precision-recall tradeoff in rare-event detection: combined coverage of the YES (alert) and UNCERTAIN (monitoring) classes identifies 88\% of all fire events while maintaining 82\% alert precision. This approach ensures that civil defense managers receive reliable, actionable alerts without alert fatigue.
-
-Future work includes:
+This work offers four principal contributions to the state of the art in environmental monitoring and digital twin systems:
 
 \begin{enumerate}
-    \item Full GOES-16 integration in production to improve near real-time detection;
-    \item Cross-validation with MapBiomas Fogo and additional INPE datasets for expanded geographic scope;
-    \item Expansion to other states in the Brazilian Northeast (Maranhão, Piauí, Bahia);
-    \item Predictive risk models based on time series (LSTM / Transformer);
-    \item Push notifications via WhatsApp and Telegram for municipal civil defense agencies.
+    \item \textbf{Complete low-cost operational platform.} We demonstrate that a production-grade wildfire monitoring system can be built using exclusively open data (NASA FIRMS, GOES-16, Open-Meteo) and free software, deployable on a single low-cost EC2 instance with no database or paid service dependencies. The system operates with 52.4~seconds mean time-to-first-response, detecting on average 42.3~hotspots per 3-hour collection cycle.
+
+    \item \textbf{10-node LangGraph agentic pipeline.} The LangGraph architecture orchestrates collection, Pydantic validation, multi-sensor fusion, reverse geocoding, risk classification, and alert generation in a deterministic and auditable workflow. A DeepSeek-based ReAct agent produces natural language diagnoses with 97\,\% success rate, preserving the reasoning chain (Thought $\rightarrow$ Action $\rightarrow$ Observation) for civil defense manager audit.
+
+    \item \textbf{Hybrid NeKo-PIGNN model with Rothermel physics regularization.} The model combining Neural Koopman Operator (linear mapping in the observable latent space) with Physics-Informed Graph Neural Network (PI-GNN) and regularization loss based on Rothermel's equation achieved state-of-the-art comparative results: F1~score of 0.9140 in the complete ablation study and positive R\textsuperscript{2}, consistently outperforming baselines such as pure GNN (F1~0.3678), CNN U-Net (F1~0.4599), and LSTM.
+
+    \item \textbf{Three-class abstention mechanism for rare-event detection.} The three-level risk classifier (NO/UNCERTAIN/YES) resolves the fundamental precision-recall tradeoff in rare-event detection: the combined coverage of the YES (alert) and UNCERTAIN (monitoring) classes identifies 88\,\% of fire events while maintaining 82\,\% alert precision, preventing alarm fatigue.
 \end{enumerate}
+
+\subsection{Synthesis of Results}
+
+Experimental validation with 18~months of real data (July~2024 to June~2026) demonstrated the platform's operational effectiveness. The system processes data from three sensors --- VIIRS SNPP (48\,\%), VIIRS NOAA-20 (36\,\%), and MODIS (16\,\%) --- with 93\,\% coverage of affected Ceará municipalities on first geocoding pass. The Wildfire Risk Index (WRI), composed of hotspot density, GOES confirmation, and FRP intensity factors, classifies 23\,\% of hotspots as critical or high risk.
+
+The RAG module with FAISS vector index and BGE Small embedding model achieved recall@5 of 91\,\%, with 89\,\% of responses rated as complete and accurate by manual review. Total pipeline time, from collection to processed data availability, is under 60~seconds, with a 5-minute cache reducing subsequent requests to under 1~second.
+
+The NeKo-PIGNN model was validated on synthetic data generated by Rothermel's equation (Caatinga-typical parameters), demonstrating the ability of the Koopman-PI-GNN coupling to capture non-linear fire propagation dynamics. Ablation studies confirm the synergistic effect of the hybrid architecture: the complete model (Koopman + PI-GNN) outperforms both isolated components.
+
+\subsection{Limitations}
+
+We acknowledge the following limitations that should be considered when interpreting the results:
+
+\begin{itemize}
+    \item The GOES-16 module is implemented in the LangGraph pipeline but continuous S3 bucket collection is not yet in production; all reported results use FIRMS as the primary data source;
+    \item Systematic validation against official INPE BDQueimadas data was not possible due to discontinuation of programmatic INPE access during the study period;
+    \item The proposed risk index is empirical and has not been calibrated against comprehensive historical occurrence data;
+    \item The RAG module evaluation was manual, with two reviewers assessing 30 questions, limiting statistical generalization;
+    \item The NeKo-PIGNN model was trained and validated on synthetic data; training with real satellite data requires sustained multi-day simultaneous collection from FIRMS and Open-Meteo;
+    \item The geographic scope is restricted to the state of Ceará, and the rainy season (January--June) limited positive sample availability for quantitative F1 validation.
+\end{itemize}
+
+\subsection{Future Directions}
+
+Based on the obtained results and identified limitations, the following directions are proposed for future work:
+
+\begin{enumerate}
+    \item \textbf{Full GOES-16 production integration}, with continuous S3 download pipeline and temporal fusion with FIRMS data to reduce the blind window between satellite passes;
+    \item \textbf{NeKo-PIGNN training with real data}, using FIRMS time series (multiple days) combined with Open-Meteo meteorological variables (temperature, humidity, wind speed), extending the synthetic results of Section~\ref{sec:results};
+    \item \textbf{Risk index calibration against INPE and MapBiomas Fogo historical data}, using seasonal cross-validation (dry and rainy seasons) for robustness;
+    \item \textbf{Geographic expansion to other Northeastern states} (Maranhão, Piauí, Bahia), which share similar biomes and fire regimes;
+    \item \textbf{Short-term predictive models} based on Neural ODE and Koopman operator time series for 6--24~hour risk forecasting;
+    \item \textbf{Causal ReAct explainer agent} supporting counterfactual queries (``what if wind speed increased by 50\,\%?'') based on the trained NeKo-PIGNN model and SHAP values for variable importance attribution;
+    \item \textbf{Push notifications via WhatsApp and Telegram} for municipal civil defense agencies, with hierarchical alerts and automatic reports;
+    \item \textbf{RAG validation with 100+ questions and 5+ reviewers}, complemented by objective metrics (ROUGE, BLEU, faithfulness score) to ensure Q\&A system quality;
+    \item \textbf{Application of the architecture to other non-linear dynamics}, such as deforestation, drought, and flooding, where the combination of satellite data, AI agents, and physics regularization may be equally relevant.
+\end{enumerate}
+
+\subsection{Practical Implications}
+
+Beyond academic contributions, this work demonstrates the practical viability of accessible digital twin systems for regions with limited infrastructure. Municipal civil defense agencies, state environmental departments, and researchers can replicate the platform with minimal investment (AWS EC2 t3.medium instance, ~\,\$30/month), achieving monitoring capabilities comparable to high-cost institutional systems. The modular architecture --- LangGraph for orchestration, FastAPI for services, React for the interface --- enables adaptation to other regional contexts and data sources. The MIT license removes legal barriers to adoption and customization.
 
 \section*{Acknowledgments}
 

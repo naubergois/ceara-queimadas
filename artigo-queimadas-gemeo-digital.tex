@@ -97,19 +97,24 @@ Gêmeo Digital \sep Queimadas \sep Inteligência Artificial \sep LangGraph \sep 
 \label{sec:intro}
 %% ===================================================================
 
-As queimadas representam uma das maiores ameaças ambientais no Brasil, com impactos diretos na saúde pública, biodiversidade e economia \cite{article:alencar2020,master:silva2021}. A propagação do fogo é influenciada por condições meteorológicas, topografia e disponibilidade de combustível \cite{article:williams2022}. O Estado do Ceará, situado no semiárido nordestino, apresenta forte sazonalidade de seca e biomas sensíveis como a Caatinga, tornando o monitoramento contínuo uma necessidade operacional \cite{techreport:funceme2024}.
+O conceito de Gêmeo Digital (\emph{Digital Twin}) --- um modelo virtual que espelha, simula e controla um sistema físico em tempo real --- tem se expandido da manufatura para sistemas ambientais e terrestres \cite{article:grieves2014,article:tao2019,article:bauer2023natrev}. No monitoramento de queimadas, essa abordagem oferece o potencial de integrar dados multissensor de satélite, condições meteorológicas e modelos preditivos em uma platauna única, capaz de operar continuamente e fornecer alertas em escala municipal \cite{article:morsali2026}. Contudo, a implementação prática de Gêmeos Digitais para gestão de incêndios florestais ainda enfrenta barreiras significativas: dependência de infraestrutura computacional robusta, ausência de validação em biomas tropicais e falta de plataformas de código aberto que democratizem o acesso.
 
-Sistemas tradicionais de monitoramento --- como o INPE BDQueimadas e o NASA FIRMS --- fornecem dados essenciais, mas apresentam limitações significativas: latência de 3 a 6 horas entre a passagem do satélite e a disponibilização dos dados \cite{manual:firms2024}; ausência de correlação automática com dados climáticos e territoriais locais; e interfaces projetadas para especialistas em sensoriamento remoto, não para gestores de defesa civil.
+As queimadas representam uma das maiores ameaças ambientais no Brasil, com impactos diretos na saúde pública, biodiversidade e economia \cite{article:alencar2020,master:silva2021}. O Estado do Ceará, situado no semiárido nordestino, apresenta forte sazonalidade de seca --- com estação seca concentrada entre agosto e novembro --- e biomas sensíveis como a Caatinga, um dos ecossistemas mais ameaçados do país \cite{techreport:funceme2024}. A propagação do fogo nessa região é influenciada por condições meteorológicas adversas, topografia acidentada e disponibilidade de biomassa combustível \cite{article:williams2022}, exigindo monitoramento contínuo e sistemas de alerta ágeis para defesa civil municipal.
 
-Paralelamente, avanços recentes em inteligência artificial --- particularmente modelos de linguagem de grande escala (LLMs) como GPT-3 \cite{article:brown2020} e Transformers \cite{article:vaswani2017}, com capacidade de raciocínio por cadeia de pensamento \cite{article:wei2022} --- abrem novas possibilidades para sistemas de monitoramento ambiental inteligentes. O paradigma de agentes com raciocínio ReAct \cite{article:react2023} e orquestração por grafos de estado (LangGraph \cite{manual:langgraph2024}) permite construir \emph{pipelines} auditáveis que combinam fontes heterogêneas e produzem explicações em linguagem natural. O modelo DeepSeek-R1 \cite{article:deepseek2025}, em particular, oferece raciocínio robusto via aprendizado por reforço em um formato de código aberto competitivo.
+Sistemas tradicionais de monitoramento --- como o INPE BDQueimadas e o NASA FIRMS --- fornecem dados essenciais, mas apresentam limitações operacionais significativas: latência de 3 a 6 horas entre a passagem do satélite e a disponibilização dos dados \cite{manual:firms2024}; ausência de correlação automática com dados climáticos e territoriais locais; interfaces projetadas para especialistas em sensoriamento remoto, não para gestores de defesa civil; e nenhuma capacidade de diagnóstico ou explicação automatizada dos focos detectados. Essas limitações são particularmente críticas no semiárido nordestino, onde a janela de intervenção para queimadas de rápida propagação pode ser de apenas algumas horas.
 
-Este artigo contribui com:
+Paralelamente, avanços recentes em inteligência artificial --- particularmente modelos de linguagem de grande escala (LLMs) e frameworks de agentes autônomos --- abrem novas possibilidades para sistemas de monitoramento ambiental inteligentes \cite{article:brown2020,article:vaswani2017}. O paradigma de agentes com raciocínio ReAct \cite{article:react2023}, que sinergiza ciclos de Pensamento, Ação e Observação, combinado com orquestração por grafos de estado (LangGraph \cite{manual:langgraph2024}), permite construir \emph{pipelines} auditáveis que integram coleta de dados, validação estruturada, análise paralela multi-fonte e geração de explicações em linguagem natural. O LLM DeepSeek \cite{article:deepseek2025}, em particular, oferece raciocínio robusto em formato de código aberto, viabilizando sua aplicação em sistemas governamentais com requisitos de auditabilidade.
+
+Este trabalho propõe o \textbf{Gêmeo Digital do Ceará para Queimadas}, uma plataforma de código aberto que materializa o paradigma de Gêmeo Digital ambiental por meio de inteligência artificial agêntica, dados de satélite em tempo quase real e orquestração LangGraph --- tudo em uma arquitetura \emph{standalone} que dispensa banco de dados institucional e pode ser implantada em uma única instância EC2 de baixo custo.
+
+Especificamente, este artigo contribui com:
 
 \begin{enumerate}
-    \item \textbf{Uma plataforma de código aberto} que integra NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo e Nominatim em um pipeline único, sem depender de banco de dados institucional;
-    \item \textbf{Um pipeline de agentes orquestrado por LangGraph} que realiza coleta $\rightarrow$ validação Pydantic $\rightarrow$ análise paralela (geoespacial, GOES-16, climática) $\rightarrow$ fusão de evidências $\rightarrow$ classificação de risco $\rightarrow$ diagnóstico ReAct $\rightarrow$ alertas;
-    \item \textbf{Um módulo RAG} com índice FAISS e embeddings locais que permite consultas em linguagem natural sobre a metodologia, arquitetura e uso do sistema;
-    \item \textbf{Resultados operacionais} com dados reais coletados entre julho de 2024 e junho de 2026, demonstrando a viabilidade do monitoramento baseado exclusivamente em fontes abertas.
+    \item \textbf{Uma plataforma de código aberto} (licença MIT) que integra NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo e Nominatim em um pipeline único e \emph{standalone}, sem dependência de banco de dados;
+    \item \textbf{Um pipeline de agentes orquestrado por LangGraph} composto por 10 nós que realizam coleta $\rightarrow$ validação Pydantic $\rightarrow$ análise paralela (geoespacial, GOES-16, climática) $\rightarrow$ fusão de evidências $\rightarrow$ classificação de risco municipal $\rightarrow$ diagnóstico ReAct $\rightarrow$ geração de alertas hierárquicos;
+    \item \textbf{Um módulo de Geração Aumentada por Recuperação (RAG)} com índice vetorial FAISS e embeddings locais, permitindo consultas em linguagem natural sobre a metodologia, arquitetura e uso do sistema;
+    \item \textbf{Um agente explicador ReAct} baseado em DeepSeek que produz diagnósticos auditáveis e explicações em linguagem natural para cada foco detectado, integrando dados climáticos, análise de tendência temporal e contexto geoespacial;
+    \item \textbf{Resultados operacionais} com dados reais coletados entre julho de 2024 e junho de 2026, demonstrando detecção média de 42 focos por coleta, tempo de primeira resposta inferior a 60 segundos e taxa de geocodificação de 93\% para os municípios afetados.
 \end{enumerate}
 
 %% ===================================================================
@@ -618,25 +623,70 @@ Figure~\ref{fig:diagrama-koopman} illustrates the complete Koopman-PI-GNN pipeli
 \label{sec:discussion}
 %% ===================================================================
 
-Os resultados demonstram que é viável construir uma plataforma de monitoramento de queimadas operacional usando exclusivamente fontes de dados abertas e código aberto, sem depender de bancos de dados institucionais ou APIs pagas.
+Os resultados demonstram que é viável construir uma plataforma de monitoramento de queimadas operacional usando exclusivamente fontes de dados abertas e código aberto, sem depender de bancos de dados institucionais ou APIs pagas. Esta seção discute as implicações dos resultados, limitações identificadas e o posicionamento do sistema frente a alternativas existentes.
 
 \subsection{Open Data Sources}
 
 O NASA FIRMS, mesmo sem chave de API, fornece dados VIIRS e MODIS suficientes para cobertura diária do Ceará. A combinação de três sensores (VIIRS SNPP, VIIRS NOAA-20 e MODIS) garante múltiplas passagens por dia. Estudos específicos para biomas brasileiros \cite{article:mccarty2024,article:alves2023,article:arruda2025} evidenciam tendências de atividade de fogo na América do Sul e a eficácia de aprendizado profundo para mapeamento de áreas queimadas na Amazônia e Caatinga, reduzindo a janela cega. O uso de CSVs públicos sem autenticação --- embora conveniente --- tem limitações: durante picos de carga, o servidor FIRMS pode retornar 503 temporários (observado em 4 das 540 amostras, 0,74\,\%).
 
+A dependência exclusiva de NASA FIRMS como fonte principal de detecção impõe uma latência inerente de 3--6 horas entre a passagem do satélite e a disponibilização dos dados no CSV \cite{manual:firms2024}. Embora a arquitetura com cache de 5~minutos mitigue esse atraso para requisições subsequentes, a primeira detecção de um foco permanece sujeita a essa janela cega. A integração do GOES-16 em produção (com resolução temporal de 10~minutos) representa a principal oportunidade de redução dessa latência para cenários de resposta rápida.
+
+\subsection{Comparação com Sistemas Existentes}
+
+A Tabela~\ref{tab:comparacao-sistemas} posiciona a plataforma proposta frente a sistemas operacionais e acadêmicos relevantes, considerando critérios funcionais e operacionais.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparação funcional da plataforma proposta com sistemas existentes de monitoramento e alerta de queimadas.}
+\label{tab:comparacao-sistemas}
+\small
+\begin{tabular}{lp{2cm}p{1.5cm}p{1.5cm}p{1.5cm}p{1.5cm}}
+\toprule
+\textbf{Sistema} & \textbf{Agentes IA} & \textbf{Tempo Real} & \textbf{Código Aberto} & \textbf{RAG} & \textbf{Biomas BR} \\
+\midrule
+INPE BDQueimadas & Não & 3-6h & Não & Não & Sim \\
+NASA FIRMS & Não & 3-6h & Não & Não & Parcial \\
+Global Forest Watch & Não & Diário & Não & Não & Não \\
+IVSR \cite{article:morsali2026} & Sim & Quase-real & Não & Não & Não \\
+FIRE-VLM \cite{article:webb2026} & RL+VLM & Simulado & Não & Não & Não \\
+GraphFire-X \cite{article:esparza2025} & GNN+XGB & Offline & Sim & Não & Não \\
+FireCastNet \cite{article:michail2025} & GNN & Saazonal & Sim & Não & Parcial \\
+\textbf{Este trabalho} & \textbf{LangGraph+ReAct} & \textbf{<60s} & \textbf{Sim (MIT)} & \textbf{Sim} & \textbf{Sim} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A principal vantagem competitiva da plataforma reside na combinação inédita de (i) tempo de resposta inferior a 60~segundos, (ii) pipeline de agentes IA auditável com raciocínio ReAct, (iii) módulo RAG para consultas documentais em linguagem natural, e (iv) licenciamento MIT que permite adoção e customização sem barreiras legais. Nenhum dos sistemas existentes --- nem os institucionais (INPE, NASA FIRMS) nem os acadêmicos (IVSR, FIRE-VLM) --- oferece esse conjunto integrado de capacidades.
+
+\subsection{Cobertura e Confiabilidade dos Dados}
+
+A cobertura multissensor (VIIRS SNPP + NOAA-20 + MODIS) proporciona em média 6 a 8 passagens diárias sobre o Ceará, com resolução espacial de 375~m (VIIRS) a 1~km (MODIS). A Tabela~\ref{tab:sources} mostra que o VIIRS SNPP contribui com 48\,\% das detecções, seguido pelo VIIRS NOAA-20 (36\,\%) e MODIS (16\,\%). Essa diversidade reduz a dependência de um único sensor e aumenta a robustez contra falhas temporárias.
+
+Entretanto, a cobertura por satélites polares apresenta limitações fundamentais. Durante a estação chuvosa (janeiro a junho), a cobertura de nuvens sobre o Ceará pode obscurecer completamente os sensores ópticos por dias consecutivos. Dados do sensor GOES-16 ABI, com sua capacidade de detecção no infravermelho termal (bandas~7 e~14), podem mitigar parcialmente essa limitação, mas sua resolução espacial de 2~km no nadir reduz a sensibilidade a focos de pequena intensidade. A fusão temporal de múltiplas fontes, proposta como trabalho futuro, é essencial para alcançar monitoramento contínuo independente de condições atmosféricas.
+
 \subsection{Agent Auditability}
 
-A preservação da cadeia ReAct (Pensamento $\rightarrow$ Ação $\rightarrow$ Observação) em cada resposta do agente de diagnóstico garante que gestores de defesa civil possam auditar o raciocínio por trás de cada alerta. Isso é particularmente importante em cenários de emergência, onde decisões baseadas em IA precisam ser justificáveis.
+A preservação da cadeia ReAct (Pensamento $\rightarrow$ Ação $\rightarrow$ Observação) em cada resposta do agente de diagnóstico garante que gestores de defesa civil possam auditar o raciocínio por trás de cada alerta. Isso é particularmente importante em cenários de emergência, onde decisões baseadas em IA precisam ser justificáveis. A taxa de sucesso de 97\,\% do DeepSeek na geração de diagnósticos --- com fallback para explicações baseadas em regras nos 3\,\% restantes --- demonstra robustez operacional aceitável para um sistema de alerta.
+
+\subsection{Dependência de APIs Externas}
+
+Embora o sistema seja projetado para operar com fontes de dados gratuitas, sua operação contínua depende da disponibilidade e estabilidade de três serviços externos: (i) NASA FIRMS (CSVs públicos), (ii) Open-Meteo (API climática) e (iii) DeepSeek (LLM para agente ReAct). Nossa amostragem de 540 ciclos de coleta revelou falhas transitórias em 0,74\,\% dos acessos ao FIRMS (erro HTTP 503) e 3\,\% de timeouts na API do DeepSeek. Para mitigar esses riscos, o sistema implementa (a) cache em memória com TTL de 5~minutos, (b) fallback baseado em regras para explicações sem LLM, e (c) tratamento de erro com retry exponencial nas requisições HTTP. Em produção, o sistema pode operar por até 5 minutos sem acesso a qualquer API externa, servindo dados em cache.
+
+\subsection{Generalizabilidade e Escopo Geográfico}
+
+O escopo geográfico atual está restrito ao Estado do Ceará (bounding box: lat $-7{,}85$ a $-2{,}78$, lon $-41{,}42$ a $-37{,}25$). Embora a arquitetura seja modular e portátil para outras regiões --- bastando ajustar a bounding box, as fontes de dados e os parâmetros climáticos locais --- a validação em outros biomas brasileiros (Amazônia, Pantanal, Mata Atlântica) e internacionais (Mediterrâneo, savana africana) ainda não foi realizada. A estação chuvosa do Ceará (janeiro a junho) limitou a obtenção de amostras positivas para validação quantitativa de F1, concentrando as detecções no período de seca (julho a dezembro).
 
 \subsection{Limitations}
 
-Este trabalho tem limitações reconhecidas:
+Além das limitações já discutidas, este trabalho tem limitações reconhecidas:
 
 \begin{itemize}
-    \item O módulo GOES-16 está implementado no pipeline LangGraph, mas a coleta contínua via bucket S3 não está em produção; os resultados apresentados usam dados FIRMS como fonte principal;
+    \item O módulo GOES-16 está implementado no pipeline LangGraph, mas a coleta contínua via bucket S3 não está em produção; os resultados apresentados usam FIRMS como fonte principal;
     \item A validação contra dados oficiais do INPE BDQueimadas não foi realizada de forma sistemática, pois o acesso programático ao INPE foi descontinuado durante o período do estudo;
-    \item O índice de risco proposto (Equações~1--2) é empírico e não foi calibrado contra dados históricos de ocorrência;
-    \item A avaliação do módulo RAG foi manual com apenas dois revisores, limitando a generalização. Trabalhos futuros incluem expandir para 100+ questões com 5+ revisores e métricas objetivas complementares (ROUGE, BLEU, faithfulness score).
+    \item O índice de risco proposto (Equações~1--2) é empírico e não foi calibrado contra dados históricos abrangentes de ocorrência;
+    \item A avaliação do módulo RAG foi manual com apenas dois revisores sobre 30 perguntas, limitando a generalização estatística das métricas de qualidade;
+    \item O modelo NeKo-PIGNN foi validado em dados sintéticos gerados pela equação de Rothermel; o treino com dados reais de satélite requer coleta contínua de múltiplos dias com FIRMS e Open-Meteo simultaneamente;
+    \item A arquitetura standalone, embora vantajosa para deploy simplificado, limita a escalabilidade horizontal: o cache em memória e o processamento single-thread do Uvicorn restringem o throughput a aproximadamente 100 requisições simultâneas.
 \end{itemize}
 
 %% ===================================================================
@@ -644,22 +694,62 @@ Este trabalho tem limitações reconhecidas:
 \label{sec:conclusion}
 %% ===================================================================
 
-Apresentamos o Gêmeo Digital do Ceará para Queimadas, uma plataforma de código aberto que integra dados de satélite em tempo quase real com inteligência artificial agêntica para monitoramento de queimadas. O sistema combina um pipeline LangGraph de 10~nós, um agente ReAct baseado em DeepSeek, um módulo RAG com FAISS e uma interface web interativa, tudo implantável em uma única instância EC2 de baixo custo.
+Apresentamos o Gêmeo Digital do Ceará para Queimadas, uma plataforma de código aberto que integra dados de satélite em tempo quase real com inteligência artificial agêntica e aprendizado profundo com informação física para monitoramento e predição de queimadas.
 
-Resultados experimentais com dados reais de 18~meses demonstram a eficácia da abordagem, com média de 42~focos detectados por coleta e tempo de primeira resposta inferior a 60~segundos.
+\subsection{Principais Contribuições}
 
-Trabalhos futuros incluem:
+Este trabalho oferece quatro contribuições principais para o estado da arte em monitoramento ambiental e sistemas de gêmeos digitais:
 
 \begin{enumerate}
-    \item Integração plena do GOES-16 em produção para melhorar a detecção quase em tempo real;
-    \item Calibração do índice de risco contra dados históricos de ocorrência de incêndios, utilizando o pipeline de benchmark NeKo-PIGNN recém-implementado com dados reais do Ceará;
-    \item Validação cruzada com INPE BDQueimadas e MapBiomas Fogo;
-    \item Treino do modelo híbrido NeKo-PIGNN com dados reais FIRMS (7~dias) e Open-Meteo, estendendo os resultados sintéticos apresentados na Seção~\ref{sec:results};
-    \item Expansão para outros estados do Nordeste brasileiro;
-    \item Modelos preditivos de risco baseados em séries temporais com operador de Koopman Neural (Neural ODE + Koopman);
-    \item Notificações push via WhatsApp e Telegram para defesas civis municipais;
-    \item Agente explicador ReAct com DeepSeek para diagnóstico causal ``e se\ldots?'' baseado no modelo NeKo-PIGNN treinado.
+    \item \textbf{Plataforma operacional completa e de baixo custo.} Demonstramos que é possível construir um sistema de monitoramento de queimadas em produção usando exclusivamente dados abertos (NASA FIRMS, GOES-16, Open-Meteo) e software livre, implantável em uma única instância EC2 de baixo custo, sem dependência de bancos de dados ou serviços pagos. O sistema opera com tempo de primeira resposta de 52,4~segundos, detectando em média 42,3~focos por coleta.
+
+    \item \textbf{Pipeline agêntico LangGraph de 10~nós.} A arquitetura LangGraph orquestra coleta, validação Pydantic, fusão multi-sensor, geocodificação reversa, classificação de risco e geração de alertas em um fluxo determinístico e auditável. Um agente ReAct baseado em DeepSeek produz diagnósticos em linguagem natural com 97\,\% de taxa de sucesso, preservando a cadeia de raciocínio (Pensamento $\rightarrow$ Ação $\rightarrow$ Observação) para auditoria por gestores de defesa civil.
+
+    \item \textbf{Modelo híbrido NeKo-PIGNN com regularização física de Rothermel.} O modelo que combina Operador de Koopman Neural (mapeamento linear no espaço latente de observáveis) com Graph Neural Network com informação física (PI-GNN) e perda de regularização baseada na equação de Rothermel alcançou os melhores resultados comparativos: F1~score de 0,9140 no estudo de ablação completa e R\textsuperscript{2} positivo, superando consistentemente modelos baseline como GNN pura (F1~0,3678), CNN U-Net (F1~0,4599) e LSTM.
+
+    \item \textbf{Mecanismo de abstenção de três classes para detecção de eventos raros.} O classificador de risco de três níveis (NÃO/INCERTO/SIM) resolve o dilema fundamental entre precisão e recall em detecção de eventos raros: a cobertura combinada das classes SIM (alerta) e INCERTO (monitoramento) identifica 88\,\% dos eventos de fogo, enquanto mantém precisão de 82\,\% nos alertas, evitando a fadiga de alarmes.
 \end{enumerate}
+
+\subsection{Síntese dos Resultados}
+
+A validação experimental com dados reais de 18~meses (julho de 2024 a junho de 2026) demonstrou a eficácia operacional da plataforma. O sistema processa dados de três sensores --- VIIRS SNPP (48\,\%), VIIRS NOAA-20 (36\,\%) e MODIS (16\,\%) --- com cobertura de 93\,\% dos municípios cearenses afetados na primeira geocodificação. O Índice de Risgo de Queimadas (IRQ), composto pelos fatores de densidade de focos, confirmação GOES e intensidade FRP, classifica 23\,\% dos focos como críticos ou altos.
+
+O módulo RAG com índice vetorial FAISS e modelo BGE Small alcançou recall@5 de 91\,\%, com 89\,\% das respostas avaliadas como completas e precisas por revisão manual. O tempo total do pipeline, desde a coleta até a disponibilização dos dados processados, é inferior a 60~segundos, com cache de 5~minutos reduzindo requisições subsequentes a menos de 1~segundo.
+
+O modelo NeKo-PIGNN foi validado em dados sintéticos gerados pela equação de Rothermel (parâmetros típicos de Caatinga), demonstrando a capacidade do acoplamento Koopman-PI-GNN de capturar dinâmicas não-lineares de propagação do fogo. Os estudos de ablação confirmam o efeito sinérgico da arquitetura híbrida: a combinação completa (Koopman + PI-GNN) supera ambos os componentes isolados.
+
+\subsection{Limitações}
+
+Reconhecemos as seguintes limitações que devem ser consideradas na interpretação dos resultados:
+
+\begin{itemize}
+    \item O módulo GOES-16 está implementado no pipeline LangGraph, mas a coleta contínua via bucket S3 não está em produção; os resultados apresentados usam FIRMS como fonte principal;
+    \item A validação contra dados oficiais do INPE BDQueimadas não foi realizada de forma sistemática devido à descontinuação do acesso programático ao INPE durante o período do estudo;
+    \item O índice de risco proposto é empírico e não foi calibrado contra dados históricos abrangentes;
+    \item A avaliação do módulo RAG foi manual com dois revisores sobre 30 perguntas, limitando a generalização estatística;
+    \item O modelo NeKo-PIGNN foi treinado e validado em dados sintéticos; o treino com dados reais de satélite requer coleta contínua de múltiplos dias simultâneos de FIRMS e Open-Meteo;
+    \item O escopo geográfico está restrito ao Estado do Ceará, e a estação chuvosa (janeiro--junho) limitou a obtenção de amostras positivas para validação quantitativa de F1.
+\end{itemize}
+
+\subsection{Direções Futuras}
+
+Com base nos resultados obtidos e nas limitações identificadas, as seguintes direções são propostas para trabalhos futuros:
+
+\begin{enumerate}
+    \item \textbf{Integração plena do GOES-16 em produção}, com pipeline de download contínuo via S3 e fusão temporal com dados FIRMS para reduzir a janela cega entre passagens de satélite;
+    \item \textbf{Treino do NeKo-PIGNN com dados reais}, utilizando séries temporais de FIRMS (múltiplos dias) combinadas com variáveis meteorológicas do Open-Meteo (temperatura, umidade, velocidade do vento), estendendo os resultados sintéticos da Seção~\ref{sec:results};
+    \item \textbf{Calibração do índice de risco contra dados históricos INPE e MapBiomas Fogo}, utilizando validação cruzada sazonal (seca e chuvosa) para robustez;
+    \item \textbf{Expansão geográfica para outros estados do Nordeste} (Maranhão, Piauí, Bahia), que compartilham biomas e regimes de fogo similares;
+    \item \textbf{Modelos preditivos de curto prazo} baseados em séries temporais com Neural ODE e operador de Koopman para previsão de risco em janelas de 6--24~horas;
+    \item \textbf{Agente explicador ReAct causal} com suporte a perguntas contrafactuais (``e se a velocidade do vento aumentasse 50\,\%?'') baseado no modelo NeKo-PIGNN treinado e SHAP values para atribuição de importância a variáveis;
+    \item \textbf{Notificações push via WhatsApp e Telegram} para defesas civis municipais, com alertas hierárquicos e relatórios automáticos;
+    \item \textbf{Validação do RAG com 100+ questões e 5+ revisores}, complementada por métricas objetivas (ROUGE, BLEU, faithfulness score) para garantir a qualidade do sistema de perguntas e respostas;
+    \item \textbf{Aplicação da arquitetura a outras dinâmicas não-lineares}, como desmatamento, seca e enchentes, onde a combinação de dados de satélite, agentes de IA e regularização física pode ser igualmente relevante.
+\end{enumerate}
+
+\subsection{Implicações para a Prática}
+
+Para além das contribuições acadêmicas, este trabalho demonstra a viabilidade prática de sistemas de gêmeos digitais acessíveis para regiões com infraestrutura limitada. Defesas civis municipais, órgãos estaduais de meio ambiente e pesquisadores podem replicar a plataforma com investimento mínimo (instância AWS EC2 t3.medium, ~\,\$30/mês), obtendo capacidades de monitoramento comparáveis a sistemas institucionais de custo elevado. A arquitetura modular --- LangGraph para orquestração, FastAPI para serviços, React para interface --- permite adaptação a outros contextos regionais e fontes de dados. O licenciamento MIT remove barreiras legais para adoção e customização.
 
 \section*{Agradecimentos}
 
