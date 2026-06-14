@@ -309,7 +309,6 @@ class PhysicsInformedGNN(nn.Module):
         super().__init__()
         self.num_layers = num_layers
         self.hidden_dim = hidden_dim
-
         # Encoder
         self.encoder = nn.Sequential(
             nn.Linear(node_features, hidden_dim),

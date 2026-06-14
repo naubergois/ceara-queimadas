@@ -190,7 +190,7 @@ export default function DataUploadPage() {
           const detRes = await fetch(`${API}/deteccao-3class`)
           if (detRes.ok) {
             const detData = await detRes.json()
-            const detMap = new Map((detData.municipios || []).map((m: any) => [m.municipio, m]))
+            const detMap = new Map((detData.municipios || []).map((m: { municipio: string; classe: string; p_sim: number }) => [m.municipio, m]))
             for (const r of riscos) {
               const det = detMap.get(r.municipio)
               if (det) {

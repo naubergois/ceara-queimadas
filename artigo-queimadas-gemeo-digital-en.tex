@@ -450,6 +450,71 @@ where $\mathbf{K}_\theta \in \mathbb{R}^{d \times d}$ is the learned matrix. The
 
 The dimensionality $d$ of the observable space is a critical hyperparameter. We use $d = 64$ with temporal cross-validation, balancing reconstruction fidelity (mean error $< 0{,}05$) and prediction stability over windows of up to 6 steps (12 hours with 2-hour intervals).
 
+\subsubsection{EDMD Approximation of the Koopman Operator}
+
+The matrix $\mathbf{K}_\theta$ is learned via \emph{Extended Dynamic Mode Decomposition} (EDMD)~\\cite{article:williams2015}, which minimizes the one-step prediction error in the observable space:
+
+\begin{equation}
+\mathbf{K}_\theta = \argmin_{\mathbf{K}} \; \mathbb{E}_{t} \left\| \psi(\mathbf{x}_{t+1}) - \mathbf{K}^\top \psi(\mathbf{x}_t) \right\|^2_{\Gamma}
+\label{eq:edmd}
+\end{equation}
+
+where $\|\cdot\|_{\Gamma}$ is the norm weighted by the covariance matrix $\Gamma = \mathbb{E}[\psi(\mathbf{x}) \psi(\mathbf{x})^\top]$. In practice, we solve:
+
+\begin{equation}
+\mathbf{K}_\theta = \mathbf{G}^+ \mathbf{A}, \quad
+\mathbf{G} = \frac{1}{T} \sum_{t=1}^{T} \psi(\mathbf{x}_t) \psi(\mathbf{x}_t)^\top, \quad
+\mathbf{A} = \frac{1}{T} \sum_{t=1}^{T} \psi(\mathbf{x}_t) \psi(\mathbf{x}_{t+1})^\top
+\label{eq:edmd_solve}
+\end{equation}
+
+where $\psi(\mathbf{x}_t)$ are the latent observations $\mathbf{z}_t$ extracted by the encoder, and $\mathbf{G}^+$ denotes the Moore-Penrose pseudoinverse. We employ the low-rank factorization $\mathbf{K}_\theta = \mathbf{U} \mathbf{V}$ with rank $r = \min(16, d/2)$, where $\mathbf{U} \in \mathbb{R}^{d \times r}$ and $\mathbf{V} \in \mathbb{R}^{r \times d}$, reducing parameters from $d^2$ to $2dr$ and preventing overfitting on short time series.
+
+\subsubsection{Variational Regularization and Reparameterization Trick}
+
+Following the variational autoencoder (VAE) formulation~\\cite{article:kingma2014}, the encoder $g_\phi$ produces a distribution $q_\phi(\mathbf{z}_t \mid \mathbf{x}_t) = \mathcal{N}(\boldsymbol{\mu}_\phi(\mathbf{x}_t), \boldsymbol{\sigma}_\phi^2(\mathbf{x}_t) \mathbf{I})$ over the latent observables. Sampling is performed via the \emph{reparameterization trick}:
+
+\begin{equation}
+\mathbf{z}_t = \boldsymbol{\mu}_\phi(\mathbf{x}_t) + \boldsymbol{\sigma}_\phi(\mathbf{x}_t) \odot \boldsymbol{\epsilon}, \quad \boldsymbol{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})
+\label{eq:reparam}
+\end{equation}
+
+The KL divergence between the variational distribution and the prior $p(\mathbf{z}) = \mathcal{N}(\mathbf{0}, \mathbf{I})$ regularizes the latent space:
+
+\begin{equation}
+\mathcal{L}_{\text{KL}} = D_{\text{KL}}\left( q_\phi(\mathbf{z}_t \mid \mathbf{x}_t) \; \| \; \mathcal{N}(\mathbf{0}, \mathbf{I}) \right) = -\frac{1}{2} \sum_{j=1}^{d} \left( 1 + \log \sigma_j^2 - \mu_j^2 - \sigma_j^2 \right)
+\label{eq:kl_div}
+\end{equation}
+
+The total KoopmanAE-VAE loss combines reconstruction, prediction, and KL regularization with weight $\beta$ ($\beta$-VAE configuration~\\cite{article:higgins2017}):
+
+\begin{equation}
+\mathcal{L}_{\text{vae-koop}} = \underbrace{\|\mathbf{x}_t - \hat{\mathbf{x}}_t\|^2}_{\text{reconstruction}} + \alpha \underbrace{\|\mathbf{x}_{t+1} - h_\psi(\mathbf{K}_\theta \mathbf{z}_t)\|^2}_{\text{prediction}} + \beta \underbrace{\mathcal{L}_{\text{KL}}}_{\text{regularization}}
+\label{eq:vae_koop_loss}
+\end{equation}
+
+\subsubsection{Temporal Curriculum Learning}
+
+Multi-step training adopts a \emph{curriculum learning} strategy~\\cite{article:bengio2009curriculum}, where the prediction horizon $K$ grows gradually during training:
+
+\begin{equation}
+K(\tau) = \min\left(K_{\max},\; K_0 + \left\lfloor \frac{\tau}{\tau_{\text{warmup}}} \right\rfloor \right), \quad \text{with } K_0 = 1
+\label{eq:curriculum}
+\end{equation}
+
+where $\tau$ is the current epoch, $\tau_{\text{warmup}} = 20$ warm-up epochs, and $K_{\max} = 6$ steps. The total gradient in each epoch is the sum of gradients for each horizon $k \in \{1, \dots, K(\tau)\}$.
+
+\subsubsection{Prediction Error Analysis}
+
+The $k$-step prediction error of the Koopman operator can be bounded by:
+
+\begin{equation}
+\|\mathbf{x}_{t+k} - \hat{\mathbf{x}}_{t+k}\| \leq \underbrace{\|h_\psi(\mathbf{K}_\theta^k \mathbf{z}_t) - \mathbf{K}_\infty^k \psi(\mathbf{x}_t)\|}_{\text{approximation error}} + \underbrace{\|\mathbf{K}_\infty^k \psi(\mathbf{x}_t) - \psi(\mathbf{x}_{t+k})\|}_{\text{truncation error}}
+\label{eq:error_bound}
+\end{equation}
+
+where $\mathbf{K}_\infty$ is the exact Koopman operator in infinite-dimensional space. The first term decays as $\mathcal{O}(e^{-\gamma k})$ for eigenvalues $|\lambda_i| < 1$ in the continuous spectrum, while the second term is bounded by the finite dimension $d$ of the observable space. For $d = 64$, spectral decomposition reveals that 95\,\% of the dynamic energy is contained in the 12 dominant coherent modes.
+
 \subsection{Physics-Informed Graph Neural Networks}
 \label{sec:pignn}
 

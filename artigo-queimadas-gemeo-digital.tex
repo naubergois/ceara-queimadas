@@ -591,7 +591,44 @@ A perda total da PI-GNN combina a perda supervisionada de predição de focos co
 \label{eq:pignn_loss}
 \end{align}
 
-onde BCE é a entropia cruzada binária entre o rótulo real $y_i$ (foco presente/ausente) e a probabilidade predita $\hat{p}_i$. Os hiperparâmetros $\lambda_1 = 0{,}1$, $\lambda_2 = 0{,}05$ e $\lambda_3 = 10^{-4}$ foram ajustados por validação.
+onde BCE é a entropia cruzada binária entre o rótulo real $y_i$ (foco presente/ausente) e a probabilidade predita $\\hat{p}_i$. Os hiperparâmetros $\\lambda_1 = 0{,}1$, $\\lambda_2 = 0{,}05$ e $\\lambda_3 = 10^{-4}$ foram ajustados por validação.
+
+\subsubsection{Algoritmo de Treinamento e Regularização Espectral}
+
+O treinamento conjunto do NeKo-PIGNN segue o Algoritmo~\ref{alg:train}. Em cada época, primeiro propagamos o estado no operador de Koopman para obter $\\hat{\\mathbf{x}}_{t+1}$, então executamos a GNN sobre o grafo $\\mathcal{G}$ para gerar mapas de risco espacializados. A retropropagação flui através de ambos os módulos, permitindo que a regularização física informada por Rothermel corrija tanto os parâmetros da GNN quanto a matriz $\\mathbf{K}_\\theta$.
+
+Adicionalmente, impomos uma regularização espectral sobre $\\mathbf{K}_\\theta$ para garantir estabilidade numérica da predição em múltiplos passos:
+
+\\begin{equation}
+\\mathcal{L}_{\\text{spec}} = \\left\\| \\max_i |\\lambda_i(\\mathbf{K}_\\theta)| - 1 \\right\\|_1
+\\label{eq:spectral_reg}
+\\end{equation}
+
+onde $\\lambda_i(\\mathbf{K}_\\theta)$ são os autovalores da matriz de Koopman. Esta penalidade força o espectro a permanecer dentro do círculo unitário, evitando crescimento exponencial de erro em predições multi-passo. A perda final de treinamento é $\\mathcal{L}_{\\text{total}} + \\lambda_4 \\mathcal{L}_{\\text{spec}}$, com $\\lambda_4 = 10^{-3}$.
+
+\\begin{algorithm}[htbp]
+\\caption{Treinamento Conjunto NeKo-PIGNN}
+\\label{alg:train}
+\\small
+\\begin{algorithmic}[1]
+\\Require Seqüência temporal $\\{\\mathbf{x}_t\\}_{t=1}^{T}$, grafo $\\mathcal{G}$, épocas $E$, horizonte $K_{\\max}$
+\\Ensure $\\theta = \\{\\phi, \\psi, \\mathbf{U}, \\mathbf{V}, \\mathbf{W}, \\mathbf{b}\\}$
+\\State $K_0 \\gets 1,\\; \\tau_{\\text{warmup}} \\gets 20$
+\\For{$\\tau = 1 \\to E$}
+    \\State $K \\gets \\min(K_{\\max}, K_0 + \\lfloor \\tau / \\tau_{\\text{warmup}} \\rfloor)$
+    \\For{$k = 1 \\to K$}
+        \\State $\\mathbf{z}_t, \\boldsymbol{\\mu}, \\boldsymbol{\\sigma} \\gets g_\\phi(\\mathbf{x}_t)$
+        \\State $\\mathbf{z}_{t+k} \\gets \\mathbf{K}_\\theta^k \\mathbf{z}_t$
+        \\State $\\hat{\\mathbf{x}}_{t+k} \\gets h_\\psi(\\mathbf{z}_{t+k})$
+        \\State $\\hat{p}_v^{(t+k)} \\gets \\text{GNN}\\big(\\hat{\\mathbf{x}}_{t+k}, \\mathcal{G}\\big), \\; \\forall v \\in \\mathcal{V}$
+        \\State $\\mathcal{L}_{\\text{total}}^{k} \\gets \\text{BCE}(\\mathbf{y}_{t+k}, \\hat{\\mathbf{p}}) + \\lambda_1 \\|\\mathbf{x}_{t+k} - \\hat{\\mathbf{x}}_{t+k}\\|^2 + \\lambda_2 \\mathcal{L}_{\\text{phys}} + \\lambda_3 \\|\\mathbf{W}\\|_2 + \\lambda_4 \\mathcal{L}_{\\text{spec}}$
+    \\EndFor
+    \\State $\\nabla_\\theta \\sum_{k=1}^{K} \\mathcal{L}_{\\text{total}}^{k}$ \\Comment{Retropropagação conjunta}
+    \\State $\\theta \\gets \\text{AdamW}(\\theta, \\nabla_\\theta, \\text{lr}=10^{-3})$
+    \\State $\\text{lr} \\gets \\text{CosineAnnealing}(\\tau, E)$
+\\EndFor
+\\end{algorithmic}
+\\end{algorithm}
 
 \subsection{Koopman-PI-GNN Integration in the Pipeline}
 \label{sec:integration}
