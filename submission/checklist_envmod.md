@@ -2,7 +2,7 @@
 
 ## 📋 Pré-requisitos da Revista
 
-- [x] **Template Elsevier**: elsarticle.cls (formato 5p, twocolumn)
+- [x] **Template Elsevier**: elsarticle.cls (formato preprint, single column)
 - [x] **Título**: "Neural Koopman Operator + Physics-Informed Graph Neural Networks for Real-Time Wildfire Digital Twin"
 - [x] **Autores**: Nauber Gois (único autor)
 - [x] **Abstract**: Bilíngue (PT + EN) — 150-250 palavras

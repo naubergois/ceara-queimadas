@@ -2,7 +2,7 @@
 %% Elsevier-compatible LaTeX article
 %% Gêmeo Digital do Ceará para Monitoramento de Queimadas
 
-\documentclass[5p,times,numbers]{elsarticle}
+\documentclass[preprint,times,numbers]{elsarticle}
 
 \makeatletter
 \gdef\ttdefault{cmtt}
@@ -31,7 +31,7 @@
 \usepackage{amsfonts}
 \usepackage{textcomp}
 
-% Float placement — evita figuras invadindo coluna vizinha em twocolumn
+% Float placement — elsarticle preprint (single column)
 \setcounter{topnumber}{2}
 \setcounter{bottomnumber}{1}
 \setcounter{totalnumber}{3}
@@ -226,7 +226,7 @@ A Figura~\ref{fig:architecture} apresenta a arquitetura geral do sistema, organi
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\columnwidth]{figures/architecture.png}
+\includegraphics[width=0.95\textwidth,height=0.38\textheight,keepaspectratio]{figures/architecture.png}
 \caption{Layered architecture of the Ceará Digital Twin platform.}
 \label{fig:architecture}
 \end{figure}
@@ -274,7 +274,7 @@ O pipeline de agentes é implementado como um grafo de estado (\texttt{StateGrap
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.92\columnwidth]{figures/langgraph.png}
+\includegraphics[width=0.85\textwidth]{figures/langgraph.png}
 \caption{LangGraph state graph of the agent pipeline. Analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}
 \label{fig:langgraph}
 \end{figure}
