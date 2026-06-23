@@ -4,6 +4,10 @@
 
 \documentclass[5p,twocolumn]{elsarticle}
 
+\makeatletter
+\def\input@path{{tex-stubs/}{./tex-stubs/}}
+\makeatother
+
 \usepackage[english,brazil]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -19,16 +23,15 @@
 \usepackage{subcaption}
 \usepackage{multirow}
 \usepackage{array}
-\usepackage{siunitx}
+\IfFileExists{siunitx.sty}{\usepackage{siunitx}}{}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{bm}
 \usepackage{amsfonts}
-\usepackage{dsfont}
 \usepackage{textcomp}
 
-% Comando para correção de vírgula decimal
-\usepackage{icomma}
+% Comando para correção de vírgula decimal (opcional: icomma)
+\IfFileExists{icomma.sty}{\usepackage{icomma}}{}
 
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -68,6 +71,7 @@
 \address[funceme]{Fundação Cearense de Meteorologia e Recursos Hídricos (FUNCEME), Fortaleza, CE, Brasil}
 \address[ifce]{Instituto Federal do Ceará (IFCE), Departamento de Computação, Fortaleza, CE, Brasil}
 
+\DeclareMathOperator*{\argmin}{arg\,min}
 \begin{document}
 
 \selectlanguage{brazil}
@@ -701,6 +705,10 @@ O código-fonte completo está disponível em: \url{https://github.com/naubergoi
 \section*{Declaração de Conflito de Interesses}
 
 Os autores declaram não haver conflitos de interesse.
+
+\section*{Declaração de Uso de Inteligência Artificial}
+
+Este manuscrito foi elaborado com o auxílio de agentes de escrita assistida por IA para refinamento de linguagem, busca bibliográfica e formatação LaTeX. O conteúdo científico, o desenho experimental, a análise de dados e as conclusões são de responsabilidade exclusiva dos autores. Todo texto gerado ou sugerido por IA foi revisado e editado substancialmente pelos autores.
 
 %% ===================================================================
 %% Referências

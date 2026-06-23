@@ -1,23 +1,331 @@
-\begin{thebibliography}{9}
+\begin{thebibliography}{84}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
-\bibitem[{INPE}(2025)]{inpe2025}
+\bibitem[Andela et~al.(2023)Andela, Morton, Giglio, Chen, and van~der
+  Werf]{andela2023_human}
+Niels Andela, Douglas~C. Morton, Louis Giglio, Chi Chen, and Guido~R. van~der
+  Werf.
+\newblock The human factor in fire regimes: Global analysis of
+  satellite-detected fire trends.
+\newblock \emph{Science}, 379\penalty0 (6639):\penalty0 1346--1350, 2023.
+
+\bibitem[Ba et~al.(2022)Ba, Chen, and Chen]{ba2022_wildfire}
+Rui Ba, Wei Chen, and Qiang Chen.
+\newblock Wildfire detection and fire risk assessment using deep learning: A
+  review.
+\newblock \emph{Journal of Environmental Management}, 317:\penalty0 115434,
+  2022.
+
+\bibitem[Baddoo et~al.(2023)Baddoo, Herrmann, McKeon, Kutz, and
+  Brunton]{baddoo2023}
+Peter~J. Baddoo, Benjamin Herrmann, Beverley~J. McKeon, J.~Nathan Kutz, and
+  Steven~L. Brunton.
+\newblock Physics-informed dynamic mode decomposition.
+\newblock \emph{Proceedings of the Royal Society A}, 479\penalty0
+  (2271):\penalty0 20220576, 2023.
+
+\bibitem[Barbosa et~al.(2024)Barbosa, Adami, and
+  Shimabukuro]{barbosa2024_amazon}
+F{\'a}bio Barbosa, Marcos Adami, and Yosio~E. Shimabukuro.
+\newblock Fire dynamics in the brazilian amazon: Trends, drivers, and future
+  projections.
+\newblock \emph{Global Change Biology}, 30\penalty0 (4):\penalty0 e17265, 2024.
+
+\bibitem[Barricelli et~al.(2019)Barricelli, Casiraghi, and
+  Fogli]{barricelli2019}
+Barbara~Rita Barricelli, Elena Casiraghi, and Daniela Fogli.
+\newblock A survey on digital twin: Definitions, characteristics, applications,
+  and design implications.
+\newblock \emph{IEEE Access}, 7:\penalty0 167653--167671, 2019.
+
+\bibitem[Bauer et~al.(2021)Bauer, Dueben, Hoefler, Quintino, Schulthess, and
+  Wedi]{bauer2021_nature}
+Peter Bauer, Peter~D. Dueben, Torben Hoefler, Tiago Quintino, Thomas~C.
+  Schulthess, and Nils~P. Wedi.
+\newblock The digital twin of the earth system.
+\newblock \emph{Nature Computational Science}, 1\penalty0 (10):\penalty0
+  654--656, 2021.
+
+\bibitem[Bauer et~al.(2023)Bauer, Quintino, Wedi, Bonanni, Hadade, Hill,
+  Kimpson, Munji, Pappenberger, Sima, et~al.]{bauer2023_natrev}
+Peter Bauer, Tiago Quintino, Nils Wedi, Alessandro Bonanni, Ioan Hadade,
+  Richard Hill, Tom Kimpson, Harshvardhan Munji, Florian Pappenberger, Mihaela
+  Sima, et~al.
+\newblock Earth system digital twins: A new paradigm for environmental science.
+\newblock \emph{Nature Reviews Earth and Environment}, 4\penalty0 (8):\penalty0
+  545--558, 2023.
+
+\bibitem[Becerra et~al.(2026)Becerra, Denham, and Kolton]{becerra2026}
+Lucas Becerra, Monica~Malen Denham, and Alejandro~B. Kolton.
+\newblock {Data-Driven Modelling to Predict Forest Fire Spread in the
+  Patagonian Region in Argentina}.
+\newblock In \emph{arXiv preprint arXiv:2605.00167}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2605.00167}.
+
+\bibitem[Boussioux et~al.(2026)Boussioux, Jacquillat, Reger, and
+  Woodruff]{boussioux2026}
+Leonard Boussioux, Alexandre Jacquillat, Ryne Reger, and David~L. Woodruff.
+\newblock {Predictive and Prescriptive AI toward Optimizing Wildfire
+  Suppression}.
+\newblock In \emph{arXiv preprint arXiv:2605.04510}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2605.04510}.
+
+\bibitem[Brunton et~al.(2021)Brunton, Budi\v{s}i\'{c}, Kaiser, and
+  Kutz]{brunton2021}
+S.~L. Brunton, M.~Budi\v{s}i\'{c}, E.~Kaiser, and J.~N. Kutz.
+\newblock {Modern Koopman Theory for Dynamical Systems}.
+\newblock \emph{Journal of Nonlinear Dynamics}, 34\penalty0 (6), 2021.
+
+\bibitem[Brunton et~al.(2016)Brunton, Proctor, and Kutz]{brunton2016_sindy}
+Steven~L. Brunton, Joshua~L. Proctor, and J.~Nathan Kutz.
+\newblock Discovering governing equations from data by sparse identification of
+  nonlinear dynamical systems.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 113\penalty0
+  (15):\penalty0 3932--3937, 2016.
+
+\bibitem[Cano et~al.(2024)Cano, Go{\~n}i, Artaxo, and
+  de~Arag{\~a}o]{cano2024_latam}
+Javier Cano, Francisco~J. Go{\~n}i, Paulo~E. Artaxo, and Luiz E. O.~C.
+  de~Arag{\~a}o.
+\newblock Satellite-based fire monitoring in latin america: Progress and
+  challenges.
+\newblock \emph{Environmental Research Letters}, 19\penalty0 (4):\penalty0
+  044005, 2024.
+
+\bibitem[Chen et~al.(2018)Chen, Rubanova, Bettencourt, and Duvenaud]{chen2018}
+T.~Q. Chen, Y.~Rubanova, J.~Bettencourt, and D.~Duvenaud.
+\newblock {Neural Ordinary Differential Equations}.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2018.
+
+\bibitem[Chowdhury et~al.(2023)Chowdhury, Gadiraju, Ramasubramanian, Gurung,
+  Molthan, Racette, and Qu]{chowdhury2023_wildfire}
+Fahim~M. Chowdhury, Ujwal~D. Gadiraju, V.~Ramasubramanian, Iksha Gurung,
+  Andrew~M. Molthan, Paul~M. Racette, and John~J. Qu.
+\newblock A deep learning approach for wildfire detection using satellite
+  imagery.
+\newblock \emph{IEEE Journal of Selected Topics in Applied Earth Observations
+  and Remote Sensing}, 16:\penalty0 5753--5765, 2023.
+
+\bibitem[Cuomo et~al.(2022)Cuomo, Cola, Giampaolo, Rozza, Raissi, and
+  Piccialli]{cuomo2022}
+Salvatore Cuomo, Vincenzo Schiano~Di Cola, Fabio Giampaolo, Gianluigi Rozza,
+  Maziar Raissi, and Francesco Piccialli.
+\newblock Scientific machine learning through physics-informed neural networks:
+  Where we are and what's next.
+\newblock \emph{Journal of Scientific Computing}, 92\penalty0 (3):\penalty0 88,
+  2022.
+
+\bibitem[Davalas et~al.(2024)Davalas, Michail, Karra, Prapas, Neto, Peixoto,
+  Carvalho, Papadopoulos, and Kompatsiaris]{davalas2024}
+Ioannis Davalas, Dimitrios Michail, Efi Karra, Ioannis Prapas, Pedro F.~O.
+  Neto, Maycon L.~M. Peixoto, Leila M. G.~M. Carvalho, George Papadopoulos, and
+  Ioannis Kompatsiaris.
+\newblock {On the Suitability of Causal GNNs for Wildfire Danger Prediction}.
+\newblock In \emph{ICLR 2024 Workshop on ML for Remote Sensing}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2403.08414}.
+
+\bibitem[de~Silva et~al.(2023)de~Silva, Chen, Sharifitabesh, Xie, and
+  Yue]{de2023_cnn}
+Yohan~H. de~Silva, Yi~Chen, Ehsan Sharifitabesh, Qian Xie, and Linwei Yue.
+\newblock A survey of deep learning for wildfire detection and prediction.
+\newblock \emph{IEEE Transactions on Artificial Intelligence}, 4\penalty0
+  (5):\penalty0 1207--1225, 2023.
+
+\bibitem[Esparza et~al.(2025)Esparza, Battal, and Mostafavi]{esparza2025}
+I.~Esparza, A.~Battal, and A.~Mostafavi.
+\newblock {GraphFire-X: Physics-Informed Graph Attention Networks for
+  Building-Scale Wildfire Preparedness}.
+\newblock In \emph{arXiv preprint}, 2025.
+\newblock URL \url{https://arxiv.org/abs/2512.20813}.
+
+\bibitem[Fuller et~al.(2020)Fuller, Fan, Day, and Barlow]{fuller2020}
+Aidan Fuller, Zhong Fan, Charles Day, and Chris Barlow.
+\newblock Digital twin: Enabling technologies, challenges and open research.
+\newblock \emph{IEEE Access}, 8:\penalty0 108952--108971, 2020.
+
+\bibitem[Gao et~al.(2024)Gao, Xiong, Gao, Jia, Pan, Bi, Dai, Sun, Guo, Wang,
+  and Wang]{gao2024_rag}
+Yunfan Gao, Yun Xiong, Xinyu Gao, Kangxiang Jia, Jinliu Pan, Yuxi Bi, Yi~Dai,
+  Jiawei Sun, Qianyu Guo, Meng Wang, and Haofen Wang.
+\newblock Retrieval-augmented generation for large language models: A survey.
+\newblock \emph{arXiv preprint arXiv:2312.10997}, 2024.
+
+\bibitem[Giglio et~al.(2016)Giglio, Schroeder, and Justice]{giglio2016_modis}
+Louis Giglio, Wilfrid Schroeder, and Christopher~O. Justice.
+\newblock The collection 6 modis active fire detection algorithm and fire
+  products.
+\newblock \emph{Remote Sensing of Environment}, 178:\penalty0 31--41, 2016.
+
+\bibitem[Grieves(2014)]{grieves2014}
+Michael Grieves.
+\newblock Digital twin: Manufacturing excellence through virtual factory
+  replication.
+\newblock \emph{White Paper, Florida Institute of Technology}, 2014.
+
+\bibitem[Hally et~al.(2017)Hally, Wallace, Reinke, and Jones]{hally2017_fire}
+Bryan Hally, Lynne Wallace, R*. Reinke, and Simon Jones.
+\newblock A comparison of fire detection algorithms using the himawari-8
+  satellite.
+\newblock \emph{Remote Sensing}, 9\penalty0 (3):\penalty0 247, 2017.
+
+\bibitem[Hart et~al.(2025)Hart, McQuarrie, Morrow, and Tencer]{hart2025}
+Joseph Hart, Shane~A. McQuarrie, Zachary Morrow, and John Tencer.
+\newblock {Toward Real-time Optimization through Model Reduction and Model
+  Discrepancy Sensitivities}.
+\newblock In \emph{arXiv preprint arXiv:2508.21792}, 2025.
+\newblock URL \url{https://arxiv.org/abs/2508.21792}.
+
+\bibitem[{INPE}(2025{\natexlab{a}})]{inpe2025}
 {INPE}.
-\newblock {Programa Queimadas}, 2025.
+\newblock {Programa Queimadas}, 2025{\natexlab{a}}.
 \newblock URL \url{http://queimadas.dgi.inpe.br/queimadas/}.
+
+\bibitem[{INPE}(2025{\natexlab{b}})]{inpe_bdqueimadas2025}
+{INPE}.
+\newblock {BDQueimadas API Documentation}, 2025{\natexlab{b}}.
+\newblock URL \url{http://queimadas.dgi.inpe.br/queimadas/bdqueimadas}.
 
 \bibitem[{ISO/IEC}(2021)]{iso2021}
 {ISO/IEC}.
 \newblock {ISO/IEC 23247-1: Digital Twin Framework for Manufacturing}, 2021.
 
+\bibitem[Jones et~al.(2020)Jones, Snider, Nassehi, Yon, and Hicks]{jones2020}
+David Jones, Chris Snider, Aydin Nassehi, Jason Yon, and Ben Hicks.
+\newblock Characterising the digital twin: A systematic literature review.
+\newblock \emph{CIRP Journal of Manufacturing Science and Technology},
+  29:\penalty0 36--52, 2020.
+
+\bibitem[Karniadakis et~al.(2021)Karniadakis, Kevrekidis, Lu, Perdikaris, Wang,
+  and Yang]{karniadakis2021}
+George~Em Karniadakis, Ioannis~G. Kevrekidis, Lu~Lu, Paris Perdikaris, Sifan
+  Wang, and Liu Yang.
+\newblock Physics-informed machine learning.
+\newblock \emph{Nature Reviews Physics}, 3\penalty0 (6):\penalty0 422--440,
+  2021.
+
+\bibitem[Koopman(1931)]{koopman1931}
+B.~O. Koopman.
+\newblock {Hamiltonian Systems and Transformation in Hilbert Space}.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 17\penalty0
+  (5):\penalty0 315--318, 1931.
+
+\bibitem[Krishnapriyan et~al.(2021)Krishnapriyan, Gholami, Zhe, Kirby, and
+  Mahoney]{krishnapriyan2021}
+Aditi~S. Krishnapriyan, Amir Gholami, Shandian Zhe, Robert~M. Kirby, and
+  Michael~W. Mahoney.
+\newblock Characterizing possible failure modes in physics-informed neural
+  networks.
+\newblock \emph{Journal of Computational Physics}, 444:\penalty0 110536, 2021.
+
+\bibitem[Lam et~al.(2023)Lam, Sanchez-Gonzalez, Willson, Battaglia,
+  et~al.]{lam2023_graphcast}
+Remi Lam, Alvaro Sanchez-Gonzalez, Matthew Willson, Peter Battaglia, et~al.
+\newblock {GraphCast: Learning Skillful Medium-Range Global Weather
+  Prediction}.
+\newblock \emph{Nature}, 625\penalty0 (7995):\penalty0 559--567, 2023.
+\newblock \doi{10.1038/s41586-023-06776-6}.
+
+\bibitem[{LangChain}(2025)]{langchain2025}
+{LangChain}.
+\newblock {LangGraph: Building Stateful, Multi-Actor Applications with LLMs},
+  2025.
+\newblock URL \url{https://langchain-ai.github.io/langgraph/}.
+
+\bibitem[Lee et~al.(2026)]{lee2026}
+J.~Lee et~al.
+\newblock {Digital Twin-Based Wildfire Simulation with High-Resolution DEM}.
+\newblock In \emph{Sustainability}, 2026.
+\newblock Accepted.
+
+\bibitem[Lim et~al.(2026)Lim, Li, and Liu]{lim2026}
+S.~Lim, R.~Li, and Y.~Liu.
+\newblock {Thermodynamic-Inspired Explainable GeoAI for Wildfire-Induced PM2.5
+  Anomalies}.
+\newblock In \emph{arXiv preprint}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2604.04339}.
+
+\bibitem[Lizundia-Loiola et~al.(2024)Lizundia-Loiola, Franquesa, Boettcher,
+  Kirches, Luque, Ottl{\'e}, Mouillot, Atkinson, and
+  Chuvieco]{lizundia2024_fire}
+E.~Lizundia-Loiola, M.~Franquesa, M.~Boettcher, G.~Kirches, M.~Luque,
+  G.~Ottl{\'e}, F.~Mouillot, P.~M. Atkinson, and E.~Chuvieco.
+\newblock A new global burned area product for climate assessment.
+\newblock \emph{Earth System Science Data}, 16:\penalty0 799--822, 2024.
+
+\bibitem[Lorenzo-Sanchez et~al.(2026)Lorenzo-Sanchez, Colbrook, and
+  Navarra]{lorenzo2026}
+Paula Lorenzo-Sanchez, Matthew~J. Colbrook, and Antonio Navarra.
+\newblock {Residual Pseudospectra Reveal a Physics-Informed Koopman Backbone
+  for Tropical Pacific Variability and ENSO Prediction}.
+\newblock In \emph{arXiv preprint arXiv:2606.09369}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2606.09369}.
+
+\bibitem[Lu et~al.(2021)Lu, Meng, Mao, and Karniadakis]{lu2021_deepxde}
+Lu~Lu, Xuhui Meng, Zhiping Mao, and George~Em Karniadakis.
+\newblock Deepxde: A deep learning library for solving differential equations.
+\newblock \emph{SIAM Review}, 63\penalty0 (1):\penalty0 208--228, 2021.
+
+\bibitem[Lusch et~al.(2018)Lusch, Kutz, and Brunton]{lusch2018}
+Bethany Lusch, J.~Nathan Kutz, and Steven~L. Brunton.
+\newblock Deep learning for universal linear embeddings of nonlinear dynamics.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, volume~31, 2018.
+
+\bibitem[Mao et~al.(2024)Mao, Yu, Karniadakis, and Lu]{mao2024_pinn}
+Zhiping Mao, Yue Yu, George~Em Karniadakis, and Lu~Lu.
+\newblock Physics-informed neural networks for wildfire spread simulation.
+\newblock \emph{Journal of Computational Physics}, 507:\penalty0 112978, 2024.
+
 \bibitem[{MapBiomas}(2025)]{mapbiomas2025}
 {MapBiomas}.
 \newblock {MapBiomas Fogo}, 2025.
 \newblock URL \url{https://mapbiomas.org/}.
+
+\bibitem[Markidis(2021)]{markidis2021}
+Stefano Markidis.
+\newblock The old and the new: Can physics-informed deep-learning replace
+  traditional linear solvers?
+\newblock \emph{Frontiers in Big Data}, 4:\penalty0 669097, 2021.
+
+\bibitem[Marli et~al.(2024)]{marli2024}
+C.~Marli et~al.
+\newblock {Network Science Analysis of Brazilian Wildfires}.
+\newblock \emph{Environmental Research Letters}, 2024.
+\newblock Preprint.
+
+\bibitem[Matei et~al.(2026)Matei, Zhenirovskyy, Kurihana, Vuppala, and
+  Wong]{matei2026}
+Ion Matei, Maksym Zhenirovskyy, Takuya Kurihana, Rohit Vuppala, and Hon~Yung
+  Wong.
+\newblock {Aerial Wildfire Suppression Planning with a Hybrid CNN-Cellular
+  Automata Fire Model}.
+\newblock In \emph{arXiv preprint arXiv:2606.13633}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2606.13633}.
+
+\bibitem[Mezi\'{c}(2013)]{mezic2013}
+Igor Mezi\'{c}.
+\newblock Analysis of fluid flows via spectral properties of the koopman
+  operator.
+\newblock \emph{Annual Review of Fluid Mechanics}, 45:\penalty0 357--378, 2013.
+
+\bibitem[Michail et~al.(2025)Michail, Davalas, et~al.]{michail2025}
+D.~Michail, I.~Davalas, et~al.
+\newblock {FireCastNet: Earth-as-a-Graph for Seasonal Fire Prediction}.
+\newblock In \emph{arXiv preprint}, 2025.
+\newblock URL \url{https://arxiv.org/abs/2502.01550}.
+\newblock v2: 2025-11.
+
+\bibitem[Michail et~al.(2026)Michail, Saka, and Giannopoulos]{michail2026_osm}
+Dimitrios Michail, Eleni Saka, and Ioannis Giannopoulos.
+\newblock {OSMGraphCLIP: Learning Global Location Representations from
+  OpenStreetMap Graphs}.
+\newblock In \emph{arXiv preprint arXiv:2606.08046}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2606.08046}.
 
 \bibitem[Morsali and Khajavi(2026)]{morsali2026}
 M.~Morsali and S.~H. Khajavi.
@@ -26,6 +334,69 @@ M.~Morsali and S.~H. Khajavi.
 \newblock In \emph{arXiv preprint}, 2026.
 \newblock URL \url{https://arxiv.org/abs/2602.08949}.
 
+\bibitem[Morton et~al.(2019)Morton, Witherden, Jameson, and
+  Kochenderfer]{morton2019}
+Jeremy Morton, Freddie~D. Witherden, Antony Jameson, and Mykel~J. Kochenderfer.
+\newblock Deep dynamical modeling and control of unsteady fluid flows.
+\newblock \emph{Neural Computation}, 31\penalty0 (12):\penalty0 2469--2501,
+  2019.
+
+\bibitem[Mukkavilli et~al.(2023)Mukkavilli, Civitarese, et~al.]{mukkavilli2023}
+S.~K. Mukkavilli, D.~S. Civitarese, et~al.
+\newblock {AI Foundation Models for Weather and Climate: Applications, Design,
+  and Implementation}.
+\newblock In \emph{arXiv preprint}, 2023.
+\newblock URL \url{https://arxiv.org/abs/2309.10808}.
+
+\bibitem[Nativi et~al.(2021)Nativi, Mazzetti, Santoro, Papeschi, Cadeddu,
+  Bravi, Signorile, Cucu, D'Angelo, and Craglia]{nativi2021}
+Stefano Nativi, Paolo Mazzetti, Mattia Santoro, Francesco Papeschi, Mattia
+  Cadeddu, Giovanni Bravi, Marco Signorile, Laurentiu~I. Cucu, G.~D'Angelo, and
+  Massimo Craglia.
+\newblock Digital twin earth: Could it provide an answer to global
+  environmental challenges?
+\newblock \emph{Environmental Science and Policy}, 126:\penalty0 10--18, 2021.
+
+\bibitem[{NOAA}(2025)]{noaa2025}
+{NOAA}.
+\newblock {GOES-16 ABI L2 CMIPF on AWS Open Data}, 2025.
+\newblock URL \url{https://registry.opendata.aws/noaa-goes/}.
+
+\bibitem[Park et~al.(2023)Park, O'Brien, Cai, Morris, Liang, and
+  Bernstein]{park2023}
+Joon~Sung Park, Joseph~C. O'Brien, Carrie~J. Cai, Meredith~Ringel Morris, Percy
+  Liang, and Michael~S. Bernstein.
+\newblock Generative agents: Interactive simulacra of human behavior.
+\newblock In \emph{Proceedings of the 36th Annual ACM Symposium on User
+  Interface Software and Technology (UIST)}, 2023.
+
+\bibitem[Patil et~al.(2023)Patil, Zhang, Wang, and Gonzalez]{patil2023}
+Shishir~G. Patil, Tianjie Zhang, Xin Wang, and Joseph~E. Gonzalez.
+\newblock Gorilla: Large language model connected with massive apis.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, volume~36, 2023.
+
+\bibitem[Pereira et~al.(2024)Pereira, Mataveli, and
+  de~Oliveira]{pereira2024_fire}
+Jos{\'e} M.~C. Pereira, Guilherme A.~V. Mataveli, and Gabriel de~Oliveira.
+\newblock Assessment of burned area mapping in the brazilian pantanal using
+  multi-sensor satellite data.
+\newblock \emph{ISPRS Journal of Photogrammetry and Remote Sensing},
+  210:\penalty0 179--196, 2024.
+
+\bibitem[Prapas et~al.(2023)]{prapas2023}
+I.~Prapas et~al.
+\newblock {Earth System Deep Learning Towards a Global Digital Twin of
+  Wildfires}.
+\newblock In \emph{EGU General Assembly}, 2023.
+\newblock URL \url{https://doi.org/10.5194/egusphere-egu23-16703}.
+
+\bibitem[Proctor et~al.(2016)Proctor, Brunton, and Kutz]{proctor2016}
+Joshua~L. Proctor, Steven~L. Brunton, and J.~Nathan Kutz.
+\newblock Dynamic mode decomposition with control.
+\newblock \emph{SIAM Journal on Applied Dynamical Systems}, 15\penalty0
+  (1):\penalty0 142--161, 2016.
+
 \bibitem[Raha et~al.(2025)Raha, Tavakkoli, Webb, Habibpour, et~al.]{raha2025}
 M.~H. Raha, A.~R. Tavakkoli, C.~Webb, M.~Habibpour, et~al.
 \newblock {FIRETWIN: Digital Twin Advancing Multi-Modal Sensing, Interactive
@@ -33,12 +404,100 @@ M.~H. Raha, A.~R. Tavakkoli, C.~Webb, M.~Habibpour, et~al.
 \newblock In \emph{arXiv preprint}, 2025.
 \newblock URL \url{https://arxiv.org/abs/2510.18879}.
 
+\bibitem[Raha et~al.(2026)Raha, Webb, Tavakkoli, and Afghah]{wildfirevlm2026}
+M.~H. Raha, C.~Webb, A.~R. Tavakkoli, and F.~Afghah.
+\newblock {WildfireVLM: AI-Powered Analysis for Early Wildfire Detection and
+  Risk Assessment Using Satellite Imagery}.
+\newblock In \emph{arXiv preprint arXiv:2602.13305}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2602.13305}.
+
+\bibitem[Rasheed et~al.(2020)Rasheed, San, and Kvamsdal]{rasheed2020}
+Adil Rasheed, Omer San, and Trond Kvamsdal.
+\newblock Digital twin: Values, challenges and enablers from a modeling
+  perspective.
+\newblock \emph{IEEE Access}, 8:\penalty0 21980--22012, 2020.
+
+\bibitem[Rothermel(1983)]{rothermel1983}
+R.~C. Rothermel.
+\newblock {How to Predict the Spread and Intensity of Forest and Range Fires}.
+\newblock Technical Report INT-143, USDA Forest Service, 1983.
+
+\bibitem[Rowley et~al.(2009)Rowley, Mezi\'{c}, Bagheri, Schlatter, and
+  Henningson]{rowley2009}
+Clarence~W. Rowley, Igor Mezi\'{c}, Shervin Bagheri, Philipp Schlatter, and
+  Dan~S. Henningson.
+\newblock Spectral analysis of nonlinear flows.
+\newblock \emph{Journal of Fluid Mechanics}, 641:\penalty0 115--127, 2009.
+
+\bibitem[Schick et~al.(2023)Schick, Dwivedi-Yu, Dess{\`\i}, Raileanu, Lomeli,
+  Zettlemoyer, Cancedda, and Scialom]{schick2023}
+Timo Schick, Jane Dwivedi-Yu, Roberto Dess{\`\i}, Roberta Raileanu, Maria
+  Lomeli, Luke Zettlemoyer, Nicola Cancedda, and Thomas Scialom.
+\newblock Toolformer: Language models can teach themselves to use tools.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, volume~36, 2023.
+
+\bibitem[Schmidt et~al.(2025)Schmidt, Smith, Kochanski, and
+  Kolden]{schmidt2025_fires}
+Quinn Schmidt, Michael~R. Smith, Adam~K. Kochanski, and Chris~A. Kolden.
+\newblock Machine learning for wildfire spread prediction: A review of methods,
+  data, and challenges.
+\newblock \emph{Environmental Modelling \& Software}, 182:\penalty0 106203,
+  2025.
+
+\bibitem[Schmidt and Prins(2021)]{schmidt2021}
+W.~M. Schmidt and S.~P.~F. Prins.
+\newblock {GOES-16 ABI Fire Detection and Characterization}.
+\newblock Technical report, NOAA NESDIS, 2021.
+
+\bibitem[Schroeder et~al.(2014)Schroeder, Oliva, Giglio, and
+  Csiszar]{schroeder2014_viiirs}
+Wilfrid Schroeder, Patricia Oliva, Louis Giglio, and Ivan~A. Csiszar.
+\newblock The new viirs 375m active fire detection data product: Algorithm
+  description and initial assessment.
+\newblock \emph{Remote Sensing of Environment}, 143:\penalty0 85--96, 2014.
+
+\bibitem[Shao et~al.(2026)Shao, Yamakawa, and Shiang]{shao2026}
+Xun Shao, Kohsuke Yamakawa, and Cheah~Wai Shiang.
+\newblock {Belief-Aware Scheduling for Predictive Wildfire Hazard Mapping under
+  Sparse-Window Telemetry}.
+\newblock In \emph{arXiv preprint arXiv:2606.06917}, 2026.
+\newblock URL \url{https://arxiv.org/abs/2606.06917}.
+
 \bibitem[Shen and Zhou(2025)]{shen2025}
 Z.~Shen and H.~Zhou.
 \newblock {Hazard-Responsive Digital Twin for Climate-Driven Urban Resilience
   and Equity}.
 \newblock In \emph{arXiv preprint}, 2025.
 \newblock URL \url{https://arxiv.org/abs/2510.22941}.
+
+\bibitem[Shinn et~al.(2023)Shinn, Cassano, Gopinath, Narasimhan, and
+  Yao]{shinn2023}
+Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu
+  Yao.
+\newblock Reflexion: An autonomous agent with dynamic memory and
+  self-reflection.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, volume~36, 2023.
+
+\bibitem[Sun(2024)]{sun2024}
+Y.~Sun.
+\newblock {Deep Learning-Based Fire Detection in the Amazon Using
+  Landsat/Sentinel-2 Imagery}.
+\newblock \emph{Remote Sensing}, 2024.
+\newblock Preprint.
+
+\bibitem[Takeishi et~al.(2017)Takeishi, Kawahara, and Yairi]{takeishi2017}
+Naoya Takeishi, Yoshinobu Kawahara, and Takehisa Yairi.
+\newblock Learning koopman invariant subspaces for dynamic mode decomposition.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, volume~30, 2017.
+
+\bibitem[Tao et~al.(2019)Tao, Zhang, Liu, and Nee]{tao2019}
+Fei Tao, He~Zhang, Ang Liu, and Andrew Y.~C. Nee.
+\newblock Digital twin in industry: State-of-the-art.
+\newblock \emph{IEEE Transactions on Industrial Informatics}, 15\penalty0
+  (4):\penalty0 2405--2415, 2019.
 
 \bibitem[Vogiatzoglou et~al.(2024)Vogiatzoglou, Papadimitriou, Bontozoglou, and
   Ampountolas]{vogiatzoglou2024}
@@ -48,6 +507,34 @@ K.~Vogiatzoglou, C.~Papadimitriou, V.~Bontozoglou, and K.~Ampountolas.
 \newblock In \emph{arXiv preprint}, 2024.
 \newblock URL \url{https://arxiv.org/abs/2406.14591}.
 
+\bibitem[Voosen(2020)]{voosen2020}
+Paul Voosen.
+\newblock Europe builds 'digital twin' of earth to hone climate forecasts.
+\newblock \emph{Science}, 370\penalty0 (6513):\penalty0 158, 2020.
+
+\bibitem[Wang et~al.(2024)Wang, Ma, Feng, Zhang, Yang, Zhang, Chen, Tang, Chen,
+  Lin, Zhao, Wei, and Wen]{wang2024_survey}
+Lei Wang, Chen Ma, Xueyang Feng, Zeyu Zhang, Hao Yang, Jingsen Zhang, Zhiyuan
+  Chen, Jiakai Tang, Xu~Chen, Yankai Lin, Wayne~Xin Zhao, Zhewei Wei, and
+  Ji-Rong Wen.
+\newblock A survey on large language model based autonomous agents.
+\newblock \emph{Frontiers of Computer Science}, 18\penalty0 (6):\penalty0
+  186345, 2024.
+
+\bibitem[Wang et~al.(2021)Wang, Teng, and Perdikaris]{wang2021_gradient}
+Sifan Wang, Yujun Teng, and Paris Perdikaris.
+\newblock Understanding and mitigating gradient flow pathologies in
+  physics-informed neural networks.
+\newblock \emph{SIAM Journal on Scientific Computing}, 43\penalty0
+  (5):\penalty0 A3055--A3081, 2021.
+
+\bibitem[Wang et~al.(2023)Wang, Sankaran, Wang, and
+  Perdikaris]{wang2023_expert}
+Sifan Wang, Shyam Sankaran, Hanwen Wang, and Paris Perdikaris.
+\newblock An expert's guide to training physics-informed neural networks.
+\newblock \emph{SIAM Journal on Scientific Computing}, 45\penalty0
+  (3):\penalty0 A1473--A1501, 2023.
+
 \bibitem[Webb et~al.(2026)Webb, Habibpour, Raha, Tavakkoli, Coen, and
   Afghah]{webb2026}
 C.~Webb, M.~Habibpour, M.~H. Raha, A.~R. Tavakkoli, J.~Coen, and F.~Afghah.
@@ -55,6 +542,41 @@ C.~Webb, M.~Habibpour, M.~H. Raha, A.~R. Tavakkoli, J.~Coen, and F.~Afghah.
   for UAV Wildfire Tracking in a Physics-Grounded Fire Digital Twin}.
 \newblock In \emph{arXiv preprint}, 2026.
 \newblock URL \url{https://arxiv.org/abs/2601.03449}.
+
+\bibitem[Williams et~al.(2015)Williams, Kevrekidis, and Rowley]{williams2015}
+M.~O. Williams, I.~G. Kevrekidis, and C.~W. Rowley.
+\newblock {A Data-Driven Approximation of the Koopman Operator: Extended
+  Dynamic Mode Decomposition}.
+\newblock \emph{Journal of Nonlinear Science}, 25\penalty0 (6):\penalty0
+  1307--1346, 2015.
+
+\bibitem[Wooster et~al.(2003)Wooster, Zhukov, and Oertel]{wooster2003_frp}
+Martin~J. Wooster, Boris Zhukov, and Dirk Oertel.
+\newblock Fire radiative energy for quantitative study of biomass burning:
+  Derivation from the bird experimental satellite and comparison to modis fire
+  products.
+\newblock \emph{Remote Sensing of Environment}, 86\penalty0 (1):\penalty0
+  83--107, 2003.
+
+\bibitem[Xi et~al.(2023)Xi, Chen, Guo, He, Ding, Hong, Zhang, Wang, Roy, Yao,
+  et~al.]{xi2023}
+Zhiheng Xi, Wenxiang Chen, Xin Guo, Wei He, Yiwen Ding, Boyang Hong, Ming
+  Zhang, Jun Wang, Senjati~Basu Roy, Lina Yao, et~al.
+\newblock The rise and potential of large language model based agents: A
+  survey.
+\newblock \emph{arXiv preprint arXiv:2309.07864}, 2023.
+
+\bibitem[Xu et~al.(2020)Xu, Wooster, Zhang, Liu, and Zhang]{xu2020_goesfrp}
+Wei Xu, Martin~J. Wooster, Tianran Zhang, Gang Liu, and Zhaoyan Zhang.
+\newblock Developing a new capable goes-r series fire radiative power retrieval
+  for wildfire monitoring.
+\newblock \emph{Remote Sensing of Environment}, 245:\penalty0 111818, 2020.
+
+\bibitem[Zhang et~al.(2022)Zhang, Wooster, and Xu]{zhang2022_goes16}
+Tianran Zhang, Martin~J. Wooster, and Wei Xu.
+\newblock Evaluation of goes-16 abi and goes-17 abi active fire detection using
+  viirs and modis.
+\newblock \emph{Remote Sensing of Environment}, 276:\penalty0 113049, 2022.
 
 \bibitem[Zhou et~al.(2025)Zhou, Wang, Yan, et~al.]{zhou2025}
 Z.~Zhou, X.~Wang, Y.~Yan, et~al.

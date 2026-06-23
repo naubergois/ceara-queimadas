@@ -3,44 +3,44 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: paper-digital-twin-queimadas.aux
 The style file: plainnat.bst
 Database file #1: refs-queimadas.bib
-You've used 9 entries,
+You've used 84 entries,
             2773 wiz_defined-function locations,
-            633 strings with 6360 characters,
-and the built_in function-call counts, 3882 in all, are:
-= -- 312
-> -- 253
-< -- 5
-+ -- 87
-- -- 78
-* -- 283
-:= -- 607
-add.period$ -- 32
-call.type$ -- 9
-change.case$ -- 51
-chr.to.int$ -- 9
-cite$ -- 18
-duplicate$ -- 187
-empty$ -- 341
-format.name$ -- 91
-if$ -- 815
-int.to.chr$ -- 1
+            1029 strings with 20716 characters,
+and the built_in function-call counts, 43546 in all, are:
+= -- 3612
+> -- 3249
+< -- 25
++ -- 1096
+- -- 1011
+* -- 3839
+:= -- 6868
+add.period$ -- 276
+call.type$ -- 84
+change.case$ -- 580
+chr.to.int$ -- 83
+cite$ -- 168
+duplicate$ -- 1784
+empty$ -- 3273
+format.name$ -- 1104
+if$ -- 8922
+int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 6
-newline$ -- 58
-num.names$ -- 36
-pop$ -- 133
+missing$ -- 76
+newline$ -- 452
+num.names$ -- 336
+pop$ -- 1183
 preamble$ -- 1
-purify$ -- 42
+purify$ -- 495
 quote$ -- 0
-skip$ -- 142
+skip$ -- 1360
 stack$ -- 0
-substring$ -- 18
-swap$ -- 15
-text.length$ -- 0
+substring$ -- 1183
+swap$ -- 118
+text.length$ -- 6
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 99
+type$ -- 924
 warning$ -- 0
-while$ -- 27
+while$ -- 322
 width$ -- 0
-write$ -- 125
+write$ -- 1113

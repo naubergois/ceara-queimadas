@@ -1,0 +1,15 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{algpseudocode}[2026/06/23 minimal stub]
+\RequirePackage{algorithm}
+\newenvironment{algorithmic}[1][]{\begin{list}{}{\setlength{\leftmargin}{1.5em}}}{\end{list}}
+\newcommand{\State}{\item}
+\newcommand{\Require}{\item[\textbf{Require:}]}
+\newcommand{\Ensure}{\item[\textbf{Ensure:}]}
+\newcommand{\For}[1]{\item[\textbf{for} #1 \textbf{do}]}
+\newcommand{\EndFor}{\item[\textbf{end for}]}
+\newcommand{\If}[1]{\item[\textbf{if} #1 \textbf{then}]}
+\newcommand{\EndIf}{\item[\textbf{end if}]}
+\newcommand{\Comment}[1]{\hfill\textit{// #1}}
+\newcommand{\Return}{\item[\textbf{return}]}
+\newcommand{\Procedure}[2]{\item[\textbf{procedure} #1(#2)]}
+\newcommand{\EndProcedure}{\item[\textbf{end procedure}]}
