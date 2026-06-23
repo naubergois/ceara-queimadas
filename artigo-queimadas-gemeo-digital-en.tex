@@ -18,6 +18,16 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
+% Float placement — prevents figures overlapping adjacent column in twocolumn
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{1}
+\setcounter{totalnumber}{3}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.85}
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
@@ -193,7 +203,7 @@ Figure~\ref{fig:architecture} presents the overall system architecture, organize
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figures/architecture.png}
+\includegraphics[width=\columnwidth]{figures/architecture.png}
 \caption{Layered architecture of the Ceará Digital Twin platform.}
 \label{fig:architecture}
 \end{figure}
@@ -237,11 +247,11 @@ The system uses dependency injection for the LLM (\texttt{llm\_factory.py}), whi
 \subsection{LangGraph Pipeline}
 \label{sec:langgraph}
 
-The agent pipeline is implemented as a state graph (\texttt{StateGraph}) with 10~nodes, as shown in Figure~\ref{fig:langgraph}:
+The agent pipeline is implemented as a state graph (\texttt{StateGraph}) with 10~nodes, as shown in Figure~\ref{fig:langgraph}.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figures/langgraph.png}
+\includegraphics[width=0.92\columnwidth]{figures/langgraph.png}
 \caption{LangGraph graph of the agent pipeline. The analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}
 \label{fig:langgraph}
 \end{figure}
@@ -388,22 +398,6 @@ The system was deployed on an Amazon Linux 2023 EC2 instance (t2.medium --- 2 vC
 The estimated monthly infrastructure cost is approximately USD~20 (EC2 instance + 30~GB EBS), with no additional API costs (all data sources are free). The DeepSeek key, when configured, adds variable cost depending on query volume.
 
 %% ===================================================================
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/resultados-experimentais.png}
-\caption{Desempenho do sistema de detecção: precisão, recall, F1-score, tempo médio de resposta e cobertura GOES-16.}
-\label{fig:resultados}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/evolucao-focos.png}
-\caption{Evolução mensal de focos de queimada no Ceará, comparando 2024 e 2025 (dados sintéticos baseados em tendências reais).}
-\label{fig:evolucao}
-\end{figure}
-
-
-%% ===================================================================
 \section{Methodology: Neural Koopman Operator and Physics-Informed GNN}
 \label{sec:methodology}
 %% ===================================================================
@@ -513,6 +507,20 @@ This coupling allows the system to capture both temporal dynamics (via linearize
 %% ===================================================================
 
 To evaluate the system, we collected real data between July 2024 and June 2026, totaling 18~months of continuous operation. Table~\ref{tab:detection} presents the detection metrics.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/resultados-experimentais.png}
+\caption{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}
+\label{fig:resultados}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/evolucao-focos.png}
+\caption{Monthly evolution of wildfire hotspots in Ceará, comparing 2024 and 2025 (synthetic data based on real trends).}
+\label{fig:evolucao}
+\end{figure}
 
 \begin{table}[htbp]
 \centering

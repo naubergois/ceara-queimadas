@@ -30,6 +30,16 @@
 \usepackage{amsfonts}
 \usepackage{textcomp}
 
+% Float placement — evita figuras invadindo coluna vizinha em twocolumn
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{1}
+\setcounter{totalnumber}{3}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.85}
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
 % Comando para correção de vírgula decimal (opcional: icomma)
 \IfFileExists{icomma.sty}{\usepackage{icomma}}{}
 
@@ -224,7 +234,7 @@ A Figura~\ref{fig:architecture} apresenta a arquitetura geral do sistema, organi
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figures/architecture.png}
+\includegraphics[width=\columnwidth]{figures/architecture.png}
 \caption{Layered architecture of the Ceará Digital Twin platform.}
 \label{fig:architecture}
 \end{figure}
@@ -268,11 +278,11 @@ O sistema utiliza injeção de dependência para o LLM (\texttt{llm\_factory.py}
 \subsection{LangGraph Pipeline}
 \label{sec:langgraph}
 
-O pipeline de agentes é implementado como um grafo de estado (\texttt{StateGraph}) com 10~nós, conforme a Figura~\ref{fig:langgraph}:
+O pipeline de agentes é implementado como um grafo de estado (\texttt{StateGraph}) com 10~nós, conforme a Figura~\ref{fig:langgraph}.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figures/langgraph.png}
+\includegraphics[width=0.92\columnwidth]{figures/langgraph.png}
 \caption{LangGraph state graph of the agent pipeline. Analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}
 \label{fig:langgraph}
 \end{figure}
@@ -419,22 +429,6 @@ O sistema foi implantado em uma instância EC2 Amazon Linux 2023 (t2.medium --- 
 O custo mensal estimado da infraestrutura é de aproximadamente USD~20 (instância EC2 + 30~GB EBS), sem custos adicionais de API (todas as fontes de dados são gratuitas). A chave DeepSeek, quando configurada, adiciona custo variável conforme o volume de consultas.
 
 %% ===================================================================
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/resultados-experimentais.png}
-\caption{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}
-\label{fig:resultados}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/evolucao-focos.png}
-\caption{Monthly evolution of wildfire hotspots in Ceará, comparing 2024 and 2025 (synthetic data based on real trends).}
-\label{fig:evolucao}
-\end{figure}
-
-
-%% ===================================================================
 %%  Metodologia Matemática — INOV-007 (TASK-026)
 %%  Seção completa com 19 equações + 1 algoritmo de treinamento
 %%  Incluída como artefato standalone em figures/metodologia-matematica.tex
@@ -447,6 +441,20 @@ O custo mensal estimado da infraestrutura é de aproximadamente USD~20 (instânc
 %% ===================================================================
 
 Para avaliar o sistema, coletamos dados reais entre julho de 2024 e junho de 2026, totalizando 18~meses de operação contínua. A Tabela~\ref{tab:detection} apresenta as métricas de detecção.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/resultados-experimentais.png}
+\caption{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}
+\label{fig:resultados}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/evolucao-focos.png}
+\caption{Monthly evolution of wildfire hotspots in Ceará, comparing 2024 and 2025 (synthetic data based on real trends).}
+\label{fig:evolucao}
+\end{figure}
 
 \begin{table}[htbp]
 \centering
