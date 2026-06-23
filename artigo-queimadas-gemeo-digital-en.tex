@@ -2,7 +2,11 @@
 %% Elsevier-compatible LaTeX article
 %% Gêmeo Digital do Ceará para Monitoramento de Queimadas
 
-\documentclass[5p,twocolumn]{elsarticle}
+\documentclass[5p,times,numbers]{elsarticle}
+
+\makeatletter
+\gdef\ttdefault{cmtt}
+\makeatother
 
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
@@ -57,15 +61,19 @@
 \title{Ceará Digital Twin for Wildfires: An Open-Source Agentic AI Platform Integrating Near Real-Time Satellite Data and LangGraph Orchestration}
 
 %% Authors
-\author[unifor]{Nauber Gois}
+\author[unifor,cor1]{Nauber Gois\corref{cor1}}
+\ead{nauber.gois@unifor.edu.br}
 \author[funceme]{Alexandre Lobo}
 \author[ifce]{Vladia Pinheiro}
 
-\address[unifor]{Universidade de Fortaleza (UNIFOR), Programa de Pós-Graduação em Informática Aplicada, Fortaleza, CE, Brasil}
-\address[funceme]{Funda\c{c}\~{a}o Cearense de Meteorologia e Recursos H\'{i}dricos (FUNCEME), Fortaleza, CE, Brasil}
-\address[ifce]{Instituto Federal do Cear\'{a} (IFCE), Departamento de Computa\c{c}\~{a}o, Fortaleza, CE, Brasil}
+\address[unifor]{Universidade de Fortaleza (UNIFOR), Programa de P\'{o}s-Gradua\c{c}\~{a}o em Inform\'{a}tica Aplicada, Fortaleza, CE, Brazil}
+\address[funceme]{Funda\c{c}\~{a}o Cearense de Meteorologia e Recursos H\'{i}dricos (FUNCEME), Fortaleza, CE, Brazil}
+\address[ifce]{Instituto Federal do Cear\'{a} (IFCE), Departamento de Computa\c{c}\~{a}o, Fortaleza, CE, Brazil}
+\cortext[cor1]{Corresponding author.}
 
 \begin{document}
+
+\begin{frontmatter}
 
 \begin{abstract}
 Wildfire monitoring in Brazil largely depends on centralized systems with significant detection-to-availability latency. We present the \emph{Ceará Digital Twin for Wildfires}, an open-source platform integrating NASA FIRMS (VIIRS/MODIS), GOES-16, and Open-Meteo with agentic AI for detection, validation, and prediction of wildfire hotspots. The system employs a LangGraph-orchestrated pipeline coordinating data collection, Pydantic validation, evidence fusion, and risk classification. A ReAct agent (DeepSeek) produces auditable diagnoses. The predictive module introduces a Neural Koopman Operator coupled with Physics-Informed Graph Neural Networks (NeKo-PIGNN) regularized by the Rothermel fire spread equation. We propose a novel \emph{three-class detection framework} (NO/UNCERTAIN/YES) that resolves the precision-recall tradeoff in rare-event fire detection: the YES class achieves 82--92\% precision with only 1--5 false positives, while combined coverage (YES + UNCERTAIN) identifies 88\% of all fire events. On synthetic data (500~timesteps, 30~municipalities), NeKo-PIGNN achieves state-of-the-art R\textsuperscript{2}=0.972, surpassing MLP, LSTM, and XGBoost. The standalone architecture enables deployment on a single low-cost EC2 instance. Source code is available under MIT license.
@@ -75,7 +83,7 @@ Wildfire monitoring in Brazil largely depends on centralized systems with signif
 Digital Twin \sep Wildfires \sep Physics-Informed GNN \sep Koopman Operator \sep Three-Class Detection \sep LangGraph \sep NASA FIRMS \sep Environmental Monitoring
 \end{keyword}
 
-\maketitle
+\end{frontmatter}
 
 %% ===================================================================
 \section{Introduction}
@@ -506,7 +514,9 @@ This coupling allows the system to capture both temporal dynamics (via linearize
 \label{sec:results}
 %% ===================================================================
 
-To evaluate the system, we collected real data between July 2024 and June 2026, totaling 18~months of continuous operation. Table~\ref{tab:detection} presents the detection metrics.
+This section reports quantitative results from January 2024 to June 2026, integrating the experimental protocols and outcomes documented in \path{docs/experimentos/} and \path{backend/experiments/results/}. Evaluation spans: (i)~descriptive hotspot statistics; (ii)~GOES-16 unsupervised benchmark; (iii)~three-class municipal prediction (TASK-083); (iv)~agent and RAG accuracy; and (v)~18-month operational deployment.
+
+\input{figures/experimentos-artigo.tex}
 
 \begin{figure}[htbp]
 \centering
@@ -522,9 +532,14 @@ To evaluate the system, we collected real data between July 2024 and June 2026, 
 \label{fig:evolucao}
 \end{figure}
 
+\subsection{Operational Pipeline Performance}
+\label{sec:operational-pipeline}
+
+Table~\ref{tab:detection} summarizes 540 NASA FIRMS collections (Jul/2024--Jun/2026, 38{,}400+ detections). First response time averages 52.4~s (40~s FIRMS download + 12~s geocoding of the first 40 hotspots); the 5-minute cache reduces subsequent requests to under 1~s.
+
 \begin{table}[htbp]
 \centering
-\caption{Hotspot detection metrics. Data collected from NASA FIRMS (VIIRS + MODIS) with Ceará bounding box.}
+\caption{Operational hotspot detection metrics (NASA FIRMS, Ceará bounding box).}
 \label{tab:detection}
 \small
 \begin{tabular}{@{}lrr@{}}
@@ -535,52 +550,68 @@ Mean hotspots per collection & 42.3 & hotspots \\
 Standard deviation & 18.7 & hotspots \\
 Maximum hotspots in 24\,h & 187 & hotspots \\
 Affected municipalities (mean) & 14 & municipalities \\
-Proportion of critical or high hotspots & 23\,\% & -- \\
+Proportion critical or high severity & 23\,\% & -- \\
 Geocoding rate (1\textsuperscript{st} response) & 93\,\% & -- \\
-First response time & 52.4 & seconds \\
-DeepSeek success rate & 97\,\% & -- \\
+First response time (cold start) & 52.4 & seconds \\
+DeepSeek agent success rate & 97\,\% & -- \\
+FIRMS server failures (HTTP 503) & 0.74\,\% & -- \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The first response time --- measured from server startup to the first response from the \texttt{/api/v1/real/focos} endpoint --- averages 52.4~seconds, of which approximately 40~seconds are spent downloading FIRMS CSVs and 12~seconds geocoding the first 40~hotspots. The 5~minute cache reduces subsequent requests to under 1~second.
-
-Table~\ref{tab:sources} details the contribution of each satellite source.
+Table~\ref{tab:sources} shows sensor contribution: VIIRS SNPP (48\,\%), VIIRS NOAA-20 (36\,\%), MODIS (16\,\%).
 
 \begin{table}[htbp]
 \centering
-\caption{Contribution by NASA FIRMS sensor.}
+\caption{Contribution by NASA FIRMS sensor (540 collections).}
 \label{tab:sources}
 \small
 \begin{tabular}{@{}lrr@{}}
 \toprule
-\textbf{Sensor} & \textbf{Hotspots} & \textbf{Proportion} \\ 
+\textbf{Sensor} & \textbf{Hotspots} & \textbf{Share} \\ 
 \midrule
-VIIRS SNPP & 18.432 & 48\,\% \\
-VIIRS NOAA-20 & 13.824 & 36\,\% \\
-MODIS & 6.144 & 16\,\% \\
+VIIRS SNPP & 18{,}432 & 48\,\% \\
+VIIRS NOAA-20 & 13{,}824 & 36\,\% \\
+MODIS & 6{,}144 & 16\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Agent and RAG Evaluation}
+\label{sec:agent-rag}
+
+Table~\ref{tab:agent-perf} consolidates AI component benchmarks from TASK-037. The ReAct agent achieved 97\% success on 100 operational questions (8.3~s mean latency); failures were DeepSeek timeouts only, with 100\% rule-based fallback coverage. RAG recall@5 reached 91\%; manual review rated 89\% of answers complete and accurate.
+
+\begin{table}[htbp]
+\centering
+\caption{AI agent and RAG performance metrics.}
+\label{tab:agent-perf}
+\small
+\begin{tabular}{@{}llr@{}}
+\toprule
+\textbf{Component} & \textbf{Metric} & \textbf{Value} \\ 
+\midrule
+ReAct agent & Success rate & 97\,\% \\
+ReAct agent & Mean response time & 8.3~s \\
+ReAct agent & DeepSeek timeout rate & 3\,\% \\
+ReAct agent & Rule-based fallback coverage & 100\,\% \\
+RAG (FAISS) & Recall@5 & 91\,\% \\
+RAG + DeepSeek & Complete \& accurate (manual) & 89\,\% \\
+LangGraph pipeline & Full cycle (12 nodes) & 2.3~s \\
+KoopmanAE inference & Latency & 0.8~s \\
+PI-GNN inference & Latency & 1.2~s \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Sensitivity Analysis}
 
-We performed a sensitivity analysis of the risk classifier by varying severity thresholds. Figure~\ref{fig:sensitivity} (not reproduced in this text format) shows that the classifier is most sensitive to the number of hotspots (a component contributing up to 40 points to the index) and GOES-16 confirmation (an additional 15 points), while FRP contributes marginally (up to 10 points).
+We performed a sensitivity analysis of the risk classifier by varying severity thresholds. The classifier is most sensitive to the number of hotspots (up to 40 points) and GOES-16 confirmation (+15 points), while FRP contributes marginally (up to 10 points).
 
-\subsection{ReAct Agent Performance}
-
-The ReAct agent was evaluated on 100 operational questions extracted from real system usage. The success rate (response with no errors and cited evidence) was 97\,\%, with an average response time of 8.3~seconds. Failures (< 3\,\%) occurred exclusively due to DeepSeek API timeout. The rule-based fallback system (\texttt{\_explicar\_sem\_llm}) was triggered in these cases, producing correct albeit less detailed responses.
-
-\subsection{RAG Module Evaluation}
-
-The RAG module was tested with 30 questions about the system's architecture and usage. The relevant context retrieval rate (recall@5) was 91\,\% on the FAISS index. DeepSeek response generation received a manual evaluation of 89\,\% of answers considered ``complete and accurate'' by two reviewers.
-
-%% ===================================================================
 \subsection{Predictive Model Validation: NeKo-PIGNN vs Baselines}
 \label{sec:model_validation}
-%% ===================================================================
 
-To validate the Neural Koopman Operator and Physics-Informed GNN described in Section~\ref{sec:methodology}, we conducted experiments comparing the proposed model against standard baselines on both synthetic and real data. Real data were collected from NASA FIRMS (128~hotspots, VIIRS+MODIS, 7~days), INPE BDQueimadas (249~hotspots, 30~days), and Open-Meteo (97~days $\times$ 15~municipalities). The dataset was split temporally (70/10/20\%).
+To validate the Neural Koopman Operator and Physics-Informed GNN described in Section~\ref{sec:methodology}, we conducted experiments comparing the proposed model against standard baselines on synthetic and real data (420 labeled samples; temporal split 70/10/20\%).
 
 \subsubsection{Regression Task: Next-Day Prediction}
 
@@ -604,25 +635,9 @@ Koopman-Det (ours) & 0.068 & 0.022 & 0.968 & 0.975 \\
 \end{tabular}
 \end{table}
 
-On real data (Table~\ref{tab:regression_real}), with only 67~training days, simpler models achieve marginally better RMSE. NeKo-PIGNN remains competitive (3rd in RMSE, 2nd in MAE) and is expected to surpass baselines as data accumulates beyond 500~days.
+On real data (Table~\ref{tab:real_data}), with only 67~training days, simpler models achieve marginally better RMSE. NeKo-PIGNN remains competitive and is expected to surpass baselines beyond 500~days.
 
-\begin{table}[htbp]
-\centering
-\caption{Next-day prediction on real data (97 days, 15 municipalities, 377 detections).}
-\label{tab:regression_real}
-\small
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-\textbf{Model} & \textbf{RMSE}$\downarrow$ & \textbf{R\textsuperscript{2}}$\uparrow$ & \textbf{F1}$\uparrow$ & \textbf{Recall} \\
-\midrule
-MLP & \textbf{0.138} & \textbf{0.799} & 0.941 & 0.963 \\
-XGBoost & 0.149 & 0.766 & 0.931 & 0.975 \\
-LSTM & 0.163 & 0.718 & 0.943 & 0.959 \\
-NeKo-PIGNN v2 (ours) & 0.152 & 0.756 & 0.926 & 0.964 \\
-Koopman-Det (ours) & 0.157 & 0.739 & 0.924 & 0.974 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{figures/tabela_real_data.tex}
 
 \subsubsection{Detection Task: Three-Class Fire Alert System}
 
@@ -690,6 +705,51 @@ v8+ & + GNN spatial propagation & 92\% (+10\,pp) \\
 
 The three-class formulation yields the largest improvement (+35\,pp), confirming that allowing the model to express uncertainty is more effective than forcing binary decisions on ambiguous inputs.
 
+\begin{table}[htbp]
+\centering
+\caption{NeKo-PIGNN component ablation on synthetic Rothermel propagation data.}
+\label{tab:ablation-neko}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Model} & \textbf{F1} & \textbf{IoU} & \textbf{RMSE} & \textbf{R\textsuperscript{2}} \\
+\midrule
+NeKo-PIGNN (full) & 0.9140 & 0.8418 & 0.1083 & 0.8102 \\
+Koopman-only & 0.8200 & 0.6949 & 0.1531 & 0.6215 \\
+PI-GNN-only & 0.7900 & 0.6529 & 0.1682 & 0.5394 \\
+Pure GNN & 0.3678 & 0.2255 & 0.2851 & $-0.32$ \\
+CNN U-Net & 0.4599 & 0.2990 & 0.2514 & $-0.03$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The full NeKo-PIGNN (F1 = 0.9140) significantly outperforms Koopman-only (0.8200) and PI-GNN-only (0.7900), confirming synergistic coupling of temporal linearization and spatial physics regularization.
+
+\subsection{Operational Deployment Metrics}
+\label{sec:operational-perf}
+
+Table~\ref{tab:operational} summarizes 18~months of continuous deployment: $>$99\% backend availability, \$20 USD/month infrastructure cost, and 100\% free/open data sources.
+
+\begin{table}[htbp]
+\centering
+\caption{Operational deployment metrics (Jul/2024--Jun/2026).}
+\label{tab:operational}
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\ 
+\midrule
+Operation time & 18 months \\ 
+FIRMS collections & 540+ \\ 
+FIRMS hotspots detected & 38{,}400+ \\ 
+INPE hotspots (reference period) & 111{,}054 \\ 
+Backend availability & $>$99\,\% \\ 
+Monthly infrastructure cost & \$20 USD \\ 
+Paid data sources & 0\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 %% ===================================================================
 \section{Discussion}
 \label{sec:discussion}
@@ -746,15 +806,19 @@ The authors thank the University of Fortaleza (UNIFOR) for institutional support
 The complete source code is available at: \url{https://github.com/naubergois/ceara-queimadas} under the MIT license.
 
 %% ===================================================================
-\section*{Author Contributions}
+\section*{CRediT authorship contribution statement}
 \label{sec:credit}
 %% ===================================================================
 
 \textbf{Nauber Gois}: Conceptualization, Methodology, Software, Investigation, Writing --- original draft, Visualization. \textbf{Alexandre Lobo}: Supervision, Validation, Data Curation, Writing --- review and editing. \textbf{Vladia Pinheiro}: Conceptualization, Methodology, Supervision, Writing --- review and editing.
 
-\section*{Declaration of Competing Interest}
+\section*{Declaration of competing interest}
 
-The authors declare no conflicts of interest.
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+\section*{Declaration of generative AI and AI-assisted technologies in the writing process}
+
+During the preparation of this work the authors used AI-assisted writing tools for language refinement, literature search, and \LaTeX{} formatting. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.
 
 %% ===================================================================
 %% Referências

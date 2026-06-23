@@ -22,9 +22,11 @@
 | Cover Letter | ✅ | `submission/cover_letter.tex` |
 | Abstract PT | ✅ | No artigo |
 | Abstract EN | ✅ | No artigo |
-| Highlights | 🟡 Pendente | Criar `submission/highlights.txt` |
+| Highlights | ✅ | `submission/highlights.txt` |
 | Sugestão Revisores | ✅ | Na cover letter |
 | Checklist | ✅ | Este arquivo |
+| Índice experimentos | ✅ | `docs/experimentos/README.md` |
+| Protocolo LaTeX | ✅ | `figures/experimentos-artigo.tex` |
 
 ## 🎨 Figuras
 

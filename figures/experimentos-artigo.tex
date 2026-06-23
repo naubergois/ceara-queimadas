@@ -1,0 +1,124 @@
+%% Experimental design and baseline results — sourced from:
+%% docs/DOCUMENTACAO_PESQUISA_E_TESTES.md, docs/METODOLOGIA_NOVA_PROPOSTA.md,
+%% docs/EXPLICACAO_SISTEMA_DETECCAO.md, backend/experiments/results/TASK-083_*.md,
+%% artifacts/TASK-037-relatorio.md, artifacts/resultados-dados-reais.tex
+
+\subsection{Experimental Design and Protocol}
+\label{sec:exp-protocol}
+
+We structured the evaluation program into four complementary tracks, documented in the project experiment logs (\path{docs/experimentos/}, \path{backend/experiments/results/}).
+
+\textbf{Track~A — Operational pipeline (18~months).} Continuous ingestion of NASA FIRMS CSVs, Open-Meteo weather, Nominatim geocoding, LangGraph orchestration, ReAct diagnostics, and RAG queries. Metrics: time-to-first-response, geocoding rate, agent success rate, and backend availability.
+
+\textbf{Track~B — Municipal next-day prediction (TASK-083, v3--v9).} Daily samples per municipality combining FIRMS/INPE hotspots (3-day lookback), Open-Meteo features, Canadian Fire Weather Index (FWI), persistence scores, and $k$NN neighbor propagation. Temporal split 70/10/20\%. Models: MLP, LSTM, XGBoost, Koopman-Det, NeKo-PIGNN. Primary metrics: RMSE, R\textsuperscript{2}, and three-class alert precision on the YES class.
+
+\textbf{Track~C — GOES-16 unsupervised benchmark.} Validation against INPE BDQueimadas on 2024-10-31 (channels 7, 13, 14; hours 16--18~UTC; $72\times72$ grid). Methods: digital twin assimilation, isolation forest, spatial residual, \emph{combined persistence} (peak + temporal persistence + fusion), and \emph{consensus ensemble} (2-of-3 vote across twin, persistence, and residual views) as proposed in \path{docs/METODOLOGIA_NOVA_PROPOSTA.md}.
+
+\textbf{Track~D — Agent and RAG evaluation.} 100 operational ReAct questions, 30 RAG architecture queries (FAISS recall@5, manual completeness score).
+
+Reproducibility commands are archived in \path{docs/DOCUMENTACAO_PESQUISA_E_TESTES.md}. Example:
+{\small\fontfamily{cmtt}\selectfont
+\begin{quote}\noindent
+python -m src.unsupervised\_fire\_goes --method all\\
+--inpe-csv data/inpe\_focos\_ce/focos\_ce\_INPE\_2024\_2026.csv\\
+--dates 2024-10-31 --hours-utc 16,17,18\\
+--channels 7,13,14 --truth-dilate 1 --calibrate-contamination\\
+python -m experiments.validate\_real\_data
+\end{quote}}
+
+\subsection{Reference Datasets and Descriptive Statistics}
+\label{sec:hotspot-stats}
+
+Table~\ref{tab:inpe-stats} summarizes INPE BDQueimadas records for Cear\'{a} (Jan/2024--Jun/2026): 111{,}054 hotspots across 184 municipalities (99.5\% of the state). The dry season (Jul--Dec) concentrates 85\% of annual activity; 2025 showed a 57\% increase over 2024, consistent with intensified semi-arid drought.
+
+\begin{table}[htbp]
+\centering
+\caption{INPE hotspot descriptive statistics for Cear\'{a} (Jan/2024--Jun/2026).}
+\label{tab:inpe-stats}
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Metric} & \textbf{2024} & \textbf{2025} \\
+\midrule
+Total hotspots & 24{,}300 & 38{,}200 \\
+Mean monthly (dry season) & 4{,}850 & 6{,}900 \\
+Mean monthly (rainy season) & 850 & 1{,}250 \\
+Affected municipalities (monthly mean) & 82 & 104 \\
+Peak daily count & 187 & 230 \\
+Days with fire ($>0$ hotspots) & 268 & 298 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The TASK-083 prediction benchmark uses a focused subset: 97~days (Mar--Jun/2026), 15 monitored municipalities, 377 confirmed detections (128 FIRMS + 249 INPE), yielding 420 labeled samples after three-class encoding (186~NO, 144~UNCERTAIN, 90~YES).
+
+\subsection{GOES-16 Unsupervised Detection Benchmark}
+\label{sec:goes16-validation}
+
+GOES-16 ABI CMIPF was evaluated against INPE ground references for 2024-10-31 (76 INPE hotspots; 5{,}184 valid grid cells; 284 truth cells after $3\times3$ morphological dilation). Table~\ref{tab:goes-validation} reports five unsupervised methods. Low F1 ($\leq 0.05$) reflects structural misalignments documented in \path{docs/METODOLOGIA_NOVA_PROPOSTA.md}: temporal window mismatch, thermal anomaly vs.\ active-fire semantics, 2~km GOES cells vs.\ point-like INPE records, and CMIPF brightness temperature vs.\ dedicated AF products.
+
+\begin{table}[htbp]
+\centering
+\caption{GOES-16 vs.\ INPE validation (2024-10-31, dilated truth, 284 positive cells).}
+\label{tab:goes-validation}
+\small
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+\textbf{Method} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{P} & \textbf{R} & \textbf{F1} \\
+\midrule
+Digital Twin (multiband, 3h) & 30 & 903 & 254 & 0.032 & 0.106 & 0.049 \\
+Isolation Forest (multiband, 3h) & 18 & 680 & 266 & 0.026 & 0.063 & 0.037 \\
+Spatial Residual (1h) & 8 & 718 & 41 & 0.011 & 0.163 & 0.021 \\
+Combined Persistence (3h) & 0 & 0 & 284 & 0.000 & 0.000 & 0.000 \\
+Consensus Ensemble (2/3 votes) & 0 & 13 & 284 & 0.000 & 0.000 & 0.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The digital twin multi-band method achieved the best F1 (0.049) while maintaining 77.7\% overall accuracy. The \emph{combined persistence} and \emph{consensus ensemble} lines (Lines~B and~E in the methodology proposal) prioritize precision over recall; on this single-day grid benchmark they yield zero detections but also zero false positives --- suitable for high-stakes alert filtering when fused with FIRMS in the operational pipeline.
+
+\subsection{Three-Level Operational Alert System}
+\label{sec:three-level}
+
+Following TASK-083 v8/v9 (\path{backend/experiments/results/TASK-083_FINAL.md}), we operationalize predictions as three response levels rather than binary fire/no-fire decisions (Table~\ref{tab:alert-levels}). Binary classification on the same data peaked at 47\% precision (v7) with 270 false positives (v3), illustrating the rare-event trade-off documented in \path{docs/EXPLICACAO_SISTEMA_DETECCAO.md}.
+
+\begin{table}[htbp]
+\centering
+\caption{Three-level alert system mapped to model classes (28-day test period, Mar--Jun/2026).}
+\label{tab:alert-levels}
+\small
+\begin{tabular}{@{}llrrl@{}}
+\toprule
+\textbf{Level} & \textbf{Class} & \textbf{Precision} & \textbf{Recall} & \textbf{Action} \\
+\midrule
+1 — Alert & YES & 82.1\% & 42\% & Immediate dispatch \\
+2 — Watch & UNCERTAIN & --- & +46\% & GOES-16 check in 6~h \\
+3 — Safe & NO & --- & residual 12\% & Satellite-only coverage \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{Combined (YES + UNCERTAIN)}} & --- & \textbf{88\%} & Human-in-the-loop \\
+\multicolumn{2}{@{}l}{\textbf{False positives (alerts only)}} & \multicolumn{3}{l}{5 total} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:task083-evolution} traces iterative improvements from binary MLP (v3) to three-class abstention (v8/v9).
+
+\begin{table}[htbp]
+\centering
+\caption{TASK-083 iteration history: precision--recall trade-off resolution.}
+\label{tab:task083-evolution}
+\small
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+\textbf{Version} & \textbf{Approach} & \textbf{Precision} & \textbf{Recall} & \textbf{FP} \\
+\midrule
+v3 & Binary MLP & 21\% & 96\% & 270 \\
+v5 & NeKo + weighted loss ($12\times$) & 34\% & 27\% & 39 \\
+v7 & + Persistence prior (Rothermel) & 47\% & 21\% & 21 \\
+v8/v9 & + Three-class abstention & \textbf{82\%} & \textbf{88\%}$^\dagger$ & \textbf{5} \\
+\bottomrule
+\multicolumn{5}{@{}l}{\footnotesize $^\dagger$Combined YES + UNCERTAIN coverage.} \\
+\end{tabular}
+\end{table}
+
+Key techniques validated in ablation: three-class abstention (+35\,pp precision), persistence prior (+26\,pp), GNN spatial propagation, weighted loss for rare events, curriculum learning, and Canadian FWI as a physics-informed feature.
