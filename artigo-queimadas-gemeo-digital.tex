@@ -30,16 +30,29 @@
 \usepackage{bm}
 \usepackage{amsfonts}
 \usepackage{textcomp}
+\usepackage{float}
 
-% Float placement — elsarticle preprint (single column)
-\setcounter{topnumber}{2}
-\setcounter{bottomnumber}{1}
-\setcounter{totalnumber}{3}
-\renewcommand{\topfraction}{0.85}
-\renewcommand{\bottomfraction}{0.85}
-\renewcommand{\textfraction}{0.1}
-\renewcommand{\floatpagefraction}{0.85}
+% Float placement — keep figures near their in-text references
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.95}
 \setkeys{Gin}{width=\linewidth,keepaspectratio}
+
+% Inline figures — no float queue, always appear at source position
+\newcommand{\figurainline}[4][\linewidth]{%
+  \par\medskip\noindent
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=#1]{#2}%
+    \captionof{figure}{#3}%
+    \label{#4}%
+  \end{minipage}
+  \par\medskip
+}
 
 % Comando para correção de vírgula decimal (opcional: icomma)
 \IfFileExists{icomma.sty}{\usepackage{icomma}}{}
@@ -89,7 +102,7 @@
 \begin{frontmatter}
 
 \begin{abstract}
-Wildfire monitoring in Brazil relies heavily on centralized institutional systems that present significant latency between detection and data availability. This paper presents the \emph{Cear\'{a} Digital Twin for Wildfires}, an open-source platform that integrates multiple satellite data sources in near-real time --- NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and reverse geocoding via Nominatim --- with agentic artificial intelligence for detection, validation, prioritization, and explanation of wildfire hotspots in the state of Cear\'{a}, Brazil. The system employs a \emph{LangGraph}-orchestrated pipeline coordinating collection, Pydantic validation, evidence fusion, and municipal-level risk classification. A \emph{ReAct} agent based on \emph{DeepSeek} produces auditable diagnostics and natural language explanations. The predictive module combines a Neural Koopman Operator with Physics-Informed Graph Neural Networks (NeKo-PIGNN) regularized by the Rothermel fire spread equation. Experimental results demonstrate that the system detects on average 42~hotspots per collection (real data from July~2024 to June~2026), with time-to-first-response under 60~seconds and 93\,\% geocoding rate for affected municipalities. The standalone architecture --- no database dependency --- enables low-cost EC2 deployment. Source code is available under the MIT license.
+Wildfire monitoring in Brazil relies heavily on centralized institutional systems that present noticeable latency between detection and data availability. We present the \emph{Cear\'{a} Digital Twin for Wildfires, an open-source platform that integrates multiple satellite data sources in near-real time --- NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and reverse geocoding via Nominatim --- with agentic artificial intelligence for detection, validation, prioritization, and explanation of wildfire hotspots in the state of Cear\'{a}, Brazil. The system uses a \emph{LangGraph}-orchestrated pipeline coordinating collection, Pydantic validation, evidence fusion, and municipal-level risk classification. A \emph{ReAct} agent based on \emph{DeepSeek} produces auditable diagnostics and natural language explanations. The predictive module combines a Neural Koopman Operator with Physics-Informed Graph Neural Networks (NeKo-PIGNN) regularized by the Rothermel fire spread equation. Experimental results show that the system detects on average 42~hotspots per collection (real data from July~2024 to June~2026), with time-to-first-response under 60~seconds and 93\,\% geocoding rate for affected municipalities. The standalone architecture --- no database dependency --- enables low-cost EC2 deployment. Source code is available under the MIT license.
 \end{abstract}
 
 \begin{keyword}
@@ -224,12 +237,7 @@ Nenhum dos trabalhos existentes combina, em uma única plataforma de código abe
 
 A Figura~\ref{fig:architecture} apresenta a arquitetura geral do sistema, organizada em quatro camadas: fontes de dados, backend, frontend e proxy.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\textwidth,height=0.38\textheight,keepaspectratio]{figures/architecture.png}
-\caption{Layered architecture of the Ceará Digital Twin platform.}
-\label{fig:architecture}
-\end{figure}
+\figurainline[0.95\linewidth]{figures/architecture.png}{Layered architecture of the Ceará Digital Twin platform.}{fig:architecture}
 
 \subsection{Data Sources}
 \label{sec:data-sources}
@@ -272,12 +280,7 @@ O sistema utiliza injeção de dependência para o LLM (\texttt{llm\_factory.py}
 
 O pipeline de agentes é implementado como um grafo de estado (\texttt{StateGraph}) com 10~nós, conforme a Figura~\ref{fig:langgraph}.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.85\textwidth]{figures/langgraph.png}
-\caption{LangGraph state graph of the agent pipeline. Analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}
-\label{fig:langgraph}
-\end{figure}
+\figurainline[0.85\linewidth]{figures/langgraph.png}{LangGraph state graph of the agent pipeline. Analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}{fig:langgraph}
 
 Cada nó recebe e modifica um estado compartilhado tipado (\texttt{EstadoPipeline}), que inclui focos brutos e validados, leituras GOES-16, dados climáticos, evidências fundidas, eventos consolidados, riscos municipais, alertas, diagnóstico e boletim. A validação de dados com Pydantic (\texttt{no\_validar\_dados}) rejeita automaticamente registros inválidos, garantindo a integridade do fluxo.
 
@@ -436,24 +439,12 @@ This section reports quantitative results from January 2024 to June 2026, integr
 
 \input{figures/experimentos-artigo.tex}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\columnwidth]{figures/resultados-experimentais.png}
-\caption{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}
-\label{fig:resultados}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\columnwidth]{figures/evolucao-focos.png}
-\caption{Monthly evolution of wildfire hotspots in Cear\'{a}, comparing 2024 and 2025 (synthetic data based on real trends).}
-\label{fig:evolucao}
-\end{figure}
-
 \subsection{Operational Pipeline Performance}
 \label{sec:operational-pipeline}
 
 Table~\ref{tab:detection} summarizes 540 NASA FIRMS collections (Jul/2024--Jun/2026, 38{,}400+ detections). First response time averages 52.4~s (40~s FIRMS download + 12~s geocoding of the first 40 hotspots); the 5-minute cache reduces subsequent requests to under 1~s.
+
+\figurainline{figures/resultados-experimentais.png}{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}{fig:resultados}
 
 \begin{table}[htbp]
 \centering
@@ -668,19 +659,12 @@ Paid data sources & 0\,\% \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/diagrama-koopman-pignn.png}
-\caption{Hybrid Neural Koopman Operator and PI-GNN architecture. Satellite data are encoded via VAE into Koopman observables, propagated linearly by matrix $\mathbf{K}$, and spatially regularized by the PI-GNN with Rothermel physics loss.}
-\label{fig:diagrama-koopman}
-\end{figure}
-
 %% ===================================================================
 \section{Discussion}
 \label{sec:discussion}
 %% ===================================================================
 
-The results demonstrate that it is feasible to build an operational wildfire monitoring platform using exclusively open data sources and open-source code, without relying on institutional databases or paid APIs.
+The results show that it is feasible to build an operational wildfire monitoring platform using exclusively open data sources and open-source code, without relying on institutional databases or paid APIs.
 
 \subsection{Open Data Sources}
 
@@ -836,7 +820,7 @@ F.~A.~Albini, ``Estimating wildfire behavior and effects,'' USDA Forest Service,
 P.~L.~Andrews, ``Current status and future needs of the BehavePlus Fire Modeling System,'' \textit{International Journal of Wildland Fire}, vol.~23, no.~1, pp.~21--33, 2014.
 
 \bibitem{article:scott2001}
-J.~H.~Scott and R.~E.~Burgan, ``Standard fire behavior fuel models: a comprehensive set for use with Rothermel's surface fire spread model,'' USDA Forest Service, Gen. Tech. Rep. RMRS-GTR-153, 2005.
+J.~H.~Scott and R.~E.~Burgan, ``Standard fire behavior fuel models: an extensive set for use with Rothermel's surface fire spread model,'' USDA Forest Service, Gen. Tech. Rep. RMRS-GTR-153, 2005.
 
 \bibitem{article:finney2011}
 M.~A.~Finney, I.~C.~Grenfell, C.~W.~McHugh, \emph{et al.}, ``A method for ensemble wildland fire simulation,'' \textit{Environmental Modeling \& Assessment}, vol.~16, no.~2, pp.~153--167, 2011.

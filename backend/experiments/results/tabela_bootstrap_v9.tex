@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\caption{Bootstrap 95\% CI for published Exp-B v9 alert metrics (2{,}000 resamples on contingency tables).}
+\label{tab:bootstrap-v9}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Metric} & \textbf{Point} & \textbf{CI low} & \textbf{CI high} \\
+\midrule
+XGBoost YES precision (23 TP, 5 FP) & 82.1\% & 71.4\% & 92.9\% \\
+NeKo-PIGNN YES precision (11 TP, 1 FP) & 91.7\% & 75.0\% & 100.0\% \\
+Combined coverage (YES+UNCERTAIN) & 88.0\% & 84.2\% & 91.0\% \\
+\midrule
+MLP RMSE (5 seeds, reproduced) & --- & see Table~\ref{tab:bootstrap-ci} & --- \\
+\bottomrule
+\end{tabular}
+\end{table}

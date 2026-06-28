@@ -1,0 +1,310 @@
+{
+  "experiment": "EXP-ROBUST-004",
+  "num_questions": 50,
+  "num_chunks": 13,
+  "recall_at_5": 0.64,
+  "mrr": 0.5066666666666666,
+  "hits": 32,
+  "details": [
+    {
+      "question": "What is the LangGraph pipeline?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "How many nodes does the agent pipeline have?",
+      "hit@5": true,
+      "rank": 3,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "What data sources does the platform use?",
+      "hit@5": true,
+      "rank": 3,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is NASA FIRMS?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "01_visao_e_pesquisa.md"
+    },
+    {
+      "question": "How is municipal risk classified?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is the ReAct agent used for?",
+      "hit@5": true,
+      "rank": 2,
+      "top_source": "03_fontes_dados.md"
+    },
+    {
+      "question": "What embedding model powers the RAG index?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "What is FAISS used for?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "How to deploy on EC2?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is NeKo-PIGNN?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is the three-class detection system?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "03_fontes_dados.md"
+    },
+    {
+      "question": "What precision does the YES alert class achieve?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is the persistence prior?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What frontend framework is used?",
+      "hit@5": true,
+      "rank": 2,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What backend framework is used?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "Where is the knowledge base stored?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "What is chunk size for RAG?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "03_fontes_dados.md"
+    },
+    {
+      "question": "What is top_k for retrieval?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "03_fontes_dados.md"
+    },
+    {
+      "question": "How does GOES-16 integration work?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "02_arquitetura.md"
+    },
+    {
+      "question": "What is Open-Meteo used for?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "03_fontes_dados.md"
+    },
+    {
+      "question": "What is the Canadian FWI?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is the Rothermel model?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What API endpoint handles research chat?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "How to rebuild the FAISS index?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "What is INPE BDQueimadas?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "03_fontes_dados.md"
+    },
+    {
+      "question": "What municipalities are monitored?",
+      "hit@5": true,
+      "rank": 4,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is the risk index formula?",
+      "hit@5": true,
+      "rank": 4,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What happens when DeepSeek times out?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "What is Track B in experiments?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What split is used for model training?",
+      "hit@5": true,
+      "rank": 3,
+      "top_source": "03_fontes_dados.md"
+    },
+    {
+      "question": "What is XGBoost used for?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "03_fontes_dados.md"
+    },
+    {
+      "question": "What sensors contribute to FIRMS detections?",
+      "hit@5": true,
+      "rank": 2,
+      "top_source": "05_api_e_frontend.md"
+    },
+    {
+      "question": "What is the geocoding service?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "05_api_e_frontend.md"
+    },
+    {
+      "question": "What license is the code under?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is the operational deployment cost?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is agent auditability?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is the UNCERTAIN alert level?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is combined coverage YES plus UNCERTAIN?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "How long is the operational pipeline?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "What is Pydantic used for?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "What parallel analysis nodes exist?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is the digital twin pragmatic definition?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "01_visao_e_pesquisa.md"
+    },
+    {
+      "question": "What biomes are in Cear\u00e1?",
+      "hit@5": true,
+      "rank": 2,
+      "top_source": "01_visao_e_pesquisa.md"
+    },
+    {
+      "question": "What is the dry season in Cear\u00e1?",
+      "hit@5": true,
+      "rank": 2,
+      "top_source": "01_visao_e_pesquisa.md"
+    },
+    {
+      "question": "How to run GOES validation?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "02_arquitetura.md"
+    },
+    {
+      "question": "What is validate_real_data?",
+      "hit@5": true,
+      "rank": 3,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is the alert threshold P(YES)?",
+      "hit@5": false,
+      "rank": null,
+      "top_source": "06_deploy_e_execucao.md"
+    },
+    {
+      "question": "What is LangGraph StateGraph?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    },
+    {
+      "question": "What is the research chat module?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "02_arquitetura.md"
+    },
+    {
+      "question": "What documents are in the knowledge base?",
+      "hit@5": true,
+      "rank": 1,
+      "top_source": "04_agentes_ia.md"
+    }
+  ]
+}

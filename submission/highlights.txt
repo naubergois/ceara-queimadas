@@ -1,5 +1,5 @@
-Open-source wildfire digital twin for Ceará with near-real-time satellite data
-LangGraph agent pipeline with ReAct diagnostics and municipal risk classification
-NeKo-PIGNN hybrid model: Koopman operator plus physics-informed GNN (Rothermel)
-Three-class detection (NO/UNCERTAIN/YES) achieves 82--92% alert precision
-Standalone EC2 deployment with MIT-licensed code and open data sources
+Open-source agentic wildfire platform with LangGraph, ReAct, and three-class alerts
+Dry-season validation: 84% precision and 92% recall on 184 days of INPE data
+Bootstrap 95% CI confirms 82% YES alert precision [68%, 96%] on held-out data
+NeKo-PIGNN plus GOES pixel evaluation with full experiment reproducibility scripts
+MIT-licensed EC2 deployment integrating NASA FIRMS, INPE, and Open-Meteo

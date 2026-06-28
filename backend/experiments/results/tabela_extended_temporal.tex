@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\caption{Extended vs.\ short-window INPE benchmarks (XGBoost 3-class, YES alert at $P\geq 0.30$).}
+\label{tab:extended-temporal}
+\small
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+\textbf{Window} & \textbf{Days} & \textbf{Focos} & \textbf{Test $n$} & \textbf{Prec.} & \textbf{Recall} & \textbf{FP} \\
+\midrule
+Short (Mar--Jun/2026 proxy) & 117 & 866 & 340 & 34.4\% & 38.9\% & 40 \\
+Dry season 2024 & 141 & 2331 & 412 & 44.9\% & 66.4\% & 114 \\
+Dry season 2025 & 184 & 24573 & 541 & 84.2\% & 91.8\% & 75 \\
+Full 12 mo (Jul/24--Jun/25) & 316 & 3789 & 936 & 31.6\% & 74.1\% & 130 \\
+\bottomrule
+\end{tabular}
+\end{table}

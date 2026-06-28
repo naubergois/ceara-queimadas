@@ -12,7 +12,9 @@
 \label{sec:methodology}
 %% ===================================================================
 
-Este núcleo metodológico apresenta a formulação matemática completa do modelo híbrido \textbf{Ne}ural \textbf{Ko}opman \textbf{P}hysics-\textbf{I}nformed \textbf{G}raph \textbf{N}eural \textbf{N}etwork (NeKo-PIGNN), que combina a teoria do operador de Koopman para linearização de dinâmicas não-lineares com Graph Neural Networks regularizadas fisicamente pelo modelo de propagação superficial de Rothermel~\cite{article:rothermel1972}. A integração destes dois paradigmas --- Koopman para modelagem temporal no espaço latente e PI-GNN para propagação espacial com restrições físicas --- constitui a contribuição original matemática deste trabalho.
+Este núcleo metodológico apresenta a formulação matemática completa do modelo híbrido \textbf{Ne}ural \textbf{Ko}opman \textbf{P}hysics-\textbf{I}nformed \textbf{G}raph \textbf{N}eural \textbf{N}etwork (NeKo-PIGNN), que combina a teoria do operador de Koopman para linearização de dinâmicas não-lineares com Graph Neural Networks regularizadas fisicamente pelo modelo de propagação superficial de Rothermel~\cite{article:rothermel1972}. A integração destes dois paradigmas --- Koopman para modelagem temporal no espaço latente e PI-GNN para propagação espacial com restrições físicas --- constitui a contribuição original matemática deste trabalho. A Figura~\ref{fig:diagrama-koopman} resume a arquitetura híbrida.
+
+\figurainline{figures/diagrama-koopman-pignn.png}{Hybrid Neural Koopman Operator and PI-GNN architecture. Satellite data are encoded via VAE into Koopman observables, propagated linearly by matrix $\mathbf{K}$, and spatially regularized by the PI-GNN with Rothermel physics loss.}{fig:diagrama-koopman}
 
 \subsection{Koopman Operator Theory for Fire Dynamics}
 \label{sec:koopman}
@@ -178,34 +180,11 @@ A função de perda completa do modelo híbrido integra os componentes temporal 
 
 onde $\mathcal{L}_{\text{data}}$ é o erro de predição nos dados observados, $\mathcal{L}_{\text{bc}}$ é a condição de contorno (focos INPE confirmados), e $\lambda_1 = 0.01$, $\lambda_2 = 1.0$, $\lambda_3 = 0.5$ são pesos de regularização determinados por busca em grade.
 
-\subsection{Análise de Erro e Convergência}
-\label{sec:error-analysis}
-
-O erro de predição composto do NeKo-PIGNN em $k$ passos decompõe-se em:
-
-\begin{equation}
-\|\mathbf{x}_{t+k} - \hat{\mathbf{x}}_{t+k}\| \leq 
-\underbrace{\|h_\psi(\mathbf{K}_\theta^k \mathbf{z}_t) - \mathcal{K}^k \psi(\mathbf{x}_t)\|}_{\text{erro de aproximação}} + 
-\underbrace{\|\mathcal{K}^k \psi(\mathbf{x}_t) - \psi(\mathbf{x}_{t+k})\|}_{\text{erro de truncamento}}
-\label{eq:error_bound}
-\end{equation}
-
-O erro de aproximação decai exponencialmente com $\mathcal{O}(e^{-\gamma k})$ para autovalores $|\lambda_i| < 1$, enquanto o erro de truncamento é limitado pela dimensão $d$ do subespaço de Koopman. A decomposição espectral de $\mathbf{K}_\theta$ revela que $95\%$ da energia dinâmica está concentrada nos $12$ modos coerentes dominantes, validando a escolha $d = 64$.
-
-O erro total de predição em regime estacionário satisfaz:
-
-\begin{equation}
-\lim_{T \to \infty} \frac{1}{T} \sum_{t=1}^{T} \|\mathbf{x}_{t+1} - \hat{\mathbf{x}}_{t+1}\|^2 \leq 
-\frac{\sigma_{\text{obs}}^2}{T} + \varepsilon_d
-\label{eq:convergence}
-\end{equation}
-
-onde $\sigma_{\text{obs}}^2$ é a variância do ruído observacional e $\varepsilon_d$ é o erro de aproximação do subespaço de dimensão $d$.
-
 \subsection{Training Algorithm}
 \label{sec:training-algo}
 
-\begin{algorithm}[t]
+\begin{algorithm}[H]
+\footnotesize
 \caption{NeKo-PIGNN Training with Curriculum Learning}
 \label{alg:training}
 \begin{algorithmic}[1]
@@ -240,6 +219,30 @@ onde $\sigma_{\text{obs}}^2$ é a variância do ruído observacional e $\varepsi
 \Return $g_\phi$, $h_\psi$, $\mathbf{K}_\theta$, $\Theta$
 \end{algorithmic}
 \end{algorithm}
+
+\subsection{Análise de Erro e Convergência}
+\label{sec:error-analysis}
+
+O erro de predição composto do NeKo-PIGNN em $k$ passos decompõe-se em:
+
+\begin{equation}
+\|\mathbf{x}_{t+k} - \hat{\mathbf{x}}_{t+k}\| \leq 
+\underbrace{\|h_\psi(\mathbf{K}_\theta^k \mathbf{z}_t) - \mathcal{K}^k \psi(\mathbf{x}_t)\|}_{\text{erro de aproximação}} + 
+\underbrace{\|\mathcal{K}^k \psi(\mathbf{x}_t) - \psi(\mathbf{x}_{t+k})\|}_{\text{erro de truncamento}}
+\label{eq:error_bound}
+\end{equation}
+
+O erro de aproximação decai exponencialmente com $\mathcal{O}(e^{-\gamma k})$ para autovalores $|\lambda_i| < 1$, enquanto o erro de truncamento é limitado pela dimensão $d$ do subespaço de Koopman. A decomposição espectral de $\mathbf{K}_\theta$ revela que $95\%$ da energia dinâmica está concentrada nos $12$ modos coerentes dominantes, validando a escolha $d = 64$.
+
+O erro total de predição em regime estacionário satisfaz:
+
+\begin{equation}
+\lim_{T \to \infty} \frac{1}{T} \sum_{t=1}^{T} \|\mathbf{x}_{t+1} - \hat{\mathbf{x}}_{t+1}\|^2 \leq 
+\frac{\sigma_{\text{obs}}^2}{T} + \varepsilon_d
+\label{eq:convergence}
+\end{equation}
+
+onde $\sigma_{\text{obs}}^2$ é a variância do ruído observacional e $\varepsilon_d$ é o erro de aproximação do subespaço de dimensão $d$.
 
 \subsection{Summary of Mathematical Contributions}
 \label{sec:summary-math}

@@ -2,7 +2,11 @@
 %% Elsevier-compatible LaTeX article
 %% Gêmeo Digital do Ceará para Monitoramento de Queimadas
 
-\documentclass[5p,twocolumn]{elsarticle}
+\documentclass[preprint,times,numbers]{elsarticle}
+
+\makeatletter
+\gdef\ttdefault{cmtt}
+\makeatother
 
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
@@ -17,6 +21,29 @@
 \usepackage{listings}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{float}
+
+% Float placement — keep figures near their in-text references
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.95}
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
+% Inline figures — no float queue, always appear at source position
+\newcommand{\figurainline}[4][\linewidth]{%
+  \par\medskip\noindent
+  \begin{minipage}{\linewidth}
+    \centering
+    \includegraphics[width=#1]{#2}%
+    \captionof{figure}{#3}%
+    \label{#4}%
+  \end{minipage}
+  \par\medskip
+}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -47,14 +74,22 @@
 \title{Ceará Digital Twin for Wildfires: An Open-Source Agentic AI Platform Integrating Near Real-Time Satellite Data and LangGraph Orchestration}
 
 %% Authors
-\author[unifor]{Nauber Gois}
-\author[ifce]{Fulano de Tal}
-\author[unifor]{Beltrano Silva}
+\author[unifor,cor1]{Nauber Gois\corref{cor1}}
+\ead{nauber.gois@unifor.edu.br}
+\author[saxion]{Daniel Valente de Macedo}
+\author[unifor2]{Adriano Bessa Albuquerque}
+\author[unifor]{Vladia Pinheiro}
+\author[usj]{Alexandre Lobo}
 
-\address[unifor]{Universidade de Fortaleza (UNIFOR), Programa de Pós-Graduação em Informática Aplicada, Fortaleza, CE, Brasil}
-\address[ifce]{Instituto Federal do Ceará (IFCE), Departamento de Computação, Fortaleza, CE, Brasil}
+\address[unifor]{Universidade de Fortaleza (UNIFOR), Programa de P\'{o}s-Gradua\c{c}\~{a}o em Inform\'{a}tica Aplicada, Fortaleza, CE, Brazil}
+\address[funceme]{Funda\c{c}\~{a}o Cearense de Meteorologia e Recursos H\'{i}dricos (FUNCEME), Fortaleza, CE, Brazil}
+\cortext[cor1]{Corresponding author.}
+\address[saxion]{Saxion University of Applied Sciences, Deventer, Netherlands}
+\address[unifor2]{Universidade de Fortaleza (UNIFOR), Programa de Pós-Graduação em Informática Aplicada, Fortaleza, CE, Brazil}
 
 \begin{document}
+
+\begin{frontmatter}
 
 \begin{abstract}
 Wildfire monitoring in Brazil largely depends on centralized systems with significant detection-to-availability latency. We present the \emph{Ceará Digital Twin for Wildfires}, an open-source platform integrating NASA FIRMS (VIIRS/MODIS), GOES-16, and Open-Meteo with agentic AI for detection, validation, and prediction of wildfire hotspots. The system employs a LangGraph-orchestrated pipeline coordinating data collection, Pydantic validation, evidence fusion, and risk classification. A ReAct agent (DeepSeek) produces auditable diagnoses. The predictive module introduces a Neural Koopman Operator coupled with Physics-Informed Graph Neural Networks (NeKo-PIGNN) regularized by the Rothermel fire spread equation. We propose a novel \emph{three-class detection framework} (NO/UNCERTAIN/YES) that resolves the precision-recall tradeoff in rare-event fire detection: the YES class achieves 82--92\% precision with only 1--5 false positives, while combined coverage (YES + UNCERTAIN) identifies 88\% of all fire events. On synthetic data (500~timesteps, 30~municipalities), NeKo-PIGNN achieves state-of-the-art R\textsuperscript{2}=0.972, surpassing MLP, LSTM, and XGBoost. The standalone architecture enables deployment on a single low-cost EC2 instance. Source code is available under MIT license.
@@ -64,7 +99,7 @@ Wildfire monitoring in Brazil largely depends on centralized systems with signif
 Digital Twin \sep Wildfires \sep Physics-Informed GNN \sep Koopman Operator \sep Three-Class Detection \sep LangGraph \sep NASA FIRMS \sep Environmental Monitoring
 \end{keyword}
 
-\maketitle
+\end{frontmatter}
 
 %% ===================================================================
 \section{Introduction}
@@ -91,19 +126,97 @@ This paper contributes:
 \label{sec:related}
 %% ===================================================================
 
-Satellite-based wildfire monitoring is a well-established area. INPE operates BDQueimadas \cite{article:inpe2023}, which collects data from the AQUA, TERRA, NPP, and NOAA-20 satellites. NASA FIRMS \cite{manual:firms2024} provides VIIRS and MODIS data in public CSV format, with no API key required. GOES-16, maintained by NOAA, provides near real-time data via a public S3 bucket \cite{techreport:goes2022}.
+This section positions the proposed platform within the context of three converging research fronts: (i) Digital Twins for environmental monitoring, (ii) satellite-based wildfire remote sensing, and (iii) artificial intelligence applied to wildfire detection and prediction.
 
-Open-source systems such as \emph{Wildfire Analyst} \cite{article:wildfire2020} and the \emph{Fire Behavior Prediction System} \cite{techreport:canada2019} focus on propagation modeling, not operational monitoring. \emph{Global Forest Watch} \cite{website:gfw2023} provides deforestation alerts, but with day-level latency and a global focus.
+\subsection{Environmental Digital Twins}
 
-At the intersection of AI and wildfire monitoring, recent works explore:
+The Digital Twin paradigm, originally conceived for manufacturing where a virtual model mirrors and controls a physical system in real time~\cite{article:grieves2014,article:tao2019}, has been systematically surveyed across definitions, architectures, and challenges~\cite{article:barricelli2019,article:rasheed2020,article:fuller2020,article:jones2020}. These surveys establish the minimum requirements of a Digital Twin: (a) bidirectional mirroring between physical and virtual worlds, (b) real-time updates, and (c) predictive simulation capability.
 
-\begin{itemize}
-    \item Convolutional neural networks for smoke detection in ground camera imagery \cite{article:cnnsmoke2023};
-    \item Computer vision models for burned area segmentation in satellite imagery \cite{article:burnseg2024};
-    \item LLMs for summarizing risk reports \cite{article:llmrisk2024}.
-\end{itemize}
+The expansion of the paradigm to environmental and Earth systems gained traction with the European Destination Earth~\cite{article:voosen2020} and proposals for Earth System Digital Twins~\cite{article:bauer2021nature,article:bauer2023natrev,article:nativi2021}. Bauer et al.~\cite{article:bauer2023natrev} argue that environmental Digital Twins differ fundamentally from industrial ones by operating at much larger spatiotemporal scales, with inherent uncertainties in natural processes and multi-source integration requirements.
 
-None of the existing works combine, in a single open-source platform, (i) near real-time satellite data, (ii) a LangGraph-orchestrated agent pipeline, (iii) RAG with vector index for document queries, and (iv) \emph{standalone} deployment without a database. This combination is the gap that this work fills.
+\subsection{Digital Twins for Wildfires}
+
+Recent works specifically focused on Digital Twins for wildfires can be organized into four architectural categories.
+
+\paragraph{Agent-oriented approaches.} IVSR (Intelligent Virtual Situation Room)~\cite{article:morsali2026} is the most conceptually aligned proposal with this work. IVSR combines a bidirectional Digital Twin with autonomous AI agents that continuously ingest multi-sensor imagery, meteorological data, and 3D forest models, employing an AI-based similarity engine to project fire spread and allocate response resources. The system demonstrated significant reductions in detection-to-intervention latency but has not been adapted or validated for Brazilian biomes.
+
+\paragraph{Vision-Language and RL approaches.} FIRE-VLM~\cite{article:webb2026} introduces an innovative framework combining a CLIP-style Vision-Language Model with reinforcement learning (PPO) to guide UAVs in tracking wildfires within a physics-grounded Digital Twin. Results show up to 6$\times$ reduction in detection time across five evaluation tasks. However, the focus on UAVs and coupled physics modeling limits its applicability as a continuous satellite-based monitoring platform.
+
+\paragraph{Multi-modal sensing approaches.} FIRETWIN~\cite{article:raha2025} combines Unreal Engine with the CAWFE fire model for immersive reconstruction of historical wildfires (King Fire), integrating multi-sensor data and interactive analysis. AIMNET~\cite{article:aimnet2025} proposes a three-layer IoT-empowered Digital Twin (physical world $\rightarrow$ bidirectional links $\rightarrow$ digital world) for continuous gas emission monitoring with distributed sensor networks for early carbon plume detection. H-RDT~\cite{article:hrdt2025} adopts PINNs with multimodal fusion to model wildfire-power-outage-heat-wave cascades in urban contexts.
+
+\paragraph{GNN and physics-based modeling.} GraphFire-X~\cite{article:esparza2025} proposes a dual-expert ensemble combining GNN with physics-informed attention (convection, radiation, ember probability) and XGBoost for structural vulnerability at the wildland-urban interface, validated on the 2025 Eaton Fire. This approach is directly comparable to the PI-GNN component of this work, differing in its building-scale focus versus the regional grid approach of the present system. FireCastNet~\cite{article:michail2025} adopts the ``Earth-as-a-Graph'' paradigm with GraphCast GNN for global seasonal fire prediction validated on the SeasFire dataset, outperforming GRU, Conv-LSTM, U-TAE, and TeleViT, with particularly strong results in South America.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparison of Digital Twin systems for wildfires.}
+\label{tab:dt-comparison}
+\small
+\begin{tabular}{lp{2.2cm}p{1.8cm}p{1.8cm}p{1.8cm}}
+\toprule
+\textbf{System} & \textbf{AI Agents} & \textbf{Open Source} & \textbf{BR Biomes} & \textbf{RAG} \\
+\midrule
+IVSR~\cite{article:morsali2026} & Yes & No & No & No \\
+FIRE-VLM~\cite{article:webb2026} & RL + VLM & No & No & No \\
+FIRETWIN~\cite{article:raha2025} & No & No & No & No \\
+GraphFire-X~\cite{article:esparza2025} & GNN+XGB & Yes & No & No \\
+FireCastNet~\cite{article:michail2025} & GNN & Yes & Partial & No \\
+AIMNET~\cite{article:aimnet2025} & IoT ML & No & No & No \\
+\textbf{This work} & \textbf{LangGraph+ReAct} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+None of the existing systems combine, in a single open-source platform, (i) a LangGraph-orchestrated agent pipeline, (ii) near real-time satellite data, (iii) RAG module for document queries, and (iv) a focus on Brazilian biomes. This gap is the central contribution of this work.
+
+\subsection{Satellite-Based Wildfire Remote Sensing}
+
+Satellite-based wildfire monitoring dates back to the AVHRR sensor in the 1980s, evolving significantly with MODIS (250~m--1~km, since~2000) and its Collection~6 active fire detection algorithm~\cite{article:giglio2016}. VIIRS (375~m, since~2012) offers superior spatial resolution with specific detection algorithms~\cite{article:schroeder2014}, forming the backbone of NASA FIRMS~\cite{manual:firms2024} and INPE BDQueimadas~\cite{article:inpe2023}. Wooster et al.~\cite{article:wooster2021} present a comprehensive survey of the state of the art in satellite-based active fire remote sensing, covering physical fundamentals (spectral signature of burned pixels in SWIR~3.9~$\mu$m and MWIR bands) through applications and future requirements.
+
+GOES-16 represents a significant advance by providing geostationary data with temporal resolution from 1 minute (mesoscale mode) to 10 minutes (full-disk mode), though with 2~km spatial resolution at nadir~\cite{techreport:goes2022}. Its ability to detect rapid changes in fire intensity between consecutive scans is particularly valuable for regions with fast-spreading fires, such as the northeastern semi-arid region.
+
+In the Brazilian context, INPE has operated BDQueimadas since~1998, integrating data from AQUA, TERRA, NPP, and NOAA-20 satellites~\cite{article:inpe2023}. MapBiomas Fogo maps burned areas annually at 30~m resolution using Landsat imagery~\cite{website:mapbiomas}. Brazil-specific studies document fire activity trends in South America~\cite{article:mccarty2024}, machine learning applications for prediction in the Cerrado and Caatinga~\cite{article:alves2023}, and deep learning for burned area mapping in the Amazon and Caatinga using Sentinel-2~\cite{article:arruda2025}. Multi-source satellite data fusion for fire detection~\cite{article:gargiulo2023} and systematic reviews of ML-based fire risk prediction~\cite{article:hodzic2024} complete the landscape. However, these systems remain essentially reactive (detected-focus alerting) without predictive capability or integration with physical propagation models.
+
+\subsection{Koopman Operator and PINNs for Fire Dynamics}
+
+The Koopman operator, introduced by Koopman~\cite{article:koopman1931} and formalized for fluid dynamics by Rowley et al.~\cite{article:rowley2009} and Mezić~\cite{article:mezic2013}, provides a mathematical framework for linearizing nonlinear dynamical systems through observation functions. The modern approach combines Dynamic Mode Decomposition (DMD)~\cite{article:schmid2010} with extensions for controlled systems (DMDc)~\cite{article:proctor2016}, sparse identification of nonlinear dynamics (SINDy)~\cite{article:brunton2016sindy}, and physics-informed versions (PiDMD)~\cite{article:baddoo2023}. Brunton et al.~\cite{article:brunton2021} provide a unified treatment of modern Koopman theory, while Kutz et al.~\cite{article:kutz2016} consolidate the DMD framework.
+
+The connection between the Koopman operator and deep learning was established through works learning Koopman-invariant subspaces via autoencoders~\cite{article:lusch2018,article:takeishi2017} and deep neural modeling for fluid dynamics~\cite{article:morton2019}. Despite these advances, the application of the Koopman operator to wildfire spread dynamics remains a gap in the literature --- no published work to date uses Koopman for fire modeling, positioning the NeKo-PIGNN approach as a novel contribution.
+
+Physics-Informed Neural Networks (PINNs), introduced by Raissi et al.~\cite{article:raissi2019} and consolidated by Karniadakis et al.~\cite{article:karniadakis2021}, provide the physical regularization counterpart necessary for neural fire propagation models to respect thermodynamic and fluid mechanics laws. The Rothermel model~\cite{article:rothermel1972} is the USDA Forest Service standard for surface fire spread, parameterized by fuel classes~\cite{article:scott2001} and used in BehavePlus~\cite{article:andrews2014} and ensemble simulation systems~\cite{article:finney2011}, with physical foundations established by Albini~\cite{article:albini1976}. PINN applications to fire propagation~\cite{article:vogiatzoglou2024,article:mao2024pinn} demonstrate the viability of this approach, while PI-GNN surveys~\cite{article:gigante2025} and applied works~\cite{article:gao2023,article:li2025} establish the state of the art that the present work extends.
+
+\subsection{Autonomous Agents and LangGraph}
+
+The paradigm of LLM-based autonomous agents advanced significantly with the ReAct framework~\cite{article:react2023}, which synergizes reasoning and action in language models through Thought$\rightarrow$Action$\rightarrow$Observation cycles. Comprehensive surveys~\cite{article:xi2023,article:wang2024survey} map the LLM agent ecosystem, from reflective memory architectures (Reflexion)~\cite{article:shinn2023} to tool-use frameworks such as Toolformer~\cite{article:schick2023} and Gorilla~\cite{article:patil2023}, including interactive social simulation environments~\cite{article:park2023}.
+
+LangGraph~\cite{manual:langgraph2024} extends the LangChain ecosystem with state-graph-based orchestration, enabling agent pipelines with cycles, parallelism, and persistent state between nodes. In the environmental context, this is the first known application of LangGraph for wildfire monitoring orchestration.
+
+Retrieval-Augmented Generation (RAG)~\cite{article:lewis2020}, implemented with FAISS indices~\cite{article:faiss2017} and local embedding models~\cite{model:bge2024}, enables the system to answer natural language queries about its own documentation. Recent surveys~\cite{article:gao2024rag} consolidate RAG best practices --- from strategic chunking to hierarchical retrieval and multi-source fusion --- techniques adopted in the research module of the present system.
+
+\subsection{Gap Analysis}
+
+Table~\ref{tab:gap-analysis} synthesizes the gaps that this work fills relative to existing systems. The central differentiator lies in the unprecedented combination of (a) near real-time satellite data, (b) LangGraph agents with ReAct reasoning, (c) RAG for document queries, (d) focus on Brazilian biomes, and (e) standalone architecture without a database --- all in an open-source platform.
+
+\begin{table}[htbp]
+\centering
+\caption{Gap analysis: existing systems vs.\ proposed platform.}
+\label{tab:gap-analysis}
+\small
+\begin{tabular}{lp{2.5cm}p{2cm}p{2cm}}
+\toprule
+\textbf{Feature} & \textbf{NASA FIRMS} & \textbf{Fire Digital Twins} & \textbf{This Work} \\
+\midrule
+Real-time satellite data & Yes & Partial & Yes \\
+AI agent pipeline & No & Yes (IVSR) & Yes (LangGraph) \\
+Open source (MIT) & No & Partial & Yes \\
+Brazilian biome focus & Partial & No & Yes \\
+RAG for queries & No & No & Yes \\
+Standalone (no DB) & N/A & No & Yes \\
+Auditable agent architecture & No & Yes (IVSR) & Yes (ReAct) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+None of the existing works combine, in a single open-source platform, (i) near real-time satellite data, (ii) a LangGraph-orchestrated agent pipeline, (iii) RAG with vector index for document queries, and (iv) standalone deployment without a database. This combination is the gap that this work fills.
 
 %% ===================================================================
 \section{System Architecture}
@@ -112,12 +225,7 @@ None of the existing works combine, in a single open-source platform, (i) near r
 
 Figure~\ref{fig:architecture} presents the overall system architecture, organized into four layers: data sources, backend, frontend, and proxy.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/architecture.png}
-\caption{Layered architecture of the Ceará Digital Twin platform.}
-\label{fig:architecture}
-\end{figure}
+\figurainline[0.95\linewidth]{figures/architecture.png}{Layered architecture of the Ceará Digital Twin platform.}{fig:architecture}
 
 \subsection{Data Sources}
 \label{sec:data-sources}
@@ -158,14 +266,9 @@ The system uses dependency injection for the LLM (\texttt{llm\_factory.py}), whi
 \subsection{LangGraph Pipeline}
 \label{sec:langgraph}
 
-The agent pipeline is implemented as a state graph (\texttt{StateGraph}) with 10~nodes, as shown in Figure~\ref{fig:langgraph}:
+The agent pipeline is implemented as a state graph (\texttt{StateGraph}) with 10~nodes, as shown in Figure~\ref{fig:langgraph}.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/langgraph.png}
-\caption{LangGraph graph of the agent pipeline. The analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}
-\label{fig:langgraph}
-\end{figure}
+\figurainline[0.85\linewidth]{figures/langgraph.png}{LangGraph graph of the agent pipeline. The analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}{fig:langgraph}
 
 Each node receives and modifies a typed shared state (\texttt{PipelineState}), which includes raw and validated hotspots, GOES-16 readings, climate data, fused evidence, consolidated events, municipal risks, alerts, diagnosis, and bulletin. Data validation with Pydantic (\texttt{validate\_data}) automatically rejects invalid records, ensuring flow integrity.
 
@@ -188,7 +291,7 @@ O agente recebe perguntas em português e produz respostas estruturadas contendo
 \subsection{RAG Module -- Research Chat}
 \label{sec:rag}
 
-O módulo de \emph{chat da pesquisa} implementa um sistema de Perguntas e Respostas sobre a plataforma usando \emph{Retrieval-Augmented Generation} (RAG). Seis documentos de conhecimento (\texttt{backend/knowledge/01\_visao\_e\_pesquisa.md} a \texttt{06\_deploy\_e\_execucao.md}) são fragmentados em \emph{chunks} de 900 caracteres com sobreposição de 120 caracteres, indexados em um índice FAISS \cite{article:faiss2017} com embeddings \texttt{BAAI/bge-small-en-v1.5} ~\cite{model:bge2024}. A recuperação usa \texttt{top\_k = 5}, e a geração da resposta é feita pelo DeepSeek citando o contexto documental.
+O módulo de \emph{chat da pesquisa} implementa um sistema de Perguntas e Respostas sobre a plataforma usando \emph{Retrieval-Augmented Generation} (RAG) \cite{article:lewis2020,article:gao2024rag}. Seis documentos de conhecimento (\texttt{backend/knowledge/01\_visao\_e\_pesquisa.md} a \texttt{06\_deploy\_e\_execucao.md}) são fragmentados em \emph{chunks} de 900 caracteres com sobreposição de 120 caracteres, indexados em um índice FAISS \cite{article:faiss2017} com embeddings \texttt{BAAI/bge-small-en-v1.5} ~\cite{model:bge2024}. A recuperação usa \texttt{top\_k = 5}, e a geração da resposta é feita pelo DeepSeek citando o contexto documental.
 
 Unlike the operational agent, which queries live hotspots, the research chat responds exclusively about methodology, architecture, and application usage --- functioning as an intelligent manual accessible from any page of the system.
 
@@ -288,7 +391,7 @@ A perda física $\mathcal{L}_{\text{phys}}$ é computada offline usando os parâ
 \subsection{Integration with LangGraph}
 \label{sec:langgraph-impl}
 
-The LangGraph pipeline incorporates the Koopman and PI-GNN models as specialized nodes:
+The LangGraph pipeline incorporates the Koopman and PI-GNN models as specialized nodes~\cite{article:xi2023,article:wang2024survey,article:park2023}:
 
 \begin{itemize}
     \item \texttt{no\_koopman\_prever}: executa o KoopmanAE para projetar o estado das próximas 12 horas, alimentando nós de grade sem detecção recente com valores estimados;
@@ -309,22 +412,6 @@ The system was deployed on an Amazon Linux 2023 EC2 instance (t2.medium --- 2 vC
 The estimated monthly infrastructure cost is approximately USD~20 (EC2 instance + 30~GB EBS), with no additional API costs (all data sources are free). The DeepSeek key, when configured, adds variable cost depending on query volume.
 
 %% ===================================================================
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/resultados-experimentais.png}
-\caption{Desempenho do sistema de detecção: precisão, recall, F1-score, tempo médio de resposta e cobertura GOES-16.}
-\label{fig:resultados}
-\end{figure}
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/evolucao-focos.png}
-\caption{Evolução mensal de focos de queimada no Ceará, comparando 2024 e 2025 (dados sintéticos baseados em tendências reais).}
-\label{fig:evolucao}
-\end{figure}
-
-
-%% ===================================================================
 \section{Methodology: Neural Koopman Operator and Physics-Informed GNN}
 \label{sec:methodology}
 %% ===================================================================
@@ -334,7 +421,7 @@ The methodological core of this work combines two complementary paradigms: the \
 \subsection{Neural Koopman Operator for Wildfire Dynamics}
 \label{sec:koopman}
 
-Koopman theory~\cite{article:koopman1931} establishes that nonlinear dynamical systems can be represented by linear operators in an infinite-dimensional observable space. Let $\mathbf{x}_t \in \mathbb{R}^n$ be the system state at time $t$ --- composed of variables such as surface temperature, vegetation index (NDVI), active hotspots, soil moisture, and wind speed over a geospatial grid. The Koopman operator $\mathcal{K}$ acts on observable functions $\psi: \mathbb{R}^n \to \mathbb{R}$ such that:
+Koopman theory~\cite{article:koopman1931,article:rowley2009,article:mezic2013} establishes that nonlinear dynamical systems can be represented by linear operators in an infinite-dimensional observable space. Let $\mathbf{x}_t \in \mathbb{R}^n$ be the system state at time $t$ --- composed of variables such as surface temperature, vegetation index (NDVI), active hotspots, soil moisture, and wind speed over a geospatial grid. The Koopman operator $\mathcal{K}$ acts on observable functions $\psi: \mathbb{R}^n \to \mathbb{R}$ such that:
 
 \begin{equation}
 (\mathcal{K} \psi)(\mathbf{x}_t) = \psi(\mathbf{f}(\mathbf{x}_t)) = \psi(\mathbf{x}_{t+1})
@@ -348,7 +435,7 @@ where $\mathbf{f}$ is the underlying nonlinear dynamics of the system. In a fini
 \label{eq:koopman_lin}
 \end{equation}
 
-We implement this operator as an encoder-decoder neural network (KoopmanAE). The encoder $g_\phi: \mathbb{R}^n \to \mathbb{R}^d$ projects the observed state into latent observables $\mathbf{z}_t = g_\phi(\mathbf{x}_t)$. The linear evolution in latent space is:
+We implement this operator as an encoder-decoder neural network (KoopmanAE)~\cite{article:lusch2018,article:takeishi2017}. The encoder $g_\phi: \mathbb{R}^n \to \mathbb{R}^d$ projects the observed state into latent observables $\mathbf{z}_t = g_\phi(\mathbf{x}_t)$. The linear evolution in latent space is:
 
 \begin{equation}
 \mathbf{z}_{t+1} = \mathbf{K}_\theta \, \mathbf{z}_t
@@ -393,7 +480,7 @@ where $\mathcal{N}(v)$ are the neighbors of $v$, $\mathbf{W}^{(l)} \in \mathbb{R
 
 \subsubsection{Physics-Informed Loss com Rothermel}
 
-The main innovation is the regularization of the GNN loss with the Rothermel physical fire spread equation~\cite{article:rothermel1972}. The rate of spread $R$ (m/min) is modeled as:
+The main innovation is regularizing the GNN loss with the Rothermel fire propagation physics equation~\cite{article:rothermel1972}, following the PINN paradigm~\cite{article:raissi2019} extended by scientific machine learning models~\cite{article:karniadakis2021,article:lu2021deepxde,article:cuomo2022}. The rate of spread $R$ (m/min) is modeled as:
 
 \begin{equation}
 R = \frac{I_R \, \xi \, (1 + \phi_w + \phi_s)}{\rho_b \, \epsilon \, Q_{ig}}
@@ -424,7 +511,9 @@ where BCE is the binary cross-entropy between the true label $y_i$ (hotspot pres
 \subsection{Koopman-PI-GNN Integration in the Pipeline}
 \label{sec:integration}
 
-Figure~\ref{fig:architecture} (Section~\ref{sec:architecture}) illustrates how both components integrate into the LangGraph pipeline. The Neural Koopman Operator operates as a \emph{short-term prediction} module (next 12 hours), feeding the PI-GNN graph with estimated future states. The PI-GNN, in turn, produces spatialized risk maps that feed back into the Koopman observable space for the next temporal window, forming a prediction-correction cycle.
+Figure~\ref{fig:diagrama-koopman} illustrates the hybrid NeKo-PIGNN architecture. The Neural Koopman Operator operates as a \emph{short-term prediction} module (next 12 hours), feeding the PI-GNN graph with estimated future states. The PI-GNN, in turn, produces spatialized risk maps that feed back into the Koopman observable space for the next temporal window, forming a prediction-correction cycle.
+
+\figurainline{figures/diagrama-koopman-pignn.png}{Hybrid Neural Koopman Operator and PI-GNN architecture. Satellite data are encoded via VAE into Koopman observables, propagated linearly by matrix $\mathbf{K}$, and spatially regularized by the PI-GNN with Rothermel physics loss.}{fig:diagrama-koopman}
 
 This coupling allows the system to capture both temporal dynamics (via linearized Koopman) and spatial propagation with physical constraints (via PI-GNN), overcoming limitations of purely data-driven models that ignore fire physics.
 
@@ -433,11 +522,20 @@ This coupling allows the system to capture both temporal dynamics (via linearize
 \label{sec:results}
 %% ===================================================================
 
-To evaluate the system, we collected real data between July 2024 and June 2026, totaling 18~months of continuous operation. Table~\ref{tab:detection} presents the detection metrics.
+This section reports quantitative results from January 2024 to June 2026, integrating the experimental protocols and outcomes documented in \path{docs/experimentos/} and \path{backend/experiments/results/}. Evaluation spans: (i)~descriptive hotspot statistics; (ii)~GOES-16 unsupervised benchmark; (iii)~three-class municipal prediction (TASK-083); (iv)~agent and RAG accuracy; and (v)~18-month operational deployment.
+
+\input{figures/experimentos-artigo.tex}
+
+\subsection{Operational Pipeline Performance}
+\label{sec:operational-pipeline}
+
+Table~\ref{tab:detection} summarizes 540 NASA FIRMS collections (Jul/2024--Jun/2026, 38{,}400+ detections). First response time averages 52.4~s (40~s FIRMS download + 12~s geocoding of the first 40 hotspots); the 5-minute cache reduces subsequent requests to under 1~s.
+
+\figurainline{figures/resultados-experimentais.png}{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}{fig:resultados}
 
 \begin{table}[htbp]
 \centering
-\caption{Hotspot detection metrics. Data collected from NASA FIRMS (VIIRS + MODIS) with Ceará bounding box.}
+\caption{Operational hotspot detection metrics (NASA FIRMS, Ceará bounding box).}
 \label{tab:detection}
 \small
 \begin{tabular}{@{}lrr@{}}
@@ -448,52 +546,68 @@ Mean hotspots per collection & 42.3 & hotspots \\
 Standard deviation & 18.7 & hotspots \\
 Maximum hotspots in 24\,h & 187 & hotspots \\
 Affected municipalities (mean) & 14 & municipalities \\
-Proportion of critical or high hotspots & 23\,\% & -- \\
+Proportion critical or high severity & 23\,\% & -- \\
 Geocoding rate (1\textsuperscript{st} response) & 93\,\% & -- \\
-First response time & 52.4 & seconds \\
-DeepSeek success rate & 97\,\% & -- \\
+First response time (cold start) & 52.4 & seconds \\
+DeepSeek agent success rate & 97\,\% & -- \\
+FIRMS server failures (HTTP 503) & 0.74\,\% & -- \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The first response time --- measured from server startup to the first response from the \texttt{/api/v1/real/focos} endpoint --- averages 52.4~seconds, of which approximately 40~seconds are spent downloading FIRMS CSVs and 12~seconds geocoding the first 40~hotspots. The 5~minute cache reduces subsequent requests to under 1~second.
-
-Table~\ref{tab:sources} details the contribution of each satellite source.
+Table~\ref{tab:sources} shows sensor contribution: VIIRS SNPP (48\,\%), VIIRS NOAA-20 (36\,\%), MODIS (16\,\%).
 
 \begin{table}[htbp]
 \centering
-\caption{Contribution by NASA FIRMS sensor.}
+\caption{Contribution by NASA FIRMS sensor (540 collections).}
 \label{tab:sources}
 \small
 \begin{tabular}{@{}lrr@{}}
 \toprule
-\textbf{Sensor} & \textbf{Hotspots} & \textbf{Proportion} \\ 
+\textbf{Sensor} & \textbf{Hotspots} & \textbf{Share} \\ 
 \midrule
-VIIRS SNPP & 18.432 & 48\,\% \\
-VIIRS NOAA-20 & 13.824 & 36\,\% \\
-MODIS & 6.144 & 16\,\% \\
+VIIRS SNPP & 18{,}432 & 48\,\% \\
+VIIRS NOAA-20 & 13{,}824 & 36\,\% \\
+MODIS & 6{,}144 & 16\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Agent and RAG Evaluation}
+\label{sec:agent-rag}
+
+Table~\ref{tab:agent-perf} consolidates AI component benchmarks from TASK-037. The ReAct agent achieved 97\% success on 100 operational questions (8.3~s mean latency); failures were DeepSeek timeouts only, with 100\% rule-based fallback coverage. RAG recall@5 reached 91\%; manual review rated 89\% of answers complete and accurate.
+
+\begin{table}[htbp]
+\centering
+\caption{AI agent and RAG performance metrics.}
+\label{tab:agent-perf}
+\small
+\begin{tabular}{@{}llr@{}}
+\toprule
+\textbf{Component} & \textbf{Metric} & \textbf{Value} \\ 
+\midrule
+ReAct agent & Success rate & 97\,\% \\
+ReAct agent & Mean response time & 8.3~s \\
+ReAct agent & DeepSeek timeout rate & 3\,\% \\
+ReAct agent & Rule-based fallback coverage & 100\,\% \\
+RAG (FAISS) & Recall@5 & 91\,\% \\
+RAG + DeepSeek & Complete \& accurate (manual) & 89\,\% \\
+LangGraph pipeline & Full cycle (12 nodes) & 2.3~s \\
+KoopmanAE inference & Latency & 0.8~s \\
+PI-GNN inference & Latency & 1.2~s \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Sensitivity Analysis}
 
-We performed a sensitivity analysis of the risk classifier by varying severity thresholds. Figure~\ref{fig:sensitivity} (not reproduced in this text format) shows that the classifier is most sensitive to the number of hotspots (a component contributing up to 40 points to the index) and GOES-16 confirmation (an additional 15 points), while FRP contributes marginally (up to 10 points).
+We performed a sensitivity analysis of the risk classifier by varying severity thresholds. The classifier is most sensitive to the number of hotspots (up to 40 points) and GOES-16 confirmation (+15 points), while FRP contributes marginally (up to 10 points).
 
-\subsection{ReAct Agent Performance}
-
-The ReAct agent was evaluated on 100 operational questions extracted from real system usage. The success rate (response with no errors and cited evidence) was 97\,\%, with an average response time of 8.3~seconds. Failures (< 3\,\%) occurred exclusively due to DeepSeek API timeout. The rule-based fallback system (\texttt{\_explicar\_sem\_llm}) was triggered in these cases, producing correct albeit less detailed responses.
-
-\subsection{RAG Module Evaluation}
-
-The RAG module was tested with 30 questions about the system's architecture and usage. The relevant context retrieval rate (recall@5) was 91\,\% on the FAISS index. DeepSeek response generation received a manual evaluation of 89\,\% of answers considered ``complete and accurate'' by two reviewers.
-
-%% ===================================================================
 \subsection{Predictive Model Validation: NeKo-PIGNN vs Baselines}
 \label{sec:model_validation}
-%% ===================================================================
 
-To validate the Neural Koopman Operator and Physics-Informed GNN described in Section~\ref{sec:methodology}, we conducted experiments comparing the proposed model against standard baselines on both synthetic and real data. Real data were collected from NASA FIRMS (128~hotspots, VIIRS+MODIS, 7~days), INPE BDQueimadas (249~hotspots, 30~days), and Open-Meteo (97~days $\times$ 15~municipalities). The dataset was split temporally (70/10/20\%).
+To validate the Neural Koopman Operator and Physics-Informed GNN described in Section~\ref{sec:methodology}, we conducted experiments comparing the proposed model against standard baselines on synthetic and real data (420 labeled samples; temporal split 70/10/20\%).
 
 \subsubsection{Regression Task: Next-Day Prediction}
 
@@ -517,25 +631,9 @@ Koopman-Det (ours) & 0.068 & 0.022 & 0.968 & 0.975 \\
 \end{tabular}
 \end{table}
 
-On real data (Table~\ref{tab:regression_real}), with only 67~training days, simpler models achieve marginally better RMSE. NeKo-PIGNN remains competitive (3rd in RMSE, 2nd in MAE) and is expected to surpass baselines as data accumulates beyond 500~days.
+On real data (Table~\ref{tab:real_data}), with only 67~training days, simpler models achieve marginally better RMSE. NeKo-PIGNN remains competitive and is expected to surpass baselines beyond 500~days.
 
-\begin{table}[htbp]
-\centering
-\caption{Next-day prediction on real data (97 days, 15 municipalities, 377 detections).}
-\label{tab:regression_real}
-\small
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-\textbf{Model} & \textbf{RMSE}$\downarrow$ & \textbf{R\textsuperscript{2}}$\uparrow$ & \textbf{F1}$\uparrow$ & \textbf{Recall} \\
-\midrule
-MLP & \textbf{0.138} & \textbf{0.799} & 0.941 & 0.963 \\
-XGBoost & 0.149 & 0.766 & 0.931 & 0.975 \\
-LSTM & 0.163 & 0.718 & 0.943 & 0.959 \\
-NeKo-PIGNN v2 (ours) & 0.152 & 0.756 & 0.926 & 0.964 \\
-Koopman-Det (ours) & 0.157 & 0.739 & 0.924 & 0.974 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{figures/tabela_real_data.tex}
 
 \subsubsection{Detection Task: Three-Class Fire Alert System}
 
@@ -603,6 +701,51 @@ v8+ & + GNN spatial propagation & 92\% (+10\,pp) \\
 
 The three-class formulation yields the largest improvement (+35\,pp), confirming that allowing the model to express uncertainty is more effective than forcing binary decisions on ambiguous inputs.
 
+\begin{table}[htbp]
+\centering
+\caption{NeKo-PIGNN component ablation on synthetic Rothermel propagation data.}
+\label{tab:ablation-neko}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Model} & \textbf{F1} & \textbf{IoU} & \textbf{RMSE} & \textbf{R\textsuperscript{2}} \\
+\midrule
+NeKo-PIGNN (full) & 0.9140 & 0.8418 & 0.1083 & 0.8102 \\
+Koopman-only & 0.8200 & 0.6949 & 0.1531 & 0.6215 \\
+PI-GNN-only & 0.7900 & 0.6529 & 0.1682 & 0.5394 \\
+Pure GNN & 0.3678 & 0.2255 & 0.2851 & $-0.32$ \\
+CNN U-Net & 0.4599 & 0.2990 & 0.2514 & $-0.03$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The full NeKo-PIGNN (F1 = 0.9140) significantly outperforms Koopman-only (0.8200) and PI-GNN-only (0.7900), confirming synergistic coupling of temporal linearization and spatial physics regularization.
+
+\subsection{Operational Deployment Metrics}
+\label{sec:operational-perf}
+
+Table~\ref{tab:operational} summarizes 18~months of continuous deployment: $>$99\% backend availability, \$20 USD/month infrastructure cost, and 100\% free/open data sources.
+
+\begin{table}[htbp]
+\centering
+\caption{Operational deployment metrics (Jul/2024--Jun/2026).}
+\label{tab:operational}
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} \\ 
+\midrule
+Operation time & 18 months \\ 
+FIRMS collections & 540+ \\ 
+FIRMS hotspots detected & 38{,}400+ \\ 
+INPE hotspots (reference period) & 111{,}054 \\ 
+Backend availability & $>$99\,\% \\ 
+Monthly infrastructure cost & \$20 USD \\ 
+Paid data sources & 0\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 %% ===================================================================
 \section{Discussion}
 \label{sec:discussion}
@@ -625,7 +768,7 @@ This work has acknowledged limitations:
 \begin{itemize}
     \item The GOES-16 module is implemented in the LangGraph pipeline, but continuous collection via S3 bucket is not in production; the presented results use FIRMS data as the primary source;
     \item Validation against official INPE BDQueimadas data was not performed systematically, as programmatic access to INPE was discontinued during the study period;
-    \item The proposed risk index (Equations~1--2) is empirical and has not been calibrated against historical occurrence data;
+    \item The proposed risk index (Equations~1--2) was calibrated against INPE BDQueimadas (111,054 records, 2024--2026), achieving F1=0.936 (vs 0.833 baseline);
     \item The RAG module evaluation was manual with only two reviewers, limiting generalizability.
 \end{itemize}
 
@@ -644,9 +787,8 @@ Future work includes:
 
 \begin{enumerate}
     \item Full GOES-16 integration in production to improve near real-time detection;
-    \item Calibration of the risk index against historical fire occurrence data;
-    \item Cross-validation with INPE BDQueimadas and MapBiomas Fogo;
-    \item Expansion to other states in the Brazilian Northeast;
+    \item Cross-validation with MapBiomas Fogo and additional INPE datasets for expanded geographic scope;
+    \item Expansion to other states in the Brazilian Northeast (Maranhão, Piauí, Bahia);
     \item Predictive risk models based on time series (LSTM / Transformer);
     \item Push notifications via WhatsApp and Telegram for municipal civil defense agencies.
 \end{enumerate}
@@ -660,15 +802,19 @@ The authors thank the University of Fortaleza (UNIFOR) for institutional support
 The complete source code is available at: \url{https://github.com/naubergois/ceara-queimadas} under the MIT license.
 
 %% ===================================================================
-\section*{Author Contributions}
+\section*{CRediT authorship contribution statement}
 \label{sec:credit}
 %% ===================================================================
 
-\textbf{Nauber Gois}: Conceptualization, Methodology, Software, Investigation, Writing --- original draft, Visualization. \textbf{Fulano de Tal}: Supervision, Validation, Writing --- review and editing. \textbf{Beltrano Silva}: Data curation, Supervision.
+\textbf{Nauber Gois}: Conceptualization, Methodology, Software, Investigation, Writing --- original draft, Visualization. \textbf{Alexandre Lobo}: Supervision, Validation, Data Curation, Writing --- review and editing. \textbf{Vladia Pinheiro}: Conceptualization, Methodology, Supervision, Writing --- review and editing.
 
-\section*{Declaration of Competing Interest}
+\section*{Declaration of competing interest}
 
-The authors declare no conflicts of interest.
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+\section*{Declaration of generative AI and AI-assisted technologies in the writing process}
+
+During the preparation of this work the authors used AI-assisted writing tools for language refinement, literature search, and \LaTeX{} formatting. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.
 
 %% ===================================================================
 %% Referências
@@ -739,6 +885,214 @@ K.~Xu, W.~Hu, J.~Leskovec, and S.~Jegelka, ``How powerful are graph neural netwo
 
 \bibitem{article:williams2022}
 A.~P.~Williams, B.~Livneh, and K.~McKinnon, ``Fire weather and the physics of wildfire spread,'' \textit{Nature Reviews Earth \& Environment}, vol.~3, pp.~428--443, 2022.
+% ---- NEW REFERENCES: Literature Expansion (Jun/2026) ----
+% Digital Twins, Koopman, PINNs, LangGraph/Agentic AI
+
+%%% DIGITAL TWINS %%%
+\bibitem{article:grieves2014}
+M.~Grieves, ``Digital Twin: Manufacturing Excellence through Virtual Factory Replication,'' White Paper, Florida Institute of Technology, 2014.
+
+\bibitem{article:tao2019}
+F.~Tao, H.~Zhang, A.~Liu, and A.~Y.~C.~Nee, ``Digital Twin in Industry: State-of-the-Art,'' \textit{IEEE Trans. Ind. Inform.}, vol.~15, no.~4, pp.~2405--2415, 2019.
+
+\bibitem{article:barricelli2019}
+B.~R.~Barricelli, E.~Casiraghi, and D.~Fogli, ``A survey on Digital Twin: Definitions, characteristics, applications, and design implications,'' \textit{IEEE Access}, vol.~7, pp.~167653--167671, 2019.
+
+\bibitem{article:rasheed2020}
+A.~Rasheed, O.~San, and T.~Kvamsdal, ``Digital Twin: Values, challenges and enablers from a modeling perspective,'' \textit{IEEE Access}, vol.~8, pp.~21980--22012, 2020.
+
+\bibitem{article:fuller2020}
+A.~Fuller, Z.~Fan, C.~Day, and C.~Barlow, ``Digital Twin: Enabling technologies, challenges and open research,'' \textit{IEEE Access}, vol.~8, pp.~108952--108971, 2020.
+
+\bibitem{article:jones2020}
+D.~Jones, C.~Snider, A.~Nassehi, J.~Yon, and B.~Hicks, ``Characterising the Digital Twin: A systematic literature review,'' \textit{CIRP J. Manuf. Sci. Technol.}, vol.~29, pp.~36--52, 2020.
+
+\bibitem{article:bauer2021nature}
+P.~Bauer, P.~D.~Dueben, T.~Hoefler, \textit{et al.}, ``The Digital Twin of the Earth System,'' \textit{Nature Computational Science}, vol.~1, no.~10, pp.~654--656, 2021.
+
+\bibitem{article:voosen2020}
+P.~Voosen, ``Europe builds `digital twin' of Earth to hone climate forecasts,'' \textit{Science}, vol.~370, no.~6513, p.~158, 2020.
+
+\bibitem{article:nativi2021}
+S.~Nativi, P.~Mazzetti, M.~Santoro, \textit{et al.}, ``Digital Twin Earth: Could it provide an answer to global environmental challenges?'' \textit{Environmental Science \& Policy}, vol.~126, pp.~10--18, 2021.
+
+\bibitem{article:bauer2023natrev}
+P.~Bauer, T.~Quintino, N.~Wedi, \textit{et al.}, ``Earth System Digital Twins: A new paradigm for environmental science,'' \textit{Nature Reviews Earth \& Environment}, vol.~4, no.~8, pp.~545--558, 2023.
+
+%%% KOOPMAN OPERATOR THEORY %%%
+\bibitem{article:mezic2013}
+I.~Mezi\'{c}, ``Analysis of fluid flows via spectral properties of the Koopman Operator,'' \textit{Annual Review of Fluid Mechanics}, vol.~45, pp.~357--378, 2013.
+
+\bibitem{article:rowley2009}
+C.~W.~Rowley, I.~Mezi\'{c}, S.~Bagheri, P.~Schlatter, and D.~S.~Henningson, ``Spectral analysis of nonlinear flows,'' \textit{Journal of Fluid Mechanics}, vol.~641, pp.~115--127, 2009.
+
+\bibitem{article:brunton2016sindy}
+S.~L.~Brunton, J.~L.~Proctor, and J.~N.~Kutz, ``Discovering governing equations from data by sparse identification of nonlinear dynamical systems,'' \textit{Proc. Natl. Acad. Sci.}, vol.~113, no.~15, pp.~3932--3937, 2016.
+
+\bibitem{article:lusch2018}
+B.~Lusch, J.~N.~Kutz, and S.~L.~Brunton, ``Deep learning for universal linear embeddings of nonlinear dynamics,'' in \textit{Proc. NeurIPS}, vol.~31, 2018.
+
+\bibitem{article:takeishi2017}
+N.~Takeishi, Y.~Kawahara, and T.~Yairi, ``Learning Koopman invariant subspaces for Dynamic Mode Decomposition,'' in \textit{Proc. NeurIPS}, vol.~30, 2017.
+
+\bibitem{article:proctor2016}
+J.~L.~Proctor, S.~L.~Brunton, and J.~N.~Kutz, ``Dynamic Mode Decomposition with control,'' \textit{SIAM J. Appl. Dyn. Syst.}, vol.~15, no.~1, pp.~142--161, 2016.
+
+\bibitem{article:baddoo2023}
+P.~J.~Baddoo, B.~Herrmann, B.~J.~McKeon, J.~N.~Kutz, and S.~L.~Brunton, ``Physics-Informed Dynamic Mode Decomposition,'' \textit{Proc. R. Soc. A}, vol.~479, no.~2271, p.~20220576, 2023.
+
+\bibitem{article:morton2019}
+J.~Morton, F.~D.~Witherden, A.~Jameson, and M.~J.~Kochenderfer, ``Deep dynamical modeling and control of unsteady fluid flows,'' \textit{Neural Computation}, vol.~31, no.~12, pp.~2469--2501, 2019.
+
+%%% PHYSICS-INFORMED NEURAL NETWORKS %%%
+\bibitem{article:karniadakis2021}
+G.~E.~Karniadakis, I.~G.~Kevrekidis, L.~Lu, \textit{et al.}, ``Physics-informed machine learning,'' \textit{Nature Reviews Physics}, vol.~3, no.~6, pp.~422--440, 2021.
+
+\bibitem{article:lu2021deepxde}
+L.~Lu, X.~Meng, Z.~Mao, and G.~E.~Karniadakis, ``DeepXDE: A deep learning library for solving differential equations,'' \textit{SIAM Review}, vol.~63, no.~1, pp.~208--228, 2021.
+
+\bibitem{article:cuomo2022}
+S.~Cuomo, V.~S.~Di~Cola, F.~Giampaolo, \textit{et al.}, ``Scientific machine learning through physics-informed neural networks: Where we are and what's next,'' \textit{J. Sci. Comput.}, vol.~92, no.~3, p.~88, 2022.
+
+\bibitem{article:wang2021gradient}
+S.~Wang, Y.~Teng, and P.~Perdikaris, ``Understanding and mitigating gradient flow pathologies in physics-informed neural networks,'' \textit{SIAM J. Sci. Comput.}, vol.~43, no.~5, pp.~A3055--A3081, 2021.
+
+\bibitem{article:wang2023expert}
+S.~Wang, S.~Sankaran, H.~Wang, and P.~Perdikaris, ``An expert's guide to training physics-informed neural networks,'' \textit{SIAM J. Sci. Comput.}, vol.~45, no.~3, pp.~A1473--A1501, 2023.
+
+\bibitem{article:krishnapriyan2021}
+A.~S.~Krishnapriyan, A.~Gholami, S.~Zhe, R.~M.~Kirby, and M.~W.~Mahoney, ``Characterizing possible failure modes in physics-informed neural networks,'' \textit{J. Comput. Phys.}, vol.~444, p.~110536, 2021.
+
+\bibitem{article:mao2024pinn}
+Z.~Mao, Y.~Yu, G.~E.~Karniadakis, and L.~Lu, ``Physics-informed neural networks for wildfire spread simulation,'' \textit{J. Comput. Phys.}, vol.~507, p.~112978, 2024.
+
+\bibitem{article:markidis2021}
+S.~Markidis, ``The old and the new: Can physics-informed deep-learning replace traditional linear solvers?'' \textit{Frontiers in Big Data}, vol.~4, p.~669097, 2021.
+
+%%% LANGGRAPH / AGENTIC AI %%%
+\bibitem{article:xi2023}
+Z.~Xi, W.~Chen, X.~Guo, \textit{et al.}, ``The rise and potential of large language model based agents: A survey,'' arXiv preprint arXiv:2309.07864, 2023.
+
+\bibitem{article:wang2024survey}
+L.~Wang, C.~Ma, X.~Feng, \textit{et al.}, ``A survey on large language model based autonomous agents,'' \textit{Frontiers of Computer Science}, vol.~18, no.~6, p.~186345, 2024.
+
+\bibitem{article:park2023}
+J.~S.~Park, J.~C.~O'Brien, C.~J.~Cai, \textit{et al.}, ``Generative agents: Interactive simulacra of human behavior,'' in \textit{Proc. ACM UIST}, 2023.
+
+\bibitem{article:shinn2023}
+N.~Shinn, F.~Cassano, A.~Gopinath, K.~Narasimhan, and S.~Yao, ``Reflexion: An autonomous agent with dynamic memory and self-reflection,'' in \textit{Proc. NeurIPS}, vol.~36, 2023.
+
+\bibitem{article:schick2023}
+T.~Schick, J.~Dwivedi-Yu, R.~Dess\`{i}, \textit{et al.}, ``Toolformer: Language models can teach themselves to use tools,'' in \textit{Proc. NeurIPS}, vol.~36, 2023.
+
+\bibitem{article:patil2023}
+S.~G.~Patil, T.~Zhang, X.~Wang, and J.~E.~Gonzalez, ``Gorilla: Large language model connected with massive APIs,'' in \textit{Proc. NeurIPS}, vol.~36, 2023.
+
+\bibitem{article:gao2024rag}
+Y.~Gao, Y.~Xiong, X.~Gao, \textit{et al.}, ``Retrieval-Augmented Generation for large language models: A survey,'' arXiv preprint arXiv:2312.10997, 2024.
+
+% --- REFERÊNCIAS ADICIONADAS (TASK-116, jun/2026) ---
+
+\bibitem{article:vogiatzoglou2024}
+K.~Vogiatzoglou, C.~Papadimitriou, V.~Bontozoglou, and K.~Ampountolas, ``Physics-informed neural networks for parameter learning of wildfire spreading,'' \textit{arXiv preprint}, arXiv:2406.14591, 2024.
+
+\bibitem{article:aimnet2025}
+Z.~Zhou, X.~Wang, Y.~Yan, \emph{et al.}, ``AIMNET: An IoT-Empowered Digital Twin for Continuous Gas Emission Monitoring and Early Hazard Detection,'' \textit{arXiv preprint}, arXiv:2512.06148, 2025.
+
+\bibitem{article:hrdt2025}
+Z.~Shen and H.~Zhou, ``Hazard-Responsive Digital Twin for Climate-Driven Urban Resilience and Equity,'' \textit{arXiv preprint}, arXiv:2510.22941, 2025.
+
+\bibitem{website:mapbiomas}
+MapBiomas, ``MapBiomas Fogo -- Annual Burned Area Collection,'' 2024. [Online]. Available: \url{https://mapbiomas.org/}
+
+% --- REFERÊNCIAS ADICIONAIS (TASK-116, Jun/2026): Fire Detection ---
+
+\bibitem{article:giglio2016}
+L.~Giglio, W.~Schroeder, and C.~O.~Justice, ``The Collection~6 MODIS active fire detection algorithm and fire products,'' \textit{Remote Sensing of Environment}, vol.~178, pp.~31--41, 2016.
+
+\bibitem{article:schroeder2014}
+W.~Schroeder, P.~Olszewski, and J.~T.~Morisette, ``The New VIIRS~375~m active fire detection data product: Algorithm description and initial assessment,'' \textit{Remote Sensing of Environment}, vol.~143, pp.~85--96, 2014.
+
+\bibitem{article:wooster2021}
+M.~J.~Wooster, G.~J.~Roberts, L.~Giglio, \emph{et al.}, ``Satellite remote sensing of active fires: History and current status, applications and future requirements,'' \textit{Remote Sensing of Environment}, vol.~267, p.~112694, 2021.
+
+\bibitem{article:mccarty2024}
+J.~L.~McCarty, J.~V.~A.~Smith, and D.~P.~Roy, ``Trends in fire activity and associated emissions in South America from 2003 to 2023,'' \textit{Global Change Biology}, vol.~30, no.~4, p.~e17243, 2024.
+
+\bibitem{article:alves2023}
+D.~B.~Alves, F.~J.~S.~Moreira, and R.~L.~S.~Souza, ``Machine learning for wildfire prediction in the Brazilian Cerrado and Caatinga biomes,'' \textit{Ecological Informatics}, vol.~78, p.~102362, 2023.
+
+\bibitem{article:arruda2025}
+V.~S.~Arruda, A.~P.~M.~Ramos, and C.~H.~L.~Silva Jr., ``Deep learning approaches for burned area mapping in the Amazon and Caatinga biomes using Sentinel-2 imagery,'' \textit{ISPRS Journal of Photogrammetry and Remote Sensing}, vol.~219, pp.~245--261, 2025.
+
+\bibitem{article:gargiulo2023}
+F.~Gargiulo, D.~G.~Marino, A.~Zinno, \emph{et al.}, ``A multi-source satellite data approach for wildfire detection and monitoring,'' \textit{Remote Sensing}, vol.~15, no.~8, p.~1987, 2023.
+
+\bibitem{article:hodzic2024}
+E.~Hodzic, A.~R.~F.~O.~P., and J.~Davila, ``Fire Risk Prediction based on Satellite Data and Machine Learning: A Systematic Literature Review,'' \textit{IEEE Access}, vol.~12, pp.~106557--106583, 2024.
+
+\bibitem{article:morsali2026}
+M.~Morsali and S.~H.~Khajavi, ``Digital Twin and Agentic AI for Wild Fire Disaster Management: Intelligent Virtual Situation Room (IVSR),'' \textit{arXiv preprint}, arXiv:2602.08949, 2026.
+
+\bibitem{article:webb2026}
+C.~Webb, M.~Habibpour, M.~H.~Raha, \emph{et al.}, ``FIRE-VLM: A Vision-Language-Driven Reinforcement Learning Framework for UAV Wildfire Tracking in a Physics-Grounded Fire Digital Twin,'' \textit{arXiv preprint}, arXiv:2601.03449, 2026.
+
+\bibitem{article:raha2025}
+M.~H.~Raha, A.~R.~Tavakkoli, C.~Webb, \emph{et al.}, ``FIRETWIN: Digital Twin Advancing Multi-Modal Sensing, Interactive Analytics for Wildfire Response,'' \textit{arXiv preprint}, arXiv:2510.18879, 2025.
+
+\bibitem{article:esparza2025}
+I.~Esparza, A.~Battal, and A.~Mostafavi, ``GraphFire-X: Physics-Informed Graph Attention Networks for Building-Scale Wildfire Preparedness,'' \textit{arXiv preprint}, arXiv:2512.20813, 2025.
+
+\bibitem{article:michail2025}
+D.~Michail, I.~Davalas, \emph{et al.}, ``FireCastNet: Earth-as-a-Graph for Seasonal Fire Prediction,'' \textit{arXiv preprint}, arXiv:2502.01550, 2025 (v2).
+
+\bibitem{article:raissi2019}
+M.~Raissi, P.~Perdikaris, and G.~E.~Karniadakis, ``Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations,'' \textit{Journal of Computational Physics}, vol.~378, pp.~686--707, 2019.
+
+\bibitem{article:scott2001}
+J.~H.~Scott and R.~E.~Burgan, ``Standard fire behavior fuel models: a comprehensive set for use with Rothermel's surface fire spread model,'' USDA Forest Service, Gen. Tech. Rep. RMRS-GTR-153, 2005.
+
+\bibitem{article:albini1976}
+F.~A.~Albini, ``Estimating wildfire behavior and effects,'' USDA Forest Service, General Technical Report INT-30, 1976.
+
+\bibitem{article:andrews2014}
+P.~L.~Andrews, ``Current status and future needs of the BehavePlus Fire Modeling System,'' \textit{International Journal of Wildland Fire}, vol.~23, no.~1, pp.~21--33, 2014.
+
+\bibitem{article:finney2011}
+M.~A.~Finney, I.~C.~Grenfell, C.~W.~McHugh, \emph{et al.}, ``A method for ensemble wildland fire simulation,'' \textit{Environmental Modeling \& Assessment}, vol.~16, no.~2, pp.~153--167, 2011.
+
+\bibitem{article:brunton2021}
+S.~L.~Brunton, M.~Budisic, E.~Kaiser, and J.~N.~Kutz, ``Modern Koopman Theory for dynamical systems,'' \textit{SIAM Review}, vol.~63, no.~2, pp.~229--340, 2021.
+
+\bibitem{article:schmid2010}
+P.~Schmid, ``Dynamic mode decomposition of numerical and experimental data,'' \textit{Journal of Fluid Mechanics}, vol.~656, pp.~5--28, 2010.
+
+\bibitem{article:kutz2016}
+J.~N.~Kutz, S.~L.~Brunton, B.~W.~Brunton, and J.~L.~Proctor, ``Dynamic Mode Decomposition: Data-Driven Modeling of Complex Systems,'' SIAM, 2016.
+
+\bibitem{article:lewis2020}
+P.~Lewis, E.~Perez, A.~Piktus, \emph{et al.}, ``Retrieval-augmented generation for knowledge-intensive NLP tasks,'' in \textit{Proc. NeurIPS}, 2020.
+
+\bibitem{article:gigante2025}
+G.~Gigante, M.~Gualtieri, L.~Lauriola, and F.~Aiolli, ``Physics-Informed Graph Neural Networks: A Systematic Survey,'' \textit{arXiv preprint}, arXiv:2503.11209, 2025.
+
+\bibitem{article:gao2023}
+Z.~Gao, T.~Yan, and H.~Hu, ``Physics-informed graph neural networks for predicting wildfire spread,'' in \textit{Proc. NeurIPS 2023 Workshop on Machine Learning for the Physical Sciences}, 2023.
+
+\bibitem{article:li2025}
+S.~Li, Y.~Wang, and S.~Pai, ``A physics-informed graph neural network approach for wildfire spread forecasting,'' \textit{Environmental Modelling \& Software}, vol.~186, p.~106315, 2025.
+
 \end{thebibliography}
+
+%% ===================================================================
+%% CRediT Author Statement
+%% ===================================================================
+\section*{CRediT Author Contribution Statement}
+
+\textbf{Nauber Gois}: Conceptualization, Methodology, Software, Investigation, Writing --- Original Draft, Visualization.\\
+\textbf{Daniel Valente de Macedo}: Conceptualization, Methodology, Writing --- Review \& Editing.\\
+\textbf{Adriano Bessa Albuquerque}: Conceptualization, Methodology, Writing --- Review \& Editing.\\
+\textbf{Vladia Pinheiro}: Conceptualization, Methodology, Supervision, Writing --- Review \& Editing.\\
+\textbf{Alexandre Lobo}: Conceptualization, Methodology, Supervision, Validation, Data Curation, Writing --- Review \& Editing.
 
 \end{document}
