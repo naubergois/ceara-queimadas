@@ -67,9 +67,9 @@ app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description=(
-        "Gêmeo Digital do Ceará para descoberta online de queimadas. "
-        "Dados reais: NASA FIRMS (VIIRS/MODIS) + Open-Meteo + Nominatim. "
-        "Agentes: LangChain ReAct + LangGraph."
+        "Ceará Digital Twin for online wildfire discovery. "
+        "Real data: NASA FIRMS (VIIRS/MODIS) + Open-Meteo + Nominatim. "
+        "Agents: LangChain ReAct + LangGraph."
     ),
     lifespan=lifespan,
     docs_url="/docs",
