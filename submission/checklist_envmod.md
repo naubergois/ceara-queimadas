@@ -13,7 +13,7 @@
 - [x] Keywords
 - [x] Cover letter atualizada (`submission/cover_letter.pdf`)
 - [ ] ORCID reais de todos os autores (registrar no Editorial Manager)
-- [ ] BibTeX externo (`docs/refs-queimadas.bib`) — ainda inline no `.tex`
+- [x] BibTeX externo (`submission/refs-ems.bib`) + `elsarticle-num.bst`
 - [ ] Zenodo DOI (`submission/ZENODO.md` — pendente release)
 
 ## Evidência científica (EMS-10)
