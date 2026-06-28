@@ -49,6 +49,7 @@ Related scientific article: submission to *Environmental Modelling & Software* (
 ## 📋 Table of Contents
 
 - [What is it?](#what-is-it-plain-language-overview)
+- [Graphical Abstract](#graphical-abstract)
 - [Overview](#-overview)
 - [Architecture](#-architecture)
 - [Data Sources](#-data-sources)
@@ -63,6 +64,14 @@ Related scientific article: submission to *Environmental Modelling & Software* (
 - [React Interface](#-react-interface)
 - [Environment Variables](#-environment-variables)
 - [Contributing](#-contributing)
+
+---
+
+## Graphical Abstract
+
+![Graphical abstract — real-time satellite-to-alert pipeline for the 2025 dry season in Ceará](submission/graphical_abstract.png)
+
+Satellite ingestion (NASA FIRMS, GOES-16, INPE), LangGraph orchestration, three-class alerting (NO / UNCERTAIN / YES), and dry-season 2025 validation metrics for Ceará, Brazil.
 
 ---
 
