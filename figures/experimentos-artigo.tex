@@ -453,6 +453,8 @@ XGBoost YES alert precision (82.1\%) has a 95\% CI of [67.9\%, 96.4\%] (23 TP, 5
 
 To test generalization beyond the 97-day Mar--Jun/2026 subset, we retrained the three-class XGBoost alert model on INPE-only features across multiple windows (Table~\ref{tab:extended-temporal}). During the 2025 dry season (184~days, 24{,}573 hotspots), YES-class alerts reached \textbf{84.2\% precision and 91.8\% recall}---consistent with the published Exp-B v9 short-window results and confirming that alert quality scales with fire-season data volume. Performance drops in mixed rainy/dry 12-month windows (31.6\% precision), indicating season-specific calibration as expected in semi-arid Ceará.
 
+Leave-one-season-out evaluation further quantifies cross-year transfer: training on dry season 2024 and testing on dry season 2025 yields 79.0\% precision and 85.9\% recall (379~FP on 2{,}745 test samples), demonstrating that alert rules learned from a moderate-fire year generalize to an extreme-fire year without retraining. The reverse direction (train 2025, test 2024) shows higher recall (98.2\%) but lower precision (39.2\%) due to class imbalance when a high-volume year is used to predict a low-volume year---supporting season-aware deployment rather than a single static threshold.
+
 \input{backend/experiments/results/tabela_extended_temporal.tex}
 
 \begin{table}[htbp]

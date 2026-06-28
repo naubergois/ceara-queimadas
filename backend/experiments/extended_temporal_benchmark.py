@@ -165,6 +165,84 @@ def run_window(label: str, start: str, end: str) -> dict:
     }
 
 
+def build_samples_with_dates(
+    dates: list[str], fire: np.ndarray, aux: np.ndarray
+) -> tuple[np.ndarray, np.ndarray, list[str]]:
+    rows_x, rows_y, row_dates = [], [], []
+    num_days, num_mun = fire.shape
+    for t in range(3, num_days - 1):
+        dkey = dates[t]
+        for m in range(num_mun):
+            hist = fire[t - 2 : t + 1, m]
+            pers = float(hist.sum() / max(hist.max(), 1.0))
+            fire_next = fire[t + 1, m]
+            if fire_next > 0 and pers > 0.25:
+                label = 2
+            elif fire_next > 0 or (aux[t, m, 1] > 0.5 and fire[t, m] > 0):
+                label = 1
+            else:
+                label = 0
+            feat = np.concatenate([fire[t - 2 : t + 1, m], aux[t, m], [pers, fire[t, m]]])
+            rows_x.append(feat)
+            rows_y.append(label)
+            row_dates.append(dkey)
+    return (
+        np.array(rows_x, dtype=np.float32),
+        np.array(rows_y, dtype=np.int64),
+        row_dates,
+    )
+
+
+def run_loo_window(label: str, start: str, end: str, mode: str) -> dict:
+    """Leave-one-season-out: train on one dry season, test on the other."""
+    dates, muns, fire, aux = load_inpe_daily(INPE_CSV, start, end)
+    X, y, row_dates = build_samples_with_dates(dates, fire, aux)
+
+    def in_dry24(d: str) -> bool:
+        return d >= "2024-07-01" and d <= "2024-12-31"
+
+    def in_dry25(d: str) -> bool:
+        return d >= "2025-07-01" and d <= "2025-12-31"
+
+    if mode == "loo_train24_test25":
+        train_mask = np.array([in_dry24(d) for d in row_dates])
+        test_mask = np.array([in_dry25(d) for d in row_dates])
+    else:
+        train_mask = np.array([in_dry25(d) for d in row_dates])
+        test_mask = np.array([in_dry24(d) for d in row_dates])
+
+    X_train, y_train = X[train_mask], y[train_mask]
+    X_test, y_test = X[test_mask], y[test_mask]
+    if len(y_train) < 50 or len(y_test) < 20:
+        raise RuntimeError(f"Insufficient LOO samples for {mode}: train={len(y_train)} test={len(y_test)}")
+
+    clf = XGBClassifier(
+        n_estimators=400, max_depth=5, learning_rate=0.04,
+        objective="multi:softprob", num_class=3, random_state=42,
+    )
+    clf.fit(X_train, y_train)
+    proba = clf.predict_proba(X_test)[:, 2]
+    alert = eval_yes_alert(y_test, proba)
+
+    return {
+        "label": label,
+        "start": start,
+        "end": end,
+        "num_days": len(dates),
+        "num_municipalities": len(muns),
+        "total_focos": int(fire.sum()),
+        "samples": int(len(y)),
+        "test_samples": int(len(y_test)),
+        "yes_in_test": int((y_test == 2).sum()),
+        "xgb_yes_alert": alert,
+        "xgb_macro_f1": float(f1_score(y_test, clf.predict(X_test), average="macro", zero_division=0)),
+        "mlp_yes_f1": 0.0,
+        "mlp_yes_precision": 0.0,
+        "mlp_yes_recall": 0.0,
+        "loo_mode": mode,
+    }
+
+
 def write_latex(results: list[dict], path: Path) -> None:
     lines = [
         r"\begin{table}[htbp]",
@@ -195,8 +273,15 @@ def main() -> None:
         ("Dry season 2024", "2024-07-01", "2024-12-31"),
         ("Dry season 2025", "2025-07-01", "2025-12-31"),
         ("Full 12 mo (Jul/24--Jun/25)", "2024-07-01", "2025-06-30"),
+        ("LOO: train dry24, test dry25", "2024-07-01", "2025-12-31", "loo_train24_test25"),
+        ("LOO: train dry25, test dry24", "2024-07-01", "2025-12-31", "loo_train25_test24"),
     ]
-    results = [run_window(*w) for w in windows]
+    results = []
+    for w in windows:
+        if len(w) == 4:
+            results.append(run_loo_window(*w))
+        else:
+            results.append(run_window(*w))
     payload = {"experiment": "EXP-ROBUST-003", "windows": results}
     out_json = RESULTS_DIR / "EXP-ROBUST-003_extended.json"
     out_json.write_text(json.dumps(payload, indent=2), encoding="utf-8")

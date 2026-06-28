@@ -1,83 +1,74 @@
 % ============================================================
-% Carta de Submissão — Environmental Modelling & Software
-% "Neural Koopman Operator + Physics-Informed GNN 
-%  for Real-Time Wildfire Digital Twin"
+% Cover Letter — Environmental Modelling & Software
+% Manuscript: Ceará Digital Twin for Wildfires (EN)
 % ============================================================
 \documentclass[a4paper,12pt]{letter}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[brazilian,english]{babel}
+\usepackage[english]{babel}
 \usepackage{hyperref}
 \usepackage{geometry}
 \geometry{margin=2.5cm}
 
-\signature{Nauber Gois}
-\address{
-  Laboratório de Gêmeos Digitais Ambientais\\
-  Fortaleza, Ceará, Brasil\\
-  \texttt{nauber.gois@email.com}
+\signature{Nauber Gois\\On behalf of all co-authors}
+\address{%
+  Universidade de Fortaleza (UNIFOR)\\
+  Fortaleza, Ceará, Brazil\\
+  \texttt{naubergois@gmail.com}
 }
 
 \begin{document}
 
-\begin{letter}{
+\begin{letter}{%
   Editorial Office\\
-  Environmental Modelling \& Software\\
+  \textit{Environmental Modelling \& Software}\\
   Elsevier
 }
 
 \opening{Dear Editor,}
 
-We are pleased to submit our manuscript entitled:
+We submit the manuscript entitled:
 
-\vspace{0.3cm}
 \begin{quote}
-\textbf{``Neural Koopman Operator + Physics-Informed Graph Neural Networks \\
-for Real-Time Wildfire Digital Twin''}
+\textbf{Ceará Digital Twin for Wildfires: An Open-Source Agentic AI Platform\\
+Integrating Near Real-Time Satellite Data and LangGraph Orchestration}
 \end{quote}
-\vspace{0.3cm}
 
-for consideration for publication in \textit{Environmental Modelling \& Software}.
+for consideration as a research article in \textit{Environmental Modelling \& Software}.
 
-\subsection*{Summary}
-This manuscript presents a novel hybrid architecture that combines a Neural Koopman Operator with a Physics-Informed Graph Neural Network (NeKo-PIGNN) for real-time wildfire propagation modeling. The key innovations are:
+\medskip
+\textbf{Summary.}\ 
+Wildfire monitoring in Brazil still depends largely on centralized systems with multi-hour latency between satellite overpass and public data availability. We present an open-source, agentic wildfire monitoring platform for Ceará that integrates NASA FIRMS, optional GOES-16, INPE BDQueimadas, and Open-Meteo within a ten-node LangGraph production pipeline (ingestion, validation, parallel geospatial/climate/GOES analysis, evidence fusion, risk classification, ReAct diagnosis, and three-class alerts).
 
-\begin{enumerate}
-  \item \textbf{Neural Koopman Operator}: Linearizes the nonlinear fire dynamics into a latent space, enabling stable long-term predictions ($t+6$ to $t+72$ hours) via a learned Koopman matrix $K$.
+The manuscript combines (i)~operational software engineering for environmental modelling workflows, (ii)~a three-class alert framework (NO/UNCERTAIN/YES) with explicit precision--recall trade-offs, and (iii)~NeKo-PIGNN (Neural Koopman Operator + Physics-Informed GNN) as an offline research module for physics-regularized prediction benchmarks.
 
-  \item \textbf{Physics-Informed GNN}: Propagates fire state between neighboring municipalities using graph message passing, regularized with the Rothermel fire spread equation as a PDE residual loss.
-
-  \item \textbf{Causal Simulation}: A differentiable causal intervention mechanism (``what-if'' analysis) allowing land managers to query the effect of changing wind, humidity, or vegetation.
-\end{enumerate}
-
-\subsection*{Contributions}
+\medskip
+\textbf{Key Results.}
 \begin{itemize}
-  \item First published combination of Neural Koopman Operators with Physics-Informed GNNs for wildfire modeling (zero prior publications in this specific intersection).
-  \item Complete open-source digital twin pipeline: GOES-16/VIIRS ingestion $\rightarrow$ Koopman encoding $\rightarrow$ GNN propagation $\rightarrow$ dashboard.
-  \item Validation against 184 municipalities in Ceará, Brazil, with ablation studies confirming the hybrid model outperforms both pure-Koopman (F1=0.82), pure-PINN (F1=0.79), and standard baselines (CNN, GNN, Neural ODE).
-  \item Fully reproducible code available on GitHub.
+  \item \textbf{Operational alerts:} 82--92\% YES precision on a 20-day holdout; bootstrap 95\% CI [68\%, 96\%] for XGBoost YES precision.
+  \item \textbf{Extended INPE validation:} 84.2\% precision and 91.8\% recall over the 2025 dry season (184 days, 24{,}573 hotspots).
+  \item \textbf{NeKo-PIGNN:} $R^2=0.972$ on synthetic benchmarks; real-data results are reported separately from operational alert metrics to avoid conflation.
+  \item \textbf{Reproducibility:} MIT-licensed code, experiment scripts (Exp-B v1--v9 and EXP-ROBUST-001--004), and pinned result tables on GitHub (\url{https://github.com/naubergois/ceara-queimadas}).
 \end{itemize}
 
-\subsection*{Novelty Statement}
-To the best of our knowledge, this is the first work to combine Neural Koopman Operators with Physics-Informed Graph Neural Networks for real-time wildfire digital twins. While Koopman theory has been applied to fluid dynamics and GNNs to fire detection, no existing publication unifies these approaches with differentiable Rothermel physics for operational fire prediction.
+\medskip
+\textbf{Fit with the Journal.}\
+This work addresses software for environmental modelling and decision support: modular agent orchestration, reproducible experiment pipelines, integration of heterogeneous geospatial/climate data streams, and transparent reporting of limitations (GOES-16 not yet in continuous production; seasonal precision variation). We believe it will interest readers working on wildfire monitoring systems, operational AI for civil defense, and open environmental software.
 
-\subsection*{Suggested Reviewers}
+\medskip
+\textbf{Suggested Reviewers.}
 \begin{enumerate}
-  \item Dr. Steven L. Brunton -- University of Washington (Koopman operator theory)
-  \item Dr. George Em Karniadakis -- Brown University (Physics-Informed Neural Networks)
-  \item Dr. Wei Tang -- (wildfire modeling with AI)
+  \item Prof.\ Steven L.\ Brunton --- University of Washington (Koopman operators, data-driven dynamical systems)
+  \item Prof.\ George Em Karniadakis --- Brown University (physics-informed machine learning)
+  \item Prof.\ Alan A.\ Ager --- USDA Forest Service (wildfire spread modelling and operational tools)
 \end{enumerate}
 
-\subsection*{Excluded Reviewers}
-None.
+\medskip
+\textbf{Declarations.}\
+All five authors (Nauber Gois, Alexandre Lobo, Vladia Celia Monteiro Pinheiro, Daniel Valente de Macedo, Adriano Bessa Albuquerque) approved the manuscript. We declare no competing interests. The study uses publicly available satellite and meteorological data; no human subjects were involved.
 
-All authors have approved the manuscript and agree with its submission to Environmental Modelling \& Software. The authors declare no competing interests.
-
-\closing{Sincerely,\\[1cm]
-\null\\[1cm]
-\textbf{Nauber Gois}\\
-Lead Researcher, Digital Twin Lab}
+\closing{Sincerely,}
 
 \end{letter}
 \end{document}

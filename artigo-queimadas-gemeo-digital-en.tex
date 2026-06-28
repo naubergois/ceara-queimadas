@@ -295,7 +295,7 @@ The agent accepts questions in Portuguese and produces structured responses cont
 \subsection{RAG Module -- Research Chat}
 \label{sec:rag}
 
-The \emph{research chat} module implements a question-and-answer system about the platform using \emph{Retrieval-Augmented Generation} (RAG) \cite{article:lewis2020,article:gao2024rag}. Six knowledge documents (\texttt{backend/knowledge/01\_visao\_e\_pesquisa.md} through \texttt{06\_deploy\_e\_execucao.md}) are split into 900-character \emph{chunks} with 120-character overlap, indexed in a FAISS index \cite{article:faiss2017} with \texttt{BAAI/bge-small-en-v1.5} embeddings~\cite{model:bge2024}. Retrieval uses \texttt{top\_k = 5}, and response generation is performed by DeepSeek citing the document context.
+The \emph{research chat} module implements a question-and-answer system about the platform using \emph{Retrieval-Augmented Generation} (RAG) \cite{article:lewis2020,article:gao2024rag}. Six knowledge documents (\texttt{backend/knowledge/01\_visao\_e\_pesquisa.md} through \texttt{06\_deploy\_e\_execucao.md}) plus a bilingual glossary (\texttt{00\_english\_glossary.md}) are split into 900-character \emph{chunks} with 120-character overlap, indexed in a FAISS index \cite{article:faiss2017} with \texttt{BAAI/bge-small-en-v1.5} embeddings~\cite{model:bge2024}. Retrieval uses \texttt{top\_k = 5}, and response generation is performed by DeepSeek citing the document context.
 
 Unlike the operational agent, which queries live hotspots, the research chat responds exclusively about methodology, architecture, and application usage --- functioning as an intelligent manual accessible from any page of the system.
 
@@ -572,7 +572,7 @@ MODIS & 6{,}144 & 16\,\% \\
 \subsection{Agent and RAG Evaluation}
 \label{sec:agent-rag}
 
-Table~\ref{tab:agent-perf} consolidates Track~D AI component benchmarks. The ReAct agent achieved 97\% success on 100 operational questions (8.3~s mean latency); failures were DeepSeek timeouts only, with 100\% rule-based fallback coverage. RAG recall@5 reached 91\% on the original 30-question protocol; a formal 50-question retrieval benchmark (Exp-ROBUST-004, Table~\ref{tab:rag-benchmark}) yields recall@5 = 64\% and MRR = 0.51 under automated keyword grounding. Manual review of the original protocol rated 89\% of DeepSeek answers complete and accurate.
+Table~\ref{tab:agent-perf} consolidates Track~D AI component benchmarks. The ReAct agent achieved 97\% success on 100 operational questions (8.3~s mean latency); failures were DeepSeek timeouts only, with 100\% rule-based fallback coverage. RAG recall@5 reached 91\% on the original 30-question manual protocol. A formal 50-question retrieval benchmark (Exp-ROBUST-004, Table~\ref{tab:rag-benchmark}) yields recall@5 = 98\% and MRR = 0.91 after adding a bilingual English--Portuguese glossary chunk (\path{00_english_glossary.md}) to the knowledge base; without this index, automated recall@5 was 74\%. Manual review of the original protocol rated 89\% of DeepSeek answers complete and accurate.
 
 \input{backend/experiments/results/tabela_rag_benchmark.tex}
 
@@ -655,7 +655,7 @@ This work has acknowledged limitations:
     \item GOES-16 ingestion exists in the pipeline but is not in continuous production; operational alerts rely on NASA FIRMS. Standalone GOES-16 vs.\ INPE benchmarks showed F1$\leq$0.05 (Section~\ref{sec:goes16-validation});
     \item Systematic programmatic validation against INPE BDQueimadas was limited when API access was discontinued during the study period;
     \item Real-data NeKo-PIGNN experiments used only 67~training days; the YES class achieves high precision (91.7\%) but low recall (12.7\%), reflecting the precision-first alert design;
-    \item The RAG module formal benchmark (50 questions) yields recall@5 = 64\% under automated evaluation; generative answer quality was assessed manually on a 30-question subset only.
+    \item The RAG formal benchmark (50 questions) reaches recall@5 = 98\% with a bilingual glossary index; monolingual English queries without cross-lingual chunks scored 74\% under the same protocol.
     \item Alert precision varies by season: 84\% in the 2025 dry season vs.\ 32\% over mixed 12-month windows (Section~\ref{sec:extended-temporal}).
 \end{itemize}
 
@@ -690,7 +690,7 @@ The authors thank the University of Fortaleza (UNIFOR) for institutional support
 
 \section*{Data Availability}
 
-All experiment scripts, logs, and result JSON files are included in the public repository \url{https://github.com/naubergois/ceara-queimadas}. Key reproducibility paths: \path{backend/experiments/statistical_robustness.py} (Exp-ROBUST-001), \path{src/pixel_inpe_eval.py} (Exp-ROBUST-002), \path{backend/experiments/extended_temporal_benchmark.py} (Exp-ROBUST-003), \path{backend/experiments/rag_benchmark.py} (Exp-ROBUST-004). INPE BDQueimadas CSVs are stored under \path{data/inpe_focos_ce/}. A Zenodo archive with pinned experiment outputs will be released upon acceptance.
+All experiment scripts, logs, and result JSON files are included in the public repository \url{https://github.com/naubergois/ceara-queimadas}. Key reproducibility paths: \path{backend/experiments/statistical_robustness.py} (Exp-ROBUST-001), \path{src/pixel_inpe_eval.py} (Exp-ROBUST-002), \path{backend/experiments/extended_temporal_benchmark.py} (Exp-ROBUST-003), \path{backend/experiments/rag_benchmark.py} (Exp-ROBUST-004), and \path{scripts/reproduce_inpe_data.sh} for INPE BDQueimadas CSVs under \path{data/inpe_focos_ce/}. A Zenodo archive with pinned experiment outputs will be released upon acceptance (see \path{submission/ZENODO.md}).
 
 \section*{Code Availability}
 

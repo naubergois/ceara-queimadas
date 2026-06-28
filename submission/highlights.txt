@@ -1,5 +1,5 @@
-Open-source agentic wildfire platform with LangGraph, ReAct, and three-class alerts
-Dry-season validation: 84% precision and 92% recall on 184 days of INPE data
-Bootstrap 95% CI confirms 82% YES alert precision [68%, 96%] on held-out data
-NeKo-PIGNN plus GOES pixel evaluation with full experiment reproducibility scripts
-MIT-licensed EC2 deployment integrating NASA FIRMS, INPE, and Open-Meteo
+Open-source agentic wildfire platform with LangGraph and three-class alerts
+Dry season 2025: 84% precision and 92% recall on 184 days of INPE data
+Bootstrap 95% CI: 82% YES alert precision with interval [68%, 96%]
+NeKo-PIGNN and GOES pixel benchmarks with full reproducibility scripts
+MIT-licensed EC2 deployment using NASA FIRMS, INPE, and Open-Meteo

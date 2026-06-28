@@ -88,6 +88,52 @@
       "mlp_yes_f1": 0.25806451612903225,
       "mlp_yes_precision": 0.37209302325581395,
       "mlp_yes_recall": 0.19753086419753085
+    },
+    {
+      "label": "LOO: train dry24, test dry25",
+      "start": "2024-07-01",
+      "end": "2025-12-31",
+      "num_days": 500,
+      "num_municipalities": 15,
+      "total_focos": 27984,
+      "samples": 7440,
+      "test_samples": 2745,
+      "yes_in_test": 1663,
+      "xgb_yes_alert": {
+        "precision": 0.7902600996126176,
+        "recall": 0.8586891160553217,
+        "tp": 1428,
+        "fp": 379,
+        "fn": 235
+      },
+      "xgb_macro_f1": 0.4378735628758383,
+      "mlp_yes_f1": 0.0,
+      "mlp_yes_precision": 0.0,
+      "mlp_yes_recall": 0.0,
+      "loo_mode": "loo_train24_test25"
+    },
+    {
+      "label": "LOO: train dry25, test dry24",
+      "start": "2024-07-01",
+      "end": "2025-12-31",
+      "num_days": 500,
+      "num_municipalities": 15,
+      "total_focos": 27984,
+      "samples": 7440,
+      "test_samples": 2070,
+      "yes_in_test": 390,
+      "xgb_yes_alert": {
+        "precision": 0.39161554192229037,
+        "recall": 0.982051282051282,
+        "tp": 383,
+        "fp": 595,
+        "fn": 7
+      },
+      "xgb_macro_f1": 0.431663370687761,
+      "mlp_yes_f1": 0.0,
+      "mlp_yes_precision": 0.0,
+      "mlp_yes_recall": 0.0,
+      "loo_mode": "loo_train25_test24"
     }
   ]
 }

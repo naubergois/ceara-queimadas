@@ -15,3 +15,11 @@
 ## Full 12 mo (Jul/24--Jun/25) (2024-07-01 → 2025-06-30)
 - Days: 316, Focos: 3789, Test n: 936
 - YES alert: precision=31.6%, recall=74.1%, FP=130
+
+## LOO: train dry24, test dry25 (2024-07-01 → 2025-12-31)
+- Days: 500, Focos: 27984, Test n: 2745
+- YES alert: precision=79.0%, recall=85.9%, FP=379
+
+## LOO: train dry25, test dry24 (2024-07-01 → 2025-12-31)
+- Days: 500, Focos: 27984, Test n: 2070
+- YES alert: precision=39.2%, recall=98.2%, FP=595

@@ -1,70 +1,48 @@
 # Checklist de Submissão — Environmental Modelling & Software
 
-## 📋 Pré-requisitos da Revista
+**Manuscrito:** `artigo-queimadas-gemeo-digital-en.tex`  
+**Nota estimada:** ~9.4–9.6 / 10 (pós EMS-10 parcial)
 
-- [x] **Template Elsevier**: elsarticle.cls (formato preprint, single column)
-- [x] **Título**: "Neural Koopman Operator + Physics-Informed Graph Neural Networks for Real-Time Wildfire Digital Twin"
-- [x] **Autores**: Nauber Gois (único autor)
-- [x] **Abstract**: Bilíngue (PT + EN) — 150-250 palavras
-- [x] **Highlights**: 3-5 bullet points (máx. 85 caracteres cada)
-- [x] **Keywords**: 6-10 palavras-chave
-- [x] **Figuras**: PNG ≥1200px, 200dpi, formato Environmental Modelling & Software
-- [x] **Tabelas**: Formato LaTeX (\begin{table}...\end{table})
-- [x] **Referências**: BibTeX, estilo Elsevier (harvard)
-- [x] **Carta de Submissão**: Cover letter com novelty statement
+## Pré-requisitos Elsevier
 
-## 📄 Documentos Entregues
+- [x] Template `elsarticle.cls` (preprint)
+- [x] Título atual: *Ceará Digital Twin for Wildfires…*
+- [x] 5 autores + CRediT + emails
+- [x] Abstract EN (150–250 palavras)
+- [x] Highlights (`submission/highlights.txt`, ≤85 chars)
+- [x] Keywords
+- [x] Cover letter atualizada (`submission/cover_letter.pdf`)
+- [ ] ORCID reais de todos os autores (registrar no Editorial Manager)
+- [ ] BibTeX externo (`docs/refs-queimadas.bib`) — ainda inline no `.tex`
+- [ ] Zenodo DOI (`submission/ZENODO.md` — pendente release)
 
-| Documento | Status | Arquivo |
-|-----------|--------|---------|
-| Artigo LaTeX (PT) | ✅ | `artigo-queimadas-gemeo-digital.tex` |
-| Artigo LaTeX (EN) | ✅ | `artigo-queimadas-gemeo-digital-en.tex` |
-| Cover Letter | ✅ | `submission/cover_letter.tex` |
-| Abstract PT | ✅ | No artigo |
-| Abstract EN | ✅ | No artigo |
-| Highlights | ✅ | `submission/highlights.txt` |
-| Sugestão Revisores | ✅ | Na cover letter |
-| Checklist | ✅ | Este arquivo |
-| Índice experimentos | ✅ | `docs/experimentos/README.md` |
-| Protocolo LaTeX | ✅ | `figures/experimentos-artigo.tex` |
+## Evidência científica (EMS-10)
 
-## 🎨 Figuras
+- [x] EXP-ROBUST-001 bootstrap CI
+- [x] EXP-ROBUST-002 GOES pixel
+- [x] EXP-ROBUST-003 temporal + LOO sazonal
+- [x] EXP-ROBUST-004 RAG Recall@5 = 98% (glossary bilíngue)
+- [x] Script INPE `scripts/reproduce_inpe_data.sh`
+- [ ] NeKo ≥12 meses ou reframing (TASK-023)
+- [ ] Validação externa MA/PI (TASK-022)
+- [ ] Copyedit nativo (TASK-018)
 
-| Figura | Arquivo | Resolução | Status |
-|--------|---------|-----------|--------|
-| Diagrama Arquitetura | `figures/architecture.png` | 1960×1868px | ✅ |
-| Pipeline LangGraph | `figures/langgraph.png` | 1476×2388px | ✅ |
-| Diagrama Koopman | `figures/diagrama-koopman-pignn.png` | 4000×2500px | ✅ |
-| Resultados Experimentais | `figures/resultados-experimentais.png` | 1600×1000px | ✅ |
-| Evolução Focos | `figures/evolucao-focos.png` | 2000×1000px | ✅ |
-| Tabela Comparativa | `figures/tabela-comparativa.tex` | LaTeX | ✅ |
+## Submissão Editorial Manager
 
-## 🔬 Checklist Científico
+1. [ ] Compilar PDF final (`pdflatex` 2×)
+2. [ ] Anexar: Manuscript PDF, Cover Letter, Highlights
+3. [ ] Sugerir 3 revisores (ver cover letter)
+4. [ ] Submeter: https://www.editorialmanager.com/envsoft/
 
-- [x] Metodologia matemática (15 equações) documentada
-- [x] Benchmark comparativo (5 modelos: Rothermel, CNN, GNN, Neural ODE, NeKo-PIGNN)
-- [x] Estudo de ablação (Koopman sem PINN, PI-GNN sem Koopman, completo)
-- [x] Dados reais VIIRS/GOES-16 (Ceará, Brasil)
-- [x] Resultados reprodutíveis (código PyTorch open-source)
-- [x] Agente explicador ReAct com DeepSeek (INOV-009)
-- [x] Dashboard React interativo (INOV-005)
-- [x] Artigo compilado com pdflatex (7+ páginas)
+## Cards Kanban EMS-10
 
-## 📮 Passos para Submissão
-
-1. [ ] Compilar PDF final com pdflatex (3×)
-2. [ ] Verificar formatação elsarticle
-3. [ ] Converter figuras para EPS (se revista exigir)
-4. [ ] Submeter em: https://www.editorialmanager.com/envsoft/
-5. [ ] Anexar: Manuscript (PDF), Cover Letter, Highlights, Figuras (separadas)
-6. [ ] Sugerir 3 revisores
-7. [ ] Submeter e aguardar desk decision (~2-4 semanas)
-
-## 💡 Dicas para Submissão
-
-1. **Título chamativo**: Incluir "Neural Koopman" + "Physics-Informed" + "Digital Twin"
-2. **Highlights**: Foco no gap (ZERO publicações combinando Koopman + PI-GNN para fogo)
-3. **Dados abertos**: Código no GitHub + dados FIRMS públicos
-4. **Aplicação real**: Ceará queima ~10.000 km²/ano — relevância prática
-5. **Reprodutibilidade**: Scripts Python + Docker Compose
-
+| ID | Título | Status |
+|----|--------|--------|
+| TASK-014 | Zenodo DOI | doing |
+| TASK-015 | Cover letter | done |
+| TASK-016 | INPE 2025 + script | done |
+| TASK-017 | BibTeX + ORCID | todo |
+| TASK-018 | Copyedit nativo | todo |
+| TASK-019 | Calibração sazonal LOO | done |
+| TASK-020 | RAG ≥85% | done |
+| TASK-021–029 | Ver kanban | todo/backlog |
