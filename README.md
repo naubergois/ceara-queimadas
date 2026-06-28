@@ -2,6 +2,34 @@
 
 > Plataforma de monitoramento inteligente de queimadas no Estado do Ceará com IA agêntica, dados de satélite em tempo quase real e interface web interativa.
 
+## O que é? (explicação simples)
+
+Imagine um **mapa vivo do Ceará** que mostra onde há fogo ou risco de incêndio, quase em tempo real.
+
+O sistema junta informações de **satélites** (INPE, NASA e GOES-16) com **dados do clima** (chuva, vento, umidade) e coloca tudo num **mapa interativo na web**. Assim, gestores, Defesa Civil e pesquisadores conseguem ver rapidamente o que está acontecendo no estado.
+
+O diferencial é a **inteligência artificial**: em vez de só listar pontos no mapa, agentes de IA **analisam**, **cruzam fontes**, **explicam o risco** e **geram alertas com justificativa** — por exemplo, por que um município está em situação crítica hoje.
+
+**Em resumo:**
+
+| Pergunta | Resposta |
+|---|---|
+| Para que serve? | Monitorar e explicar queimadas no Ceará |
+| De onde vêm os dados? | Satélites (INPE, NASA, GOES-16) e estações climáticas |
+| Quem pode usar? | Defesa Civil, gestores ambientais, pesquisadores |
+| O que a IA faz? | Valida focos, calcula risco, responde perguntas e gera boletins |
+| É código aberto? | Sim — pode instalar, estudar e adaptar |
+
+**Fluxo em linguagem simples:**
+
+```
+Satélites e clima  →  Sistema coleta e organiza  →  IA analisa e explica  →  Mapa e alertas na web
+```
+
+Artigo científico associado: submissão a *Environmental Modelling & Software* (código e dados abertos neste repositório).
+
+---
+
 [![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com)
 [![LangChain](https://img.shields.io/badge/LangChain-0.3-1C3C3C?logo=langchain)](https://langchain.com)
@@ -18,6 +46,7 @@
 
 ## 📋 Sumário
 
+- [O que é? (explicação simples)](#o-que-é-explicação-simples)
 - [Visão Geral](#-visão-geral)
 - [Arquitetura](#-arquitetura)
 - [Fontes de Dados](#-fontes-de-dados)
