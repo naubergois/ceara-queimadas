@@ -80,7 +80,7 @@ export default function MapaRealPage() {
       <div className="toolbar px-4 py-3 flex items-center gap-3 flex-wrap shrink-0">
         <div className="flex items-center gap-2">
           <Map size={16} className="text-fire-600" />
-          <span className="text-sm font-semibold text-slate-900">Focos Reais — Ceará</span>
+          <span className="text-sm font-semibold text-slate-900">Real Hotspots — Ceará</span>
           <span className="text-xs text-slate-500">NASA FIRMS + Open-Meteo</span>
         </div>
 
@@ -89,10 +89,10 @@ export default function MapaRealPage() {
           value={dias}
           onChange={e => setDias(Number(e.target.value))}
           className="input-field text-xs py-1.5"
-          aria-label="Período de coleta"
+          aria-label="Collection period"
         >
-          <option value={1}>Últimas 24h</option>
-          <option value={7}>Últimos 7 dias</option>
+          <option value={1}>Last 24h</option>
+          <option value={7}>Last 7 days</option>
         </select>
 
         {/* Toggles de camadas */}
@@ -127,10 +127,10 @@ export default function MapaRealPage() {
           onClick={carregar}
           disabled={carregando}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs transition-colors disabled:opacity-50"
-          aria-label="Recarregar dados reais"
+          aria-label="Reload real data"
         >
           <RefreshCw size={12} className={carregando ? 'animate-spin' : ''} />
-          Atualizar
+          Refresh
         </button>
       </div>
 
@@ -163,7 +163,7 @@ export default function MapaRealPage() {
               aria-pressed={painelLateral === 'lista'}
             >
               <List size={12} />
-              Focos ({focos.length})
+              Hotspots ({focos.length})
             </button>
             <button
               onClick={() => setPainelLateral('clima')}
@@ -176,7 +176,7 @@ export default function MapaRealPage() {
               aria-pressed={painelLateral === 'clima'}
             >
               <Thermometer size={12} />
-              Clima
+              Weather
             </button>
           </div>
 
@@ -210,7 +210,7 @@ export default function MapaRealPage() {
           {/* Instrução overlay quando nenhum foco selecionado */}
           {!focoSelecionado && !carregando && focos.length > 0 && (
             <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/90 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-600 backdrop-blur-sm pointer-events-none">
-              Clique em um foco para ver a análise do agente IA
+              Click a hotspot to view the AI agent analysis
             </div>
           )}
 
@@ -219,8 +219,8 @@ export default function MapaRealPage() {
               <div className="bg-white border border-slate-200 rounded-xl px-6 py-4 flex items-center gap-3">
                 <RefreshCw size={18} className="animate-spin text-fire-600" />
                 <div>
-                  <p className="text-sm text-slate-800 font-medium">Coletando dados reais...</p>
-                  <p className="text-xs text-slate-500">NASA FIRMS + Open-Meteo — a primeira carga pode levar até 1 min</p>
+                  <p className="text-sm text-slate-800 font-medium">Collecting real data...</p>
+                  <p className="text-xs text-slate-500">NASA FIRMS + Open-Meteo — first load may take up to 1 min</p>
                 </div>
               </div>
             </div>

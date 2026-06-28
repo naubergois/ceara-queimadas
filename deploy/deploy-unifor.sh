@@ -21,7 +21,7 @@ cd app
 
 # ── .env backend ──
 cat > backend/.env << ENVEOF
-APP_NAME=Gemeo Digital Ceara - Queimadas (Unifor)
+APP_NAME=Ceara Digital Twin - Wildfires
 APP_VERSION=1.0.0
 DEBUG=false
 SECRET_KEY=unifor-queimadas-2025

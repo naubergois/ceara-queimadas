@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function KPIsFocosReais({ focos, atualizadoEm, dias = 7, carregando }: Props) {
-  const periodoLabel = dias === 1 ? 'últimas 24h' : `últimos ${dias} dias`
+  const periodoLabel = dias === 1 ? 'last 24h' : `last ${dias} days`
   const total = focos.length
   const criticos = focos.filter(f => f.severidade === 'critica').length
   const altos = focos.filter(f => f.severidade === 'alta').length
@@ -23,7 +23,7 @@ export default function KPIsFocosReais({ focos, atualizadoEm, dias = 7, carregan
 
   const kpis = [
     {
-      label: 'Focos Reais',
+      label: 'Real Hotspots',
       valor: total,
       sub: `NASA FIRMS · ${periodoLabel}`,
       icon: Flame,
@@ -31,9 +31,9 @@ export default function KPIsFocosReais({ focos, atualizadoEm, dias = 7, carregan
       bg: 'bg-orange-50 border-orange-100',
     },
     {
-      label: 'Críticos + Altos',
+      label: 'Critical + High',
       valor: criticos + altos,
-      sub: `${criticos} críticos, ${altos} altos`,
+      sub: `${criticos} critical, ${altos} high`,
       icon: Zap,
       cor: criticos > 0 ? 'text-red-700' : 'text-amber-700',
       bg: criticos > 0 ? 'bg-red-50 border-red-100' : 'bg-amber-50 border-amber-100',
@@ -41,13 +41,13 @@ export default function KPIsFocosReais({ focos, atualizadoEm, dias = 7, carregan
     {
       label: 'FRP Total',
       valor: `${frpTotal.toFixed(0)} MW`,
-      sub: `Máx: ${frpMax.toFixed(1)} MW`,
+      sub: `Max: ${frpMax.toFixed(1)} MW`,
       icon: TrendingUp,
       cor: 'text-violet-700',
       bg: 'bg-violet-50 border-violet-100',
     },
     {
-      label: 'Satélites',
+      label: 'Satellites',
       valor: new Set(focos.map(f => f.sensor)).size,
       sub: [...new Set(focos.map(f => f.sensor))].join(', ') || '—',
       icon: Satellite,
@@ -78,7 +78,7 @@ export default function KPIsFocosReais({ focos, atualizadoEm, dias = 7, carregan
       </div>
       {atualizadoEm && (
         <p className="text-xs text-slate-400 text-right">
-          Dados coletados em: {new Date(atualizadoEm).toLocaleString('pt-BR')}
+          Data collected at: {new Date(atualizadoEm).toLocaleString('en-US')}
         </p>
       )}
     </div>

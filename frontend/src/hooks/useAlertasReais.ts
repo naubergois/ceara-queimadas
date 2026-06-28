@@ -26,7 +26,7 @@ export function useAlertasReais() {
       const lista = await getAlertasReais(diasFocosReais, 48)
       setAlertas(lista)
     } catch {
-      setErroAlertas('Não foi possível carregar os alertas. Aguarde os focos reais e tente novamente.')
+      setErroAlertas('Could not load alerts. Wait for real hotspots and try again.')
       setAlertas([])
     } finally {
       setCarregandoAlertas(false)

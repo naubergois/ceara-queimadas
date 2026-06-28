@@ -39,7 +39,7 @@ export default function MascoteGuia({
       className={clsx(animado && 'animate-mascote-float', className)}
       role={ariaHidden ? 'presentation' : 'img'}
       aria-hidden={ariaHidden}
-      aria-label={ariaHidden ? undefined : `${NOME_MASCOTE}, mascote em forma do mapa do Ceará`}
+      aria-label={ariaHidden ? undefined : `${NOME_MASCOTE}, mascot shaped like the map of Ceará`}
     >
       {/* sombra */}
       <path

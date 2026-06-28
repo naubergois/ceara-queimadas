@@ -10,6 +10,14 @@ import CardAlerta from '../components/CardAlerta'
 
 const NIVEIS = ['todos', 'emergencia', 'alerta', 'atencao', 'informativo'] as const
 
+const NIVEL_LABELS: Record<string, string> = {
+  todos: 'All',
+  emergencia: 'Emergency',
+  alerta: 'Alert',
+  atencao: 'Attention',
+  informativo: 'Informational',
+}
+
 export default function AlertasPage() {
   useFocosReais()
   const { alertas, carregando, erro, recarregar } = useAlertasReais()
@@ -29,9 +37,9 @@ export default function AlertasPage() {
     <div className="p-4 lg:p-6 space-y-4 max-w-4xl mx-auto">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="page-title">Alertas de Queimadas</h1>
+          <h1 className="page-title">Wildfire Alerts</h1>
           <p className="page-subtitle mt-1">
-            {alertas.length} alertas · NASA FIRMS + Open-Meteo · últimas 48h
+            {alertas.length} alerts · NASA FIRMS + Open-Meteo · last 48h
           </p>
         </div>
         <button
@@ -39,10 +47,10 @@ export default function AlertasPage() {
           onClick={recarregar}
           disabled={carregando}
           className="btn-ghost"
-          aria-label="Atualizar alertas"
+          aria-label="Refresh alerts"
         >
           <RefreshCw size={14} className={carregando ? 'animate-spin' : ''} />
-          Atualizar
+          Refresh
         </button>
       </div>
 
@@ -53,16 +61,16 @@ export default function AlertasPage() {
       )}
 
       <div className="flex gap-2 flex-wrap text-xs text-slate-500">
-        <span className="text-red-700 font-medium">{contagem.emergencia} emergência</span>
+        <span className="text-red-700 font-medium">{contagem.emergencia} emergency</span>
         <span>·</span>
-        <span className="text-orange-700 font-medium">{contagem.alerta} alerta</span>
+        <span className="text-orange-700 font-medium">{contagem.alerta} alert</span>
         <span>·</span>
-        <span className="text-amber-700 font-medium">{contagem.atencao} atenção</span>
+        <span className="text-amber-700 font-medium">{contagem.atencao} attention</span>
         <span>·</span>
-        <span>{contagem.informativo} informativo</span>
+        <span>{contagem.informativo} informational</span>
       </div>
 
-      <div className="flex gap-2 flex-wrap" role="group" aria-label="Filtrar alertas por nível">
+      <div className="flex gap-2 flex-wrap" role="group" aria-label="Filter alerts by level">
         {NIVEIS.map((nivel) => (
           <button
             key={nivel}
@@ -75,7 +83,7 @@ export default function AlertasPage() {
             }`}
             aria-pressed={filtroNivel === nivel}
           >
-            {nivel}
+            {NIVEL_LABELS[nivel]}
           </button>
         ))}
       </div>
@@ -88,13 +96,13 @@ export default function AlertasPage() {
         </div>
       ) : alertasFiltrados.length === 0 ? (
         <div className="text-center py-16 text-slate-500 card">
-          <p className="text-lg font-medium text-slate-700">Nenhum alerta neste filtro</p>
+          <p className="text-lg font-medium text-slate-700">No alerts in this filter</p>
           <p className="text-sm mt-1">
-            Os alertas são gerados automaticamente quando há focos FIRMS ou risco climático elevado
+            Alerts are generated automatically when there are FIRMS hotspots or elevated weather risk
           </p>
         </div>
       ) : (
-        <div className="space-y-3" role="list" aria-label="Lista de alertas">
+        <div className="space-y-3" role="list" aria-label="Alert list">
           {alertasFiltrados.map((a) => (
             <div key={a.id_alerta} role="listitem">
               <CardAlerta alerta={a} />

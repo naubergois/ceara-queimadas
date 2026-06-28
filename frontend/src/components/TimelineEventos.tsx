@@ -4,7 +4,7 @@
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { format, subHours, startOfHour, subDays } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import type { Foco, FocoReal } from '../services/api'
 
 type FocoTimeline = Foco | FocoReal
@@ -38,7 +38,7 @@ function agruparPorHora(focos: FocoTimeline[], horas: number, modoReal: boolean)
     if (dt < inicio) continue
     const key = dt.toISOString()
     buckets[key] = {
-      hora: format(dt, horas > 48 ? 'dd/MM HH:mm' : 'HH:mm', { locale: ptBR }),
+      hora: format(dt, horas > 48 ? 'MM/dd HH:mm' : 'HH:mm', { locale: enUS }),
       INPE: 0,
       NASA_FIRMS: 0,
       GOES16: 0,
@@ -64,14 +64,14 @@ function agruparPorHora(focos: FocoTimeline[], horas: number, modoReal: boolean)
 export default function TimelineEventos({ focos, horas = 24, modoReal = false }: Props) {
   const dados = agruparPorHora(focos, horas, modoReal)
   const titulo = modoReal
-    ? 'Evolução dos focos NASA FIRMS'
-    : 'Evolução temporal dos focos'
+    ? 'NASA FIRMS hotspot evolution'
+    : 'Hotspot timeline'
 
   return (
-    <section className="card" aria-label="Timeline de eventos de queimada">
+    <section className="card" aria-label="Wildfire event timeline">
       <h2 className="text-sm font-semibold text-slate-900 mb-4">{titulo}</h2>
       {dados.every((d) => d.INPE === 0 && d.NASA_FIRMS === 0 && d.GOES16 === 0) && focos.length === 0 ? (
-        <p className="text-sm text-slate-500 text-center py-8">Nenhum foco no período selecionado</p>
+        <p className="text-sm text-slate-500 text-center py-8">No hotspots in the selected period</p>
       ) : (
         <ResponsiveContainer width="100%" height={180}>
           <AreaChart data={dados} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>

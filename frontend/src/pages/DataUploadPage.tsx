@@ -97,7 +97,7 @@ export default function DataUploadPage() {
       if (modoUpload === 'csv') {
         const text = await file.text()
         const lines = text.trim().split('\n')
-        if (lines.length < 2) throw new Error('Arquivo CSV vazio ou inválido')
+        if (lines.length < 2) throw new Error('Empty or invalid CSV file')
 
         const headers = lines[0].toLowerCase().split(',')
         const latIdx = headers.findIndex(h => h.includes('lat'))
@@ -107,7 +107,7 @@ export default function DataUploadPage() {
         const confIdx = headers.findIndex(h => h.includes('conf') || h.includes('confidence'))
 
         if (latIdx === -1 || lonIdx === -1) {
-          throw new Error('CSV precisa de colunas lat/lon')
+          throw new Error('CSV requires lat/lon columns')
         }
 
         const registros: RegistroPreview[] = lines.slice(1, 201).map(line => {
@@ -121,7 +121,7 @@ export default function DataUploadPage() {
           }
         }).filter(r => !isNaN(r.lat) && !isNaN(r.lon))
 
-        if (registros.length === 0) throw new Error('Nenhum registro válido encontrado')
+        if (registros.length === 0) throw new Error('No valid records found')
 
         setPreview(registros)
         setStatus('preview')
@@ -137,7 +137,7 @@ export default function DataUploadPage() {
         setStatus('preview')
       }
     } catch (err) {
-      setErroMsg(err instanceof Error ? err.message : 'Erro ao ler arquivo')
+      setErroMsg(err instanceof Error ? err.message : 'Error reading file')
       setStatus('erro')
     }
   }, [modoUpload])
@@ -169,7 +169,7 @@ export default function DataUploadPage() {
       if (!res.ok) {
         // Fallback: usa o endpoint existente de predição municipal
         const fallbackRes = await fetch(`${API}/prever-risco-municipios?horas_frente=12&limite=15`)
-        if (!fallbackRes.ok) throw new Error(`API retornou ${res.status}`)
+        if (!fallbackRes.ok) throw new Error(`API returned ${res.status}`)
 
         const fallbackData = await fallbackRes.json()
         const riscos = (fallbackData.municipios_risco || [])
@@ -210,7 +210,7 @@ export default function DataUploadPage() {
 
       setStatus('concluido')
     } catch (err) {
-      setErroMsg(err instanceof Error ? err.message : 'Erro ao executar inferência')
+      setErroMsg(err instanceof Error ? err.message : 'Error running inference')
       setStatus('erro')
     } finally {
       setProcessando(false)
@@ -253,16 +253,16 @@ export default function DataUploadPage() {
               <Upload className="text-white" size={20} />
             </div>
             <div>
-              <h1 className="page-title">Upload de Dados</h1>
+              <h1 className="page-title">Data Upload</h1>
               <p className="page-subtitle mt-0.5">
-                Envie dados de satélite (CSV / NetCDF) para inferência com NeKo-PIGNN
+                Upload satellite data (CSV / NetCDF) for NeKo-PIGNN inference
               </p>
             </div>
           </div>
           {(status !== 'idle' && status !== 'selecionando') && (
-            <button onClick={limpar} className="btn-ghost text-xs" aria-label="Limpar">
+            <button onClick={limpar} className="btn-ghost text-xs" aria-label="Clear">
               <Trash2 size={14} />
-              <span className="hidden sm:inline">Novo upload</span>
+              <span className="hidden sm:inline">New upload</span>
             </button>
           )}
         </div>
@@ -274,7 +274,7 @@ export default function DataUploadPage() {
           <div className="alert-error flex items-start gap-2" role="alert">
             <AlertTriangle size={16} className="shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium">Erro no processamento</p>
+              <p className="font-medium">Processing error</p>
               <p className="text-sm mt-0.5">{erroMsg}</p>
             </div>
           </div>
@@ -295,7 +295,7 @@ export default function DataUploadPage() {
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 )}
               >
-                CSV (lat, lon, temperatura)
+                CSV (lat, lon, temperature)
               </button>
               <button
                 onClick={() => setModoUpload('netcdf')}
@@ -340,20 +340,20 @@ export default function DataUploadPage() {
               />
               <Upload size={36} className="mx-auto text-slate-300 mb-3" />
               <p className="text-slate-600 font-medium">
-                Arraste um arquivo ou clique para selecionar
+                Drag a file here or click to select
               </p>
               <p className="text-xs text-slate-400 mt-1.5">
                 {modoUpload === 'csv'
-                  ? 'Formatos aceitos: CSV com colunas lat, lon, temperatura_k, frp'
-                  : 'Formatos aceitos: NetCDF GOES-16 (bandas C07 + C13)'
+                  ? 'Accepted formats: CSV with lat, lon, temperatura_k, frp columns'
+                  : 'Accepted formats: NetCDF GOES-16 (bands C07 + C13)'
                 }
               </p>
               <div className="mt-3 flex items-center justify-center gap-4 text-xs text-slate-400">
                 <span className="flex items-center gap-1">
-                  <Database size={12} /> até 10MB
+                  <Database size={12} /> up to 10MB
                 </span>
                 <span className="flex items-center gap-1">
-                  <FileText size={12} /> preview 200 linhas
+                  <FileText size={12} /> preview 200 rows
                 </span>
               </div>
             </div>
@@ -367,7 +367,7 @@ export default function DataUploadPage() {
           <div className="card flex items-center gap-3 py-6">
             <Loader2 size={24} className="animate-spin text-fire-600" />
             <div>
-              <p className="text-sm font-medium text-slate-700">Lendo arquivo...</p>
+              <p className="text-sm font-medium text-slate-700">Reading file...</p>
               <p className="text-xs text-slate-500">{arquivoNome}</p>
             </div>
           </div>
@@ -382,10 +382,10 @@ export default function DataUploadPage() {
               <div className="flex items-center gap-2">
                 <Eye size={16} className="text-sky-600" />
                 <h2 className="text-sm font-semibold text-slate-900">
-                  Pré-visualização
+                  Preview
                 </h2>
                 <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                  {preview.length} registros
+                  {preview.length} records
                 </span>
               </div>
               <div className="text-xs text-slate-400">{arquivoNome}</div>
@@ -400,7 +400,7 @@ export default function DataUploadPage() {
                     <th className="text-left px-3 py-2 font-medium">Lon</th>
                     <th className="text-right px-3 py-2 font-medium">Temp (K)</th>
                     <th className="text-right px-3 py-2 font-medium">FRP</th>
-                    <th className="text-right px-3 py-2 font-medium">Confiança</th>
+                    <th className="text-right px-3 py-2 font-medium">Confidence</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -423,7 +423,7 @@ export default function DataUploadPage() {
                   {preview.length > 100 && (
                     <tr className="border-t border-slate-100 text-slate-400">
                       <td colSpan={6} className="px-3 py-2 text-center italic">
-                        ... e mais {preview.length - 100} registros
+                        ... and {preview.length - 100} more records
                       </td>
                     </tr>
                   )}
@@ -434,7 +434,7 @@ export default function DataUploadPage() {
             <div className="flex items-center justify-end gap-2 mt-4">
               <button onClick={limpar} className="btn-ghost text-xs">
                 <Trash2 size={14} />
-                Cancelar
+                Cancel
               </button>
               <button
                 onClick={executarInferencia}
@@ -446,7 +446,7 @@ export default function DataUploadPage() {
                 ) : (
                   <BarChart3 size={14} />
                 )}
-                {processando ? 'Processando...' : `Executar Inferência (${preview.length} pts)`}
+                {processando ? 'Processing...' : `Run Inference (${preview.length} pts)`}
               </button>
             </div>
           </div>
@@ -460,7 +460,7 @@ export default function DataUploadPage() {
             <div className="flex items-center gap-3">
               <Loader2 size={24} className="animate-spin text-fire-600" />
               <div>
-                <p className="text-sm font-medium text-slate-700">Executando inferência...</p>
+                <p className="text-sm font-medium text-slate-700">Running inference...</p>
                 <p className="text-xs text-slate-500">
                   Modelo NeKo-PIGNN v2 · Koopman + PI-GNN · {preview.length} pontos
                 </p>
@@ -482,10 +482,10 @@ export default function DataUploadPage() {
                 <div className="flex items-center gap-2">
                   <CheckCircle2 size={18} className="text-emerald-600" />
                   <h2 className="text-sm font-semibold text-slate-900">
-                    Resultados da Inferência
+                    Inference Results
                   </h2>
                   <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                    {resultados.length} municípios
+                    {resultados.length} municipalities
                   </span>
                 </div>
                 <button onClick={handleDownload} className="btn-ghost text-xs">
@@ -498,27 +498,27 @@ export default function DataUploadPage() {
               <div className="grid grid-cols-3 md:grid-cols-6 gap-2 mb-4">
                 <div className="bg-red-900/10 border border-red-200/30 rounded-lg p-2 text-center">
                   <div className="text-lg font-bold text-red-600">{statsResultados.critico}</div>
-                  <div className="text-[10px] text-red-500 uppercase">Crítico</div>
+                  <div className="text-[10px] text-red-500 uppercase">Critical</div>
                 </div>
                 <div className="bg-orange-900/10 border border-orange-200/30 rounded-lg p-2 text-center">
                   <div className="text-lg font-bold text-orange-600">{statsResultados.alto}</div>
-                  <div className="text-[10px] text-orange-500 uppercase">Alto</div>
+                  <div className="text-[10px] text-orange-500 uppercase">High</div>
                 </div>
                 <div className="bg-amber-900/10 border border-amber-200/30 rounded-lg p-2 text-center">
                   <div className="text-lg font-bold text-amber-600">{statsResultados.medio}</div>
-                  <div className="text-[10px] text-amber-500 uppercase">Médio</div>
+                  <div className="text-[10px] text-amber-500 uppercase">Medium</div>
                 </div>
                 <div className="bg-green-900/10 border border-green-200/30 rounded-lg p-2 text-center">
                   <div className="text-lg font-bold text-green-600">{statsResultados.baixo}</div>
-                  <div className="text-[10px] text-green-500 uppercase">Baixo</div>
+                  <div className="text-[10px] text-green-500 uppercase">Low</div>
                 </div>
                 <div className="bg-red-900/10 border border-red-200/30 rounded-lg p-2 text-center">
                   <div className="text-lg font-bold text-red-500">{statsResultados.sim}</div>
-                  <div className="text-[10px] text-red-400 uppercase">ALERTA</div>
+                  <div className="text-[10px] text-red-400 uppercase">ALERT</div>
                 </div>
                 <div className="bg-yellow-900/10 border border-yellow-200/30 rounded-lg p-2 text-center">
                   <div className="text-lg font-bold text-yellow-500">{statsResultados.incerteza}</div>
-                  <div className="text-[10px] text-yellow-400 uppercase">Vigília</div>
+                  <div className="text-[10px] text-yellow-400 uppercase">Watch</div>
                 </div>
               </div>
 
@@ -527,12 +527,12 @@ export default function DataUploadPage() {
                 <table className="w-full text-xs">
                   <thead className="bg-slate-50 sticky top-0">
                     <tr className="text-slate-500">
-                      <th className="text-left px-3 py-2 font-medium">Município</th>
-                      <th className="text-right px-3 py-2 font-medium">Risco</th>
-                      <th className="text-center px-3 py-2 font-medium">Classificação</th>
+                      <th className="text-left px-3 py-2 font-medium">Municipality</th>
+                      <th className="text-right px-3 py-2 font-medium">Risk</th>
+                      <th className="text-center px-3 py-2 font-medium">Classification</th>
                       <th className="text-right px-3 py-2 font-medium">Koopman</th>
                       <th className="text-right px-3 py-2 font-medium">Rothermel</th>
-                      <th className="text-center px-3 py-2 font-medium">Detecção</th>
+                      <th className="text-center px-3 py-2 font-medium">Detection</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -565,8 +565,8 @@ export default function DataUploadPage() {
               </div>
 
               <div className="flex items-center justify-between mt-3 text-xs text-slate-400">
-                <span>Modelo: NeKo-PIGNN v2 (Koopman Determinístico + GNN + Rothermel Loss)</span>
-                <span>Previsão: 12h à frente</span>
+                <span>Model: NeKo-PIGNN v2 (Koopman Deterministic + GNN + Rothermel Loss)</span>
+                <span>Forecast: 12h ahead</span>
               </div>
             </div>
           </FadeIn>
@@ -575,22 +575,22 @@ export default function DataUploadPage() {
             <div className="card">
               <div className="flex items-center gap-2 mb-3">
                 <MapIcon size={16} className="text-sky-600" />
-                <h2 className="text-sm font-semibold text-slate-900">Visualização no Mapa</h2>
+                <h2 className="text-sm font-semibold text-slate-900">Map Visualization</h2>
               </div>
               <p className="text-sm text-slate-500">
-                Acesse a página{' '}
+                Go to the{' '}
                 <a href="/mapa-real" className="text-fire-600 hover:text-fire-700 underline font-medium">
-                  Mapa Real
+                  Real Map
                 </a>{' '}
-                ou{' '}
+                or{' '}
                 <a href="/mapa" className="text-fire-600 hover:text-fire-700 underline font-medium">
-                  Mapa
+                  Map
                 </a>{' '}
-                para visualizar os focos geoespacialmente com os resultados da inferência.
+                page to view hotspots geospatially with inference results.
               </p>
               <p className="text-xs text-slate-400 mt-2">
-                Os resultados ficam disponíveis para download em CSV para análise externa
-                ou integração com sistemas GIS.
+                Results are available for CSV download for external analysis
+                or GIS integration.
               </p>
             </div>
           </FadeIn>
@@ -602,9 +602,9 @@ export default function DataUploadPage() {
         <FadeIn>
           <div className="card text-center py-8">
             <CheckCircle2 size={32} className="mx-auto text-emerald-500 mb-3" />
-            <p className="text-sm font-medium text-slate-700">Processamento concluído</p>
+            <p className="text-sm font-medium text-slate-700">Processing complete</p>
             <p className="text-xs text-slate-500 mt-1">
-              Nenhum município com risco detectado nos dados enviados.
+              No municipalities with detected risk in the uploaded data.
             </p>
           </div>
         </FadeIn>

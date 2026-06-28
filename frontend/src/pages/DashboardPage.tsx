@@ -45,10 +45,10 @@ export default function DashboardPage() {
     <div className="p-4 lg:p-6 space-y-4 max-w-screen-2xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="page-title">Dashboard Operacional</h1>
+          <h1 className="page-title">Operational Dashboard</h1>
           <p className="page-subtitle mt-1 flex items-center gap-1.5 flex-wrap">
             <Satellite size={14} className="text-fire-600 shrink-0" />
-            Dados reais NASA FIRMS — Estado do Ceará
+            Real NASA FIRMS data — State of Ceará
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -56,20 +56,20 @@ export default function DashboardPage() {
             value={dias}
             onChange={(e) => setDias(Number(e.target.value))}
             className="input-field text-xs py-1.5"
-            aria-label="Período dos focos reais"
+            aria-label="Real hotspot time range"
           >
-            <option value={1}>Últimas 24h</option>
-            <option value={7}>Últimos 7 dias</option>
+            <option value={1}>Last 24h</option>
+            <option value={7}>Last 7 days</option>
           </select>
           <StatusFontes />
           <button
             onClick={atualizarTudo}
             disabled={carregando}
             className="btn-ghost"
-            aria-label="Recarregar dados"
+            aria-label="Reload data"
           >
             <RefreshCw size={14} className={carregando ? 'animate-spin' : ''} />
-            <span className="hidden sm:inline">Atualizar</span>
+            <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
       </div>
@@ -92,10 +92,10 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <PainelRiscoMunicipal riscos={riscos} carregando={carregandoSimulado} />
 
-        <section className="card space-y-3" aria-label="Alertas recentes">
-          <h2 className="text-sm font-semibold text-slate-900">Alertas Ativos</h2>
+        <section className="card space-y-3" aria-label="Recent alerts">
+          <h2 className="text-sm font-semibold text-slate-900">Active Alerts</h2>
           <p className="text-xs text-slate-500 -mt-1">
-            Gerados a partir de focos NASA FIRMS e clima Open-Meteo (48h)
+            Generated from NASA FIRMS hotspots and Open-Meteo weather (48h)
           </p>
           {carregandoAlertas ? (
             <div className="space-y-2">
@@ -105,7 +105,7 @@ export default function DashboardPage() {
             </div>
           ) : alertas.length === 0 ? (
             <p className="text-sm text-slate-500 text-center py-4">
-              Nenhum alerta no período — condições dentro da normalidade ou aguarde a carga dos focos
+              No alerts in this period — conditions are normal, or wait for hotspots to load
             </p>
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto">

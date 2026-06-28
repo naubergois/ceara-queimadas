@@ -1,32 +1,34 @@
-# 🔥 Gêmeo Digital do Ceará — Queimadas
+# 🔥 Ceará Digital Twin — Wildfires
 
-> Plataforma de monitoramento inteligente de queimadas no Estado do Ceará com IA agêntica, dados de satélite em tempo quase real e interface web interativa.
+> Intelligent wildfire monitoring platform for the State of Ceará, Brazil — agentic AI, near real-time satellite data, and an interactive web interface.
 
-## O que é? (explicação simples)
+**Live demo (AWS):** http://98.91.177.145
 
-Imagine um **mapa vivo do Ceará** que mostra onde há fogo ou risco de incêndio, quase em tempo real.
+## What is it? (plain-language overview)
 
-O sistema junta informações de **satélites** (INPE, NASA e GOES-16) com **dados do clima** (chuva, vento, umidade) e coloca tudo num **mapa interativo na web**. Assim, gestores, Defesa Civil e pesquisadores conseguem ver rapidamente o que está acontecendo no estado.
+Imagine a **live map of Ceará** showing where fires or fire risk are happening, almost in real time.
 
-O diferencial é a **inteligência artificial**: em vez de só listar pontos no mapa, agentes de IA **analisam**, **cruzam fontes**, **explicam o risco** e **geram alertas com justificativa** — por exemplo, por que um município está em situação crítica hoje.
+The system combines **satellite** data (INPE, NASA, and GOES-16) with **weather** data (rain, wind, humidity) and presents everything on an **interactive web map**. Managers, civil defense teams, and researchers can quickly see what is happening across the state.
 
-**Em resumo:**
+The key difference is **artificial intelligence**: instead of only plotting points on a map, AI agents **analyze**, **cross-check sources**, **explain risk**, and **generate alerts with justification** — for example, why a municipality is critical today.
 
-| Pergunta | Resposta |
+**At a glance:**
+
+| Question | Answer |
 |---|---|
-| Para que serve? | Monitorar e explicar queimadas no Ceará |
-| De onde vêm os dados? | Satélites (INPE, NASA, GOES-16) e estações climáticas |
-| Quem pode usar? | Defesa Civil, gestores ambientais, pesquisadores |
-| O que a IA faz? | Valida focos, calcula risco, responde perguntas e gera boletins |
-| É código aberto? | Sim — pode instalar, estudar e adaptar |
+| What is it for? | Monitor and explain wildfires in Ceará |
+| Where does data come from? | Satellites (INPE, NASA, GOES-16) and weather stations |
+| Who can use it? | Civil defense, environmental managers, researchers |
+| What does the AI do? | Validates hotspots, calculates risk, answers questions, generates bulletins |
+| Is it open source? | Yes — install, study, and adapt |
 
-**Fluxo em linguagem simples:**
+**Simple flow:**
 
 ```
-Satélites e clima  →  Sistema coleta e organiza  →  IA analisa e explica  →  Mapa e alertas na web
+Satellites + weather  →  System collects & organizes  →  AI analyzes & explains  →  Web map & alerts
 ```
 
-Artigo científico associado: submissão a *Environmental Modelling & Software* (código e dados abertos neste repositório).
+Related scientific article: submission to *Environmental Modelling & Software* (open code and data in this repository).
 
 ---
 
@@ -44,257 +46,223 @@ Artigo científico associado: submissão a *Environmental Modelling & Software* 
 
 ---
 
-## 📋 Sumário
+## 📋 Table of Contents
 
-- [O que é? (explicação simples)](#o-que-é-explicação-simples)
-- [Visão Geral](#-visão-geral)
-- [Arquitetura](#-arquitetura)
-- [Fontes de Dados](#-fontes-de-dados)
-- [Stack Tecnológica](#-stack-tecnológica)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Pré-requisitos](#-pré-requisitos)
-- [Instalação e Execução](#-instalação-e-execução)
+- [What is it?](#what-is-it-plain-language-overview)
+- [Overview](#-overview)
+- [Architecture](#-architecture)
+- [Data Sources](#-data-sources)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Prerequisites](#-prerequisites)
+- [Installation & Run](#-installation--run)
+- [AWS Deployment](#-aws-deployment)
 - [API Reference](#-api-reference)
-- [Agentes de IA](#-agentes-de-ia)
-- [Pipeline LangGraph](#-pipeline-langgraph)
-- [Interface React](#-interface-react)
-- [Variáveis de Ambiente](#-variáveis-de-ambiente)
-- [Contribuindo](#-contribuindo)
+- [AI Agents](#-ai-agents)
+- [LangGraph Pipeline](#-langgraph-pipeline)
+- [React Interface](#-react-interface)
+- [Environment Variables](#-environment-variables)
+- [Contributing](#-contributing)
 
 ---
 
-## 🌐 Visão Geral
+## 🌐 Overview
 
-O **Gêmeo Digital do Ceará para Queimadas** é uma plataforma operacional que detecta, monitora, valida, prioriza e alerta sobre queimadas no Estado do Ceará em tempo quase real.
+The **Ceará Digital Twin for Wildfires** is an operational platform that detects, monitors, validates, prioritizes, and alerts on wildfires across the State of Ceará in near real time.
 
-O sistema funciona como um **gêmeo digital do território cearense**, permitindo acompanhar:
+The system acts as a **digital twin of Ceará's territory**, enabling:
 
-| Capacidade | Descrição |
+| Capability | Description |
 |---|---|
-| 🔥 Focos ativos | Detecção via INPE, NASA FIRMS e GOES-16 |
-| 🌡️ Risco climático | Índice calculado com FUNCEME e INMET |
-| 📡 GOES-16 | Persistência, FRP e evolução temporal dos focos |
-| 🗺️ Cruzamento espacial | Municípios, UCs, áreas urbanas via PostGIS |
-| 🤖 IA agêntica | Agentes ReAct com LangChain + LangGraph |
-| 🚨 Alertas explicáveis | Com justificativa técnica e auditoria |
-| 💬 Chat inteligente | Perguntas em linguagem natural |
+| 🔥 Active hotspots | Detection via INPE, NASA FIRMS, and GOES-16 |
+| 🌡️ Climate risk | Index computed with FUNCEME and INMET |
+| 📡 GOES-16 | Persistence, FRP, and temporal evolution of hotspots |
+| 🗺️ Spatial cross-check | Municipalities, protected areas, urban zones via PostGIS |
+| 🤖 Agentic AI | ReAct agents with LangChain + LangGraph |
+| 🚨 Explainable alerts | With technical justification and audit trail |
+| 💬 Smart chat | Natural-language questions |
 
 ---
 
-## 🏗️ Arquitetura
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        FONTES DE DADOS                          │
+│                        DATA SOURCES                             │
 │  INPE │ NASA FIRMS │ GOES-16 │ FUNCEME │ INMET │ MapBiomas      │
 └───────────────────────────┬─────────────────────────────────────┘
                             │
                             ▼
               ┌─────────────────────────┐
-              │   ETL / Coleta Periódica │
+              │   ETL / Periodic Collection │
               │   (Celery + Redis)       │
               └────────────┬────────────┘
                            │
                            ▼
               ┌─────────────────────────┐
-              │  Validação com Pydantic  │
+              │  Pydantic Validation     │
               └────────────┬────────────┘
                            │
                            ▼
          ┌─────────────────────────────────┐
          │   PostgreSQL + PostGIS           │
-         │   (focos, eventos, clima, UCs)   │
+         │   (hotspots, events, weather)    │
          └────────────────┬────────────────┘
                           │
                           ▼
               ┌───────────────────────┐
-              │  LangGraph Orquestrador│
+              │  LangGraph Orchestrator│
               └──────────┬────────────┘
                          │
         ┌────────────────┼────────────────┐
         ▼                ▼                ▼
-  [Agente Geo]   [Agente GOES-16]  [Agente Clima]
+  [Geo Agent]    [GOES-16 Agent]   [Climate Agent]
         │                │                │
         └────────────────┼────────────────┘
                          │
                          ▼
             ┌────────────────────────┐
-            │  Agente ReAct Diagnóstico│
+            │  ReAct Diagnostic Agent │
             │  (LangChain + OpenAI)   │
             └────────────┬───────────┘
                          │
               ┌──────────┴──────────┐
               ▼                     ▼
-        [Alertas]            [Boletim Técnico]
+        [Alerts]            [Technical Bulletin]
               │                     │
               └──────────┬──────────┘
                          ▼
               ┌─────────────────────┐
-              │   API FastAPI        │
-              │   + Frontend React   │
+              │   FastAPI API        │
+              │   + React Frontend   │
               └─────────────────────┘
 ```
 
 ---
 
-## 📡 Fontes de Dados
+## 📡 Data Sources
 
-| Fonte | Uso | Frequência |
+| Source | Use | Frequency |
 |---|---|---|
-| **INPE BDQueimadas** | Focos oficiais no Brasil | A cada 15 min |
-| **NASA FIRMS** (MODIS/VIIRS) | Validação cruzada | A cada 15 min |
-| **GOES-16** (NOAA S3) | Detecção quase em tempo real, FRP, persistência | A cada 15 min |
-| **MapBiomas Fogo** | Histórico de áreas queimadas e recorrência | Diário |
-| **MapBiomas Uso e Cobertura** | Tipo de vegetação e vulnerabilidade | Mensal |
-| **FUNCEME** | Chuva, seca, clima do Ceará | Horário |
-| **INMET** | Temperatura, umidade, vento | Horário |
-| **CPTEC/INPE** | Previsão meteorológica | Diário |
-| **IPECE** | Camadas territoriais do Ceará | Estático |
-| **IBGE** | Malhas municipais e limites | Estático |
+| **INPE BDQueimadas** | Official hotspots in Brazil | Every 15 min |
+| **NASA FIRMS** (MODIS/VIIRS) | Cross-validation | Every 15 min |
+| **GOES-16** (NOAA S3) | Near real-time detection, FRP, persistence | Every 15 min |
+| **MapBiomas Fire** | Burned-area history and recurrence | Daily |
+| **MapBiomas Land Cover** | Vegetation type and vulnerability | Monthly |
+| **FUNCEME** | Rain, drought, Ceará climate | Hourly |
+| **INMET** | Temperature, humidity, wind | Hourly |
+| **CPTEC/INPE** | Weather forecast | Daily |
+| **IPECE** | Territorial layers for Ceará | Static |
+| **IBGE** | Municipal boundaries | Static |
 
 ---
 
-## 🛠️ Stack Tecnológica
+## 🛠️ Tech Stack
 
 ### Backend
-| Tecnologia | Versão | Função |
+| Technology | Version | Role |
 |---|---|---|
-| **Python** | 3.12 | Linguagem principal |
-| **FastAPI** | 0.115 | API REST assíncrona |
-| **LangChain** | 0.3 | Agentes especializados com ferramentas |
-| **LangGraph** | 0.2 | Orquestração do pipeline de agentes |
-| **Pydantic** | 2.10 | Validação e estruturação de dados |
-| **SQLAlchemy** | 2.0 | ORM assíncrono |
-| **PostgreSQL + PostGIS** | 16 + 3.4 | Banco geoespacial |
-| **Celery + Redis** | 5.4 | Coleta periódica e filas |
-| **boto3** | 1.35 | Acesso ao GOES-16 via AWS S3 |
-| **netCDF4 + numpy** | — | Processamento de dados GOES-16 |
+| **Python** | 3.12 | Main language |
+| **FastAPI** | 0.115 | Async REST API |
+| **LangChain** | 0.3 | Specialized tool-using agents |
+| **LangGraph** | 0.2 | Agent pipeline orchestration |
+| **Pydantic** | 2.10 | Data validation |
+| **SQLAlchemy** | 2.0 | Async ORM |
+| **PostgreSQL + PostGIS** | 16 + 3.4 | Geospatial database |
+| **Celery + Redis** | 5.4 | Periodic collection and queues |
+| **boto3** | 1.35 | GOES-16 access via AWS S3 |
+| **netCDF4 + numpy** | — | GOES-16 data processing |
 
 ### Frontend
-| Tecnologia | Versão | Função |
+| Technology | Version | Role |
 |---|---|---|
-| **React** | 18 | Interface web |
-| **TypeScript** | 5.7 | Tipagem estática |
-| **Vite** | 6 | Build e dev server |
-| **react-map-gl + MapLibre** | 7 + 4 | Mapa interativo |
-| **deck.gl** | 9 | Visualizações geoespaciais avançadas |
-| **Recharts** | 2.13 | Gráficos e timeline |
-| **Zustand** | 5 | Gerenciamento de estado |
-| **Tailwind CSS** | 3.4 | Estilização |
+| **React** | 18 | Web UI |
+| **TypeScript** | 5.7 | Static typing |
+| **Vite** | 6 | Build and dev server |
+| **react-map-gl + MapLibre** | 7 + 4 | Interactive map |
+| **deck.gl** | 9 | Advanced geospatial visuals |
+| **Recharts** | 2.13 | Charts and timeline |
+| **Zustand** | 5 | State management |
+| **Tailwind CSS** | 3.4 | Styling |
 
 ---
 
-## 📁 Estrutura do Projeto
+## 📁 Project Structure
 
 ```
 ceara-queimadas/
 ├── backend/
 │   ├── app/
-│   │   ├── agents/
-│   │   │   ├── react_agent.py        # Agente ReAct de diagnóstico (LangChain)
-│   │   │   ├── auditor_agent.py      # Agente Auditor de evidências
-│   │   │   └── langgraph_pipeline.py # Pipeline LangGraph completo
-│   │   ├── api/
-│   │   │   └── routes.py             # Endpoints FastAPI
-│   │   ├── core/
-│   │   │   ├── config.py             # Configurações (pydantic-settings)
-│   │   │   ├── database.py           # SQLAlchemy async + PostGIS
-│   │   │   └── orm_models.py         # Modelos ORM
-│   │   ├── models/
-│   │   │   └── schemas.py            # Schemas Pydantic (validação)
-│   │   ├── services/
-│   │   │   ├── inpe_service.py       # Coleta INPE BDQueimadas
-│   │   │   ├── firms_service.py      # Coleta NASA FIRMS
-│   │   │   ├── goes16_service.py     # Coleta e processamento GOES-16
-│   │   │   ├── clima_service.py      # Coleta FUNCEME + INMET
-│   │   │   └── geo_service.py        # Cruzamento espacial PostGIS
-│   │   ├── tools/
-│   │   │   └── queimada_tools.py     # Ferramentas LangChain
-│   │   └── main.py                   # Ponto de entrada FastAPI
-│   ├── migrations/                   # Alembic migrations
-│   ├── requirements.txt
-│   └── .env.example
+│   │   ├── agents/          # LangChain + LangGraph agents
+│   │   ├── api/             # FastAPI routes
+│   │   ├── core/            # Config, database, ORM
+│   │   ├── models/          # Pydantic schemas
+│   │   ├── services/        # INPE, FIRMS, GOES-16, climate, geo
+│   │   └── tools/           # LangChain tools
+│   ├── migrations/
+│   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── MapaQueimadas.tsx     # Mapa interativo (MapLibre)
-│   │   │   ├── ChatAgente.tsx        # Chat com agente ReAct
-│   │   │   ├── CardAlerta.tsx        # Card de alerta
-│   │   │   ├── PainelRiscoMunicipal.tsx  # Ranking de risco
-│   │   │   ├── TimelineEventos.tsx   # Evolução temporal
-│   │   │   ├── DashboardOperacional.tsx  # KPIs executivos
-│   │   │   └── CamadasControle.tsx   # Controle de camadas
-│   │   ├── hooks/
-│   │   │   └── useQueimadas.ts       # Hook de dados com polling
-│   │   ├── pages/
-│   │   │   ├── DashboardPage.tsx     # Visão executiva
-│   │   │   ├── MapaPage.tsx          # Mapa completo
-│   │   │   ├── AlertasPage.tsx       # Listagem de alertas
-│   │   │   ├── ChatPage.tsx          # Interface de chat
-│   │   │   └── BoletimPage.tsx       # Geração de boletim
-│   │   ├── services/
-│   │   │   └── api.ts                # Cliente HTTP (axios)
-│   │   └── store/
-│   │       └── useQueimadasStore.ts  # Estado global (Zustand)
-│   ├── index.html
+│   │   ├── components/      # Map, chat, alerts, dashboards
+│   │   ├── pages/           # Dashboard, Real Map, Alerts, Chat, etc.
+│   │   └── services/        # API client
 │   └── package.json
+├── deploy/                  # AWS EC2 scripts
 ├── docker/
-│   ├── docker-compose.yml
-│   └── init-db.sql
+│   └── docker-compose.yml
 └── README.md
 ```
 
 ---
 
-## ✅ Pré-requisitos
+## ✅ Prerequisites
 
-- **Docker** 24+ e **Docker Compose** v2
-- **Python** 3.12+ (para desenvolvimento local do backend)
-- **Node.js** 20+ (para desenvolvimento local do frontend)
-- **Chave de API OpenAI** (para os agentes LangChain)
-- **Chave NASA FIRMS** (gratuita em [firms.modaps.eosdis.nasa.gov](https://firms.modaps.eosdis.nasa.gov/api/area/))
+- **Docker** 24+ and **Docker Compose** v2
+- **Python** 3.12+ (local backend development)
+- **Node.js** 20+ (local frontend development)
+- **OpenAI API key** (for LangChain agents)
+- **NASA FIRMS API key** (free at [firms.modaps.eosdis.nasa.gov](https://firms.modaps.eosdis.nasa.gov/api/area/))
 
 ---
 
-## 🚀 Instalação e Execução
+## 🚀 Installation & Run
 
-### 1. Clone o repositório
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/naubergois/ceara-queimadas.git
 cd ceara-queimadas
 ```
 
-### 2. Configure as variáveis de ambiente
+### 2. Configure environment variables
 
 ```bash
 cp backend/.env.example backend/.env
-# Edite backend/.env com suas chaves de API
+# Edit backend/.env with your API keys
 ```
 
-Variáveis obrigatórias:
+Required variables:
 ```env
 OPENAI_API_KEY=sk-...
-NASA_FIRMS_API_KEY=sua-chave
+NASA_FIRMS_API_KEY=your-key
 ```
 
-### 3. Suba com Docker Compose
+### 3. Run with Docker Compose
 
 ```bash
 cd docker
 docker compose up -d
 ```
 
-Serviços disponíveis:
-| Serviço | URL |
+| Service | URL |
 |---|---|
-| Frontend React | http://localhost:5173 |
-| API FastAPI | http://localhost:8000 |
+| React frontend | http://localhost:5173 |
+| FastAPI | http://localhost:8000 |
 | Swagger UI | http://localhost:8000/docs |
 | PostgreSQL | localhost:5432 |
 | Redis | localhost:6379 |
 
-### 4. Desenvolvimento local (sem Docker)
+### 4. Local development (without Docker)
 
 **Backend:**
 ```bash
@@ -314,267 +282,161 @@ npm run dev
 
 ---
 
+## ☁️ AWS Deployment
+
+The production instance runs on **Amazon Linux 2023** (EC2) with Nginx + systemd.
+
+**Live app:** http://98.91.177.145  
+**API docs:** http://98.91.177.145/docs  
+**Health check:** http://98.91.177.145/health
+
+### Option 1: Automatic (user-data)
+
+Launch an Amazon Linux 2023 instance and paste `deploy/user-data.sh` into the **User data** field. The script installs dependencies, clones the repo, builds the frontend, configures Nginx, and registers the backend as a systemd service.
+
+### Option 2: Manual on an existing EC2
+
+```bash
+sudo bash deploy/finish-deploy.sh
+```
+
+### Post-deploy verification
+
+```bash
+curl http://YOUR_IP/health
+sudo systemctl status unifor-backend nginx
+sudo journalctl -u unifor-backend -f --no-pager
+```
+
+---
+
 ## 📡 API Reference
 
-| Método | Endpoint | Descrição |
+| Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/v1/focos/tempo-real` | Focos recentes (filtro por horas e fonte) |
-| `GET` | `/api/v1/focos/municipio/{nome}` | Focos por município |
-| `GET` | `/api/v1/risco/municipios` | Ranking de risco municipal |
-| `GET` | `/api/v1/alertas/ativos` | Alertas ativos |
-| `GET` | `/api/v1/goes16/eventos` | Eventos GOES-16 |
-| `POST` | `/api/v1/agente/pergunta` | Chat com agente ReAct |
-| `GET` | `/api/v1/relatorios/boletim` | Gerar boletim técnico |
-| `GET` | `/api/v1/eventos/{id}` | Detalhe de evento |
-| `GET` | `/api/v1/mapa/camadas` | Camadas disponíveis |
+| `GET` | `/api/v1/focos/tempo-real` | Recent hotspots (filter by hours and source) |
+| `GET` | `/api/v1/focos/municipio/{nome}` | Hotspots by municipality |
+| `GET` | `/api/v1/risco/municipios` | Municipal risk ranking |
+| `GET` | `/api/v1/alertas/ativos` | Active alerts |
+| `GET` | `/api/v1/goes16/eventos` | GOES-16 events |
+| `POST` | `/api/v1/agente/pergunta` | Chat with ReAct agent |
+| `GET` | `/api/v1/relatorios/boletim` | Generate technical bulletin |
+| `GET` | `/api/v1/eventos/{id}` | Event detail |
+| `GET` | `/api/v1/mapa/camadas` | Available map layers |
 | `GET` | `/health` | Health check |
 
-**Exemplo — pergunta ao agente:**
+**Example — ask the agent:**
 ```bash
 curl -X POST http://localhost:8000/api/v1/agente/pergunta \
   -H "Content-Type: application/json" \
-  -d '{"pergunta": "Quais municípios do Ceará estão com risco crítico hoje?"}'
-```
-
-**Resposta:**
-```json
-{
-  "pergunta": "Quais municípios...",
-  "resposta": "Com base nos dados consultados...",
-  "evidencias": ["[buscar_focos_recentes]: ...", "[buscar_risco_municipal]: ..."],
-  "fontes": ["buscar_focos_recentes", "buscar_risco_municipal"],
-  "nivel_confianca": 0.85,
-  "recomendacao_operacional": "Acionar equipes de monitoramento...",
-  "ferramentas_usadas": ["buscar_focos_recentes", "buscar_risco_municipal"],
-  "passos_raciocinio": ["Ação: buscar_focos_recentes | ..."]
-}
+  -d '{"pergunta": "Which municipalities in Ceará have critical risk today?"}'
 ```
 
 ---
 
-## 🤖 Agentes de IA
+## 🤖 AI Agents
 
-### Agentes LangChain
+### LangChain agents
 
-| Agente | Responsabilidade |
+| Agent | Responsibility |
 |---|---|
-| **Agente Coletor** | Consulta INPE, NASA FIRMS, GOES-16, FUNCEME e INMET |
-| **Agente Geoespacial** | Cruza focos com municípios, UCs e uso do solo (PostGIS) |
-| **Agente Climático** | Calcula risco usando chuva, vento, umidade e temperatura |
-| **Agente GOES-16** | Analisa persistência, FRP, temperatura e evolução dos focos |
-| **Agente Validador** | Verifica consistência dos dados com Pydantic |
-| **Agente ReAct Diagnóstico** | Raciocina sobre causa, risco e prioridade (padrão ReAct) |
-| **Agente de Alerta** | Gera mensagens para gestores e equipes operacionais |
-| **Agente Relator** | Produz boletins técnicos e sumários executivos |
-| **Agente Auditor** | Verifica se alertas têm evidências suficientes (anti-falso-positivo) |
+| **Collector** | Queries INPE, NASA FIRMS, GOES-16, FUNCEME, INMET |
+| **Geospatial** | Cross-checks hotspots with municipalities, protected areas, land use (PostGIS) |
+| **Climate** | Computes risk from rain, wind, humidity, temperature |
+| **GOES-16** | Analyzes persistence, FRP, temperature, hotspot evolution |
+| **Validator** | Checks data consistency with Pydantic |
+| **ReAct Diagnostic** | Reasons about cause, risk, and priority (ReAct pattern) |
+| **Alert** | Generates messages for managers and operations teams |
+| **Reporter** | Produces technical bulletins and executive summaries |
+| **Auditor** | Verifies alerts have sufficient evidence (anti-false-positive) |
 
-### Ferramentas LangChain disponíveis
+### LangChain tools
 
 ```python
-buscar_focos_recentes       # Focos por município, janela de tempo e fonte
-buscar_dados_climaticos     # Temperatura, umidade, vento, dias sem chuva
-buscar_risco_municipal      # Índice de risco calculado por município
-buscar_dados_goes16         # Leituras GOES-16 com FRP e persistência
-buscar_historico_mapbiomas  # Histórico de queimadas por município
-listar_municipios_criticos  # Ranking dos municípios mais críticos
-```
-
-### Padrão ReAct
-
-O agente de diagnóstico segue o ciclo **Pensamento → Ação → Observação**:
-
-```
-Pergunta: "Há risco crítico de queimada hoje no Sertão Central?"
-
-Pensamento: Preciso verificar focos recentes e dados climáticos
-Ação: buscar_focos_recentes
-Entrada: {"municipio": "Quixadá", "horas": 24}
-Observação: {"total": 8, "focos": [...]}
-
-Pensamento: Preciso verificar o clima
-Ação: buscar_dados_climaticos
-Entrada: {"municipio": "Quixadá"}
-Observação: {"umidade_relativa": 28, "dias_sem_chuva": 15, ...}
-
-Pensamento: Preciso confirmar com GOES-16
-Ação: buscar_dados_goes16
-Entrada: {"municipio": "Quixadá", "horas": 6}
-Observação: {"total": 3, "leituras_goes16": [...]}
-
-Pensamento: Tenho evidências suficientes
-Resposta Final: Sim, risco CRÍTICO confirmado. 8 focos nas últimas 24h,
-GOES-16 confirmou 3 pixels com fogo, umidade de 28% e 15 dias sem chuva.
-Recomendação: Acionar Defesa Civil imediatamente.
+buscar_focos_recentes       # Hotspots by municipality, time window, source
+buscar_dados_climaticos     # Temperature, humidity, wind, days without rain
+buscar_risco_municipal      # Risk index by municipality
+buscar_dados_goes16         # GOES-16 readings with FRP and persistence
+buscar_historico_mapbiomas  # Fire history by municipality
+listar_municipios_criticos  # Ranking of most critical municipalities
 ```
 
 ---
 
-## 🔄 Pipeline LangGraph
-
-O grafo LangGraph orquestra o fluxo completo de análise:
+## 🔄 LangGraph Pipeline
 
 ```
-START
-  │
-  ▼
-coletar_dados          ← INPE + NASA FIRMS + GOES-16 + FUNCEME
-  │
-  ▼
-validar_dados          ← Pydantic (rejeita registros inválidos)
-  │
-  ├──────────────────────────────┐
-  ▼                              ▼                    ▼
-agente_geoespacial    agente_goes16         agente_climatico
-(PostGIS)             (FRP, persistência)   (seca, vento, umidade)
-  │                              │                    │
-  └──────────────────────────────┘────────────────────┘
-                                 │
-                                 ▼
-                        fundir_evidencias
-                                 │
-                                 ▼
-                        classificar_risco
-                                 │
-                                 ▼
-                    agente_react_diagnostico  ← LangChain ReAct
-                                 │
-                                 ▼
-                          gerar_alertas
-                                 │
-                                 ▼
-                          gerar_boletim
-                                 │
-                                END
+START → collect_data → validate_data → [geo | goes16 | climate agents]
+  → merge_evidence → classify_risk → react_diagnostic → generate_alerts
+  → generate_bulletin → END
 ```
 
 ---
 
-## 🖥️ Interface React
+## 🖥️ React Interface
 
-### Páginas
-
-| Página | Rota | Descrição |
+| Page | Route | Description |
 |---|---|---|
-| **Dashboard** | `/` | KPIs, timeline, ranking de risco e alertas |
-| **Mapa** | `/mapa` | Mapa interativo com focos e camadas |
-| **Alertas** | `/alertas` | Listagem completa com filtros por nível |
-| **Chat IA** | `/chat` | Interface conversacional com agente ReAct |
-| **Boletim** | `/boletim` | Geração de relatório técnico |
-
-### Componentes principais
-
-| Componente | Função |
-|---|---|
-| `MapaQueimadas` | Mapa MapLibre com focos INPE, FIRMS, GOES-16 e heatmap |
-| `ChatAgente` | Chat com sugestões, evidências e raciocínio do agente |
-| `PainelRiscoMunicipal` | Ranking com barra de risco e justificativa |
-| `TimelineEventos` | Gráfico de área por fonte e hora |
-| `CardAlerta` | Card com nível, recomendação e confiança |
-| `CamadasControle` | Toggle de camadas do mapa |
-| `DashboardOperacional` | KPIs: focos, emergências, municípios críticos, GOES-16 |
-
-### Perguntas suportadas no chat
-
-```
-Quais municípios do Ceará estão com maior risco hoje?
-Existe algum foco próximo a unidade de conservação?
-O GOES-16 confirmou crescimento do fogo nas últimas imagens?
-Quais focos apareceram nas últimas 3 horas?
-Gere um boletim para a Defesa Civil.
-Explique por que este município está classificado como risco crítico.
-Compare os focos do INPE com os do NASA FIRMS.
-Mostre os eventos persistentes detectados pelo GOES-16.
-```
+| **Dashboard** | `/` | KPIs, timeline, risk ranking, alerts |
+| **Real Map** | `/mapa-real` | Live NASA FIRMS hotspots + AI explanations |
+| **Map** | `/mapa` | Interactive map with layers |
+| **Alerts** | `/alertas` | Full alert list with level filters |
+| **AI Chat** | `/chat` | Conversational ReAct agent |
+| **Bulletin** | `/boletim` | Technical report generation |
+| **AI Prediction** | `/inovacao` | NeKo-PIGNN risk forecasting |
+| **Upload** | `/upload` | Satellite data inference |
 
 ---
 
-## ⚙️ Variáveis de Ambiente
+## ⚙️ Environment Variables
 
-| Variável | Obrigatória | Descrição |
+| Variable | Required | Description |
 |---|---|---|
-| `OPENAI_API_KEY` | ✅ | Chave OpenAI para os agentes LangChain |
-| `NASA_FIRMS_API_KEY` | ✅ | Chave NASA FIRMS (gratuita) |
-| `DATABASE_URL` | ✅ | URL PostgreSQL+PostGIS |
-| `REDIS_URL` | ✅ | URL Redis |
-| `OPENAI_MODEL` | — | Modelo OpenAI (padrão: `gpt-4o`) |
-| `INPE_API_KEY` | — | Token INPE BDQueimadas |
-| `FUNCEME_API_KEY` | — | Token FUNCEME |
-| `INMET_TOKEN` | — | Token INMET |
-| `MAPBIOMAS_TOKEN` | — | Token MapBiomas |
-| `ALERTA_WEBHOOK_URL` | — | Webhook para notificações externas |
-| `SMTP_HOST` | — | Servidor SMTP para alertas por e-mail |
-| `DEBUG` | — | Modo debug (padrão: `false`) |
+| `OPENAI_API_KEY` | ✅ | OpenAI key for LangChain agents |
+| `NASA_FIRMS_API_KEY` | ✅ | NASA FIRMS key (free) |
+| `DATABASE_URL` | ✅ | PostgreSQL+PostGIS URL |
+| `REDIS_URL` | ✅ | Redis URL |
+| `OPENAI_MODEL` | — | OpenAI model (default: `gpt-4o`) |
+| `DEEPSEEK_API_KEY` | — | DeepSeek key (alternative LLM) |
+| `DEBUG` | — | Debug mode (default: `false`) |
 
 ---
 
-## 🗄️ Banco de Dados
+## 🔍 Traceability & Audit
 
-Tabelas principais no PostgreSQL + PostGIS:
-
-| Tabela | Conteúdo |
-|---|---|
-| `focos_queimada` | Focos detectados por fonte (INPE, FIRMS, GOES-16) |
-| `eventos_consolidados` | Agrupamento de focos em eventos |
-| `leituras_goes16` | Dados extraídos do GOES-16 |
-| `municipios_ceara` | Malha municipal com geometria |
-| `risco_municipal` | Índice de risco calculado por município |
-| `dados_climaticos` | Chuva, vento, umidade e temperatura |
-| `alertas` | Alertas gerados com rastreabilidade |
-| `areas_sensiveis` | UCs, áreas urbanas, equipamentos, infraestrutura |
-| `historico_mapbiomas` | Cicatrizes e recorrência de fogo |
-| `logs_agentes` | Decisões e ferramentas chamadas pelos agentes |
+Each alert records data source, collection time, responsible agent, tools used, evidence, confidence level, natural-language justification, and false-positive flags. The **Auditor Agent** checks whether alerts are justified and whether GOES-16, INPE, and NASA FIRMS agree.
 
 ---
 
-## 🔍 Rastreabilidade e Auditoria
+## 🤝 Contributing
 
-Cada alerta registra:
-- Fonte dos dados e data/hora da coleta
-- Agente responsável e ferramentas consultadas
-- Evidências usadas na decisão
-- Nível de confiança
-- Justificativa em linguagem natural
-- Flag de suspeita de falso positivo
-
-O **Agente Auditor** verifica automaticamente:
-- Se o alerta é justificável com as evidências disponíveis
-- Se há divergência entre GOES-16, INPE e NASA FIRMS
-- Se dados climáticos reforçam ou enfraquecem o risco
+1. Fork the repository
+2. Create a branch: `git checkout -b feature/my-feature`
+3. Commit: `git commit -m 'feat: add my feature'`
+4. Push: `git push origin feature/my-feature`
+5. Open a Pull Request
 
 ---
 
-## 🤝 Contribuindo
+## 📄 License
 
-1. Fork o repositório
-2. Crie uma branch: `git checkout -b feature/minha-feature`
-3. Commit: `git commit -m 'feat: adiciona minha feature'`
-4. Push: `git push origin feature/minha-feature`
-5. Abra um Pull Request
+MIT © 2025 — Built for public wildfire monitoring in the State of Ceará, Brazil.
 
 ---
 
-## 📄 Licença
+## 🙏 Acknowledgments
 
-MIT © 2025 — Desenvolvido para monitoramento público de queimadas no Estado do Ceará.
+- [INPE BDQueimadas](https://queimadas.dgi.inpe.br) — official hotspot data
+- [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) — MODIS and VIIRS
+- [NOAA GOES-16](https://www.goes.noaa.gov) — near real-time imagery
+- [FUNCEME](https://www.funceme.br) — Ceará climate data
+- [MapBiomas](https://mapbiomas.org) — land cover history
+- [LangChain](https://langchain.com) and [LangGraph](https://langchain-ai.github.io/langgraph) — agent framework
 
----
+## 📚 Additional Documentation
 
-## 🙏 Agradecimentos
-
-- [INPE BDQueimadas](https://queimadas.dgi.inpe.br) — dados oficiais de focos
-- [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) — MODIS e VIIRS
-- [NOAA GOES-16](https://www.goes.noaa.gov) — imagens em tempo quase real
-- [FUNCEME](https://www.funceme.br) — dados climáticos do Ceará
-- [MapBiomas](https://mapbiomas.org) — histórico de uso e cobertura
-- [LangChain](https://langchain.com) e [LangGraph](https://langchain-ai.github.io/langgraph) — framework de agentes
-
-## 📚 Documentação Adicional
-
-| Documento | Descrição |
+| Document | Description |
 |-----------|-----------|
-| [Guia de Instalação](docs/GUIA_DE_INSTALACAO.md) | Instalação do zero (Docker, manual, AWS) |
-| [Guia de Treinamento](docs/GUIA_TREINAMENTO.md) | Treinamento para operadores, analistas e devs |
-| [Changelog](docs/CHANGELOG.md) | Histórico de versões e evolução |
-| [Explicação do Sistema de Detecção](docs/EXPLICACAO_SISTEMA_DETECCAO.md) | Como funciona a detecção 3-classes |
-| [Documentação de Pesquisa](docs/DOCUMENTACAO_PESQUISA_E_TESTES.md) | Testes e resultados experimentais |
-| [Evolução da Pesquisa](docs/EVOLUCAO_PESQUISA.md) | Cronograma e evolução do projeto |
+| [Installation Guide](docs/GUIA_DE_INSTALACAO.md) | Setup from scratch (Docker, manual, AWS) |
+| [Changelog](docs/CHANGELOG.md) | Version history |
+| [Research Documentation](docs/DOCUMENTACAO_PESQUISA_E_TESTES.md) | Experiments and results |

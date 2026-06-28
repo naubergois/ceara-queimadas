@@ -46,7 +46,7 @@ cd "$APP_DIR"
 sudo git pull --ff-only || true
 
 sudo tee backend/.env >/dev/null <<ENVEOF
-APP_NAME=Gêmeo Digital Ceará - Queimadas (Unifor)
+APP_NAME=Ceara Digital Twin - Wildfires
 APP_VERSION=1.0.0
 DEBUG=false
 SECRET_KEY=unifor-queimadas-2025-secret

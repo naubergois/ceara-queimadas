@@ -41,7 +41,7 @@ export function useQueimadas() {
       if (goes16.status === 'fulfilled') setLeituraGOES16(goes16.value)
       if (camadas.status === 'fulfilled') setCamadas(camadas.value)
     } catch (e) {
-      setErro('Erro ao carregar dados. Verifique a conexão com o servidor.')
+      setErro('Failed to load data. Check the server connection.')
     } finally {
       setCarregando(false)
     }

@@ -30,37 +30,37 @@ export default function DashboardOperacional({ focos, alertas, riscos, leituraGO
 
   const kpis: KPI[] = [
     {
-      label: 'Focos Ativos',
+      label: 'Active Hotspots',
       valor: focos24h,
-      sub: 'últimas 24h',
+      sub: 'last 24h',
       icon: Flame,
       cor: 'text-fire-600',
     },
     {
-      label: 'Emergências',
+      label: 'Emergencies',
       valor: alertasEmergencia,
-      sub: 'alertas críticos',
+      sub: 'critical alerts',
       icon: AlertTriangle,
       cor: alertasEmergencia > 0 ? 'text-red-600' : 'text-slate-500',
     },
     {
-      label: 'Municípios Críticos',
+      label: 'Critical Municipalities',
       valor: municipiosCriticos,
-      sub: 'risco crítico',
+      sub: 'critical risk',
       icon: CloudRain,
       cor: municipiosCriticos > 0 ? 'text-red-600' : 'text-emerald-600',
     },
     {
       label: 'GOES-16',
       valor: goes16Ativos,
-      sub: 'pixels com fogo',
+      sub: 'fire pixels',
       icon: Satellite,
       cor: 'text-amber-600',
     },
   ]
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" role="region" aria-label="KPIs operacionais">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" role="region" aria-label="Operational KPIs">
       {kpis.map((kpi) => {
         const Icon = kpi.icon
         return (

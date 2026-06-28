@@ -32,8 +32,8 @@ export function useFocosReais() {
     } catch (e) {
       const msg =
         e instanceof Error && e.message.includes('timeout')
-          ? 'A primeira carga dos dados reais pode levar até 2 minutos. Tente atualizar novamente.'
-          : 'Não foi possível carregar os focos reais (NASA FIRMS). Verifique o backend.'
+          ? 'The first load of real data may take up to 2 minutes. Try refreshing again.'
+          : 'Could not load real hotspots (NASA FIRMS). Check the backend.'
       setErroReais(msg)
     } finally {
       setCarregandoReais(false)

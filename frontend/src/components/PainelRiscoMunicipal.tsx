@@ -27,10 +27,10 @@ const barColor = {
 
 export default function PainelRiscoMunicipal({ riscos, carregando }: Props) {
   return (
-    <section className="card space-y-3" aria-label="Ranking de risco municipal">
+    <section className="card space-y-3" aria-label="Municipal risk ranking">
       <div className="flex items-center gap-2 mb-1">
         <TrendingUp size={16} className="text-fire-600" aria-hidden="true" />
-        <h2 className="text-sm font-semibold text-slate-900">Risco por Município</h2>
+        <h2 className="text-sm font-semibold text-slate-900">Risk by Municipality</h2>
       </div>
 
       {carregando ? (
@@ -40,7 +40,7 @@ export default function PainelRiscoMunicipal({ riscos, carregando }: Props) {
           ))}
         </div>
       ) : riscos.length === 0 ? (
-        <p className="text-sm text-slate-500 text-center py-4">Nenhum dado disponível</p>
+        <p className="text-sm text-slate-500 text-center py-4">No data available</p>
       ) : (
         <ol className="space-y-2">
           {riscos.map((r) => (
@@ -51,7 +51,7 @@ export default function PainelRiscoMunicipal({ riscos, carregando }: Props) {
                   <span className="text-sm text-slate-700 truncate">{r.municipio}</span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs text-slate-500">{r.focos_24h} focos</span>
+                  <span className="text-xs text-slate-500">{r.focos_24h} hotspots</span>
                   <span className={classConfig[r.classificacao]}>{r.classificacao}</span>
                 </div>
               </div>

@@ -56,7 +56,7 @@ export default function MapaQueimadas({ focos, leituraGOES16 }: Props) {
   }, [])
 
   return (
-    <div className="relative w-full h-full rounded-xl overflow-hidden" role="region" aria-label="Mapa de queimadas do Ceará">
+    <div className="relative w-full h-full rounded-xl overflow-hidden" role="region" aria-label="Ceará wildfire map">
       <Map
         initialViewState={CEARA_CENTER}
         mapStyle={MAP_STYLE}
@@ -104,7 +104,7 @@ export default function MapaQueimadas({ focos, leituraGOES16 }: Props) {
                 <button
                   className="w-3 h-3 rounded-full border border-white/30 cursor-pointer hover:scale-150 transition-transform"
                   style={{ backgroundColor: severidadeCor[f.severidade ?? 'baixa'] }}
-                  aria-label={`Foco INPE em ${f.municipio ?? 'localização desconhecida'}`}
+                  aria-label={`INPE hotspot in ${f.municipio ?? 'unknown location'}`}
                 />
               </Marker>
             ))}
@@ -124,7 +124,7 @@ export default function MapaQueimadas({ focos, leituraGOES16 }: Props) {
                 <button
                   className="w-3 h-3 rounded-full border-2 border-blue-400 cursor-pointer hover:scale-150 transition-transform"
                   style={{ backgroundColor: severidadeCor[f.severidade ?? 'baixa'] }}
-                  aria-label={`Foco NASA FIRMS em ${f.municipio ?? 'localização desconhecida'}`}
+                  aria-label={`NASA FIRMS hotspot in ${f.municipio ?? 'unknown location'}`}
                 />
               </Marker>
             ))}
@@ -141,7 +141,7 @@ export default function MapaQueimadas({ focos, leituraGOES16 }: Props) {
             >
               <button
                 className="w-4 h-4 rounded-sm border border-yellow-400 bg-yellow-500/70 cursor-pointer hover:scale-150 transition-transform"
-                aria-label={`GOES-16 em ${l.municipio ?? 'localização desconhecida'}`}
+                aria-label={`GOES-16 at ${l.municipio ?? 'unknown location'}`}
               />
             </Marker>
           ))}
@@ -156,12 +156,12 @@ export default function MapaQueimadas({ focos, leituraGOES16 }: Props) {
             anchor="bottom"
           >
             <div className="text-gray-900 text-xs space-y-1 min-w-[160px]">
-              <p className="font-bold">{popupFoco.municipio ?? 'Município desconhecido'}</p>
-              <p>Fonte: <strong>{popupFoco.fonte}</strong></p>
-              <p>Severidade: <strong>{popupFoco.severidade ?? '—'}</strong></p>
+              <p className="font-bold">{popupFoco.municipio ?? 'Unknown municipality'}</p>
+              <p>Source: <strong>{popupFoco.fonte}</strong></p>
+              <p>Severity: <strong>{popupFoco.severidade ?? '—'}</strong></p>
               {popupFoco.frp && <p>FRP: <strong>{popupFoco.frp.toFixed(1)} MW</strong></p>}
-              {popupFoco.confianca && <p>Confiança: <strong>{popupFoco.confianca.toFixed(0)}%</strong></p>}
-              <p className="text-slate-500">{new Date(popupFoco.data_hora).toLocaleString('pt-BR')}</p>
+              {popupFoco.confianca && <p>Confidence: <strong>{popupFoco.confianca.toFixed(0)}%</strong></p>}
+              <p className="text-slate-500">{new Date(popupFoco.data_hora).toLocaleString('en-US')}</p>
             </div>
           </Popup>
         )}
@@ -177,15 +177,15 @@ export default function MapaQueimadas({ focos, leituraGOES16 }: Props) {
           >
             <div className="text-gray-900 text-xs space-y-1 min-w-[160px]">
               <p className="font-bold">GOES-16</p>
-              <p>{popupGOES.municipio ?? 'Município desconhecido'}</p>
+              <p>{popupGOES.municipio ?? 'Unknown municipality'}</p>
               {popupGOES.frp_mw && <p>FRP: <strong>{popupGOES.frp_mw.toFixed(1)} MW</strong></p>}
               {popupGOES.temperatura_k && (
                 <p>Temp: <strong>{(popupGOES.temperatura_k - 273.15).toFixed(1)}°C</strong></p>
               )}
               {popupGOES.persistencia_horas && (
-                <p>Persistência: <strong>{popupGOES.persistencia_horas.toFixed(1)}h</strong></p>
+                <p>Persistence: <strong>{popupGOES.persistencia_horas.toFixed(1)}h</strong></p>
               )}
-              <p>Detecções: <strong>{popupGOES.deteccoes_consecutivas}</strong></p>
+              <p>Detections: <strong>{popupGOES.deteccoes_consecutivas}</strong></p>
             </div>
           </Popup>
         )}
@@ -193,7 +193,7 @@ export default function MapaQueimadas({ focos, leituraGOES16 }: Props) {
 
       {/* Legenda */}
       <div className="absolute bottom-4 left-4 bg-white/90 border border-slate-200 rounded-lg p-3 text-xs space-y-1.5">
-        <p className="font-semibold text-slate-600 mb-1">Severidade</p>
+        <p className="font-semibold text-slate-600 mb-1">Severity</p>
         {Object.entries(severidadeCor).map(([sev, cor]) => (
           <div key={sev} className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full" style={{ backgroundColor: cor }} />

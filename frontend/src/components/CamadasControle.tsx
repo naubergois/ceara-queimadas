@@ -22,10 +22,10 @@ export default function CamadasControle({ camadas }: Props) {
   const toggleCamada = useQueimadasStore((s) => s.toggleCamada)
 
   return (
-    <section className="card space-y-2" aria-label="Controle de camadas do mapa">
+    <section className="card space-y-2" aria-label="Map layer controls">
       <div className="flex items-center gap-2 mb-1">
         <Layers size={16} className="text-sky-600" aria-hidden="true" />
-        <h2 className="text-sm font-semibold text-slate-900">Camadas</h2>
+        <h2 className="text-sm font-semibold text-slate-900">Layers</h2>
       </div>
 
       <ul className="space-y-1.5">
@@ -37,7 +37,7 @@ export default function CamadasControle({ camadas }: Props) {
                 checked={camada.ativo}
                 onChange={() => toggleCamada(camada.id)}
                 className="w-4 h-4 rounded accent-orange-500 cursor-pointer"
-                aria-label={`Camada ${camada.nome}`}
+                aria-label={`Layer ${camada.nome}`}
               />
               <span
                 className={clsx(

@@ -9,9 +9,9 @@ export default function ChatPage() {
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="px-6 py-4 border-b border-slate-200">
-        <h1 className="text-lg font-bold text-slate-900">Chat com Agente IA</h1>
+        <h1 className="text-lg font-bold text-slate-900">AI Agent Chat</h1>
         <p className="text-sm text-slate-500">
-          Consulte focos, riscos, GOES-16 e dados climáticos em linguagem natural
+          Query hotspots, risks, GOES-16, and weather data in natural language
         </p>
       </div>
 

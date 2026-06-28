@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import axios from 'axios'
 import { getExplicacaoFoco, type FocoReal, type FocoComExplicacao, type ClimaReal } from '../services/api'
 
@@ -22,10 +22,10 @@ interface Props {
 }
 
 const severidadeConfig = {
-  baixa:   { cor: 'text-emerald-600',  bg: 'bg-emerald-50 border-emerald-200',  label: 'Baixa' },
-  media:   { cor: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', label: 'Média' },
-  alta:    { cor: 'text-fire-600', bg: 'bg-orange-50 border-orange-200', label: 'Alta' },
-  critica: { cor: 'text-red-600',    bg: 'bg-red-50 border-red-200',       label: 'Crítica' },
+  baixa:   { cor: 'text-emerald-600',  bg: 'bg-emerald-50 border-emerald-200',  label: 'Low' },
+  media:   { cor: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', label: 'Medium' },
+  alta:    { cor: 'text-fire-600', bg: 'bg-orange-50 border-orange-200', label: 'High' },
+  critica: { cor: 'text-red-600',    bg: 'bg-red-50 border-red-200',       label: 'Critical' },
 }
 
 export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
@@ -46,15 +46,15 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
       .catch((e: unknown) => {
         if (axios.isAxiosError(e)) {
           if (e.response?.status === 404) {
-            setErro('Foco não encontrado no servidor. Clique em Atualizar no mapa e selecione o foco novamente.')
+            setErro('Hotspot not found on the server. Click Refresh on the map and select it again.')
             return
           }
           if (e.code === 'ECONNABORTED' || e.message.includes('timeout')) {
-            setErro('A análise demorou demais. Tente novamente em alguns segundos.')
+            setErro('Analysis took too long. Try again in a few seconds.')
             return
           }
         }
-        setErro('Erro ao consultar o agente. Verifique se o backend está ativo.')
+        setErro('Failed to query the agent. Check that the backend is running.')
       })
       .finally(() => setCarregando(false))
   }, [foco?.id])
@@ -67,7 +67,7 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
   return (
     <aside
       className="w-96 bg-white border-l border-slate-200 flex flex-col h-full overflow-hidden"
-      aria-label="Painel de explicação do foco"
+      aria-label="Hotspot explanation panel"
     >
       {/* Header */}
       <div className={clsx('px-4 py-3 border-b border-slate-200 flex items-start justify-between gap-2', sev.bg)}>
@@ -75,7 +75,7 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
           <div className="flex items-center gap-2 mb-0.5">
             <Flame size={16} className={sev.cor} />
             <span className={clsx('text-sm font-bold', sev.cor)}>
-              {foco.municipio ?? 'Localização no Ceará'}
+              {foco.municipio ?? 'Location in Ceará'}
             </span>
             <span className={clsx('text-xs px-2 py-0.5 rounded-full border', sev.bg, sev.cor)}>
               {sev.label}
@@ -88,7 +88,7 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
         <button
           onClick={onFechar}
           className="p-1 rounded-lg hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors shrink-0"
-          aria-label="Fechar painel"
+          aria-label="Close panel"
         >
           <X size={16} />
         </button>
@@ -98,13 +98,13 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
       <div className="px-4 py-3 border-b border-slate-200 grid grid-cols-2 gap-2">
         <MetricaItem
           icon={<Satellite size={13} className="text-sky-600" />}
-          label="Satélite"
+          label="Satellite"
           valor={foco.satelite}
         />
         <MetricaItem
           icon={<Clock size={13} className="text-slate-500" />}
-          label="Detecção"
-          valor={format(new Date(foco.data_hora), 'dd/MM HH:mm', { locale: ptBR })}
+          label="Detection"
+          valor={format(new Date(foco.data_hora), 'MM/dd HH:mm', { locale: enUS })}
         />
         {foco.frp != null && (
           <MetricaItem
@@ -116,19 +116,19 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
         {tempC && (
           <MetricaItem
             icon={<Thermometer size={13} className="text-red-600" />}
-            label="Temp. pixel"
+            label="Pixel temp."
             valor={`${tempC}°C`}
           />
         )}
         <MetricaItem
           icon={<CheckCircle size={13} className="text-emerald-600" />}
-          label="Confiança"
+          label="Confidence"
           valor={`${foco.confianca.toFixed(0)}%`}
         />
         <MetricaItem
           icon={<Info size={13} className="text-slate-500" />}
-          label="Período"
-          valor={foco.daynight === 'D' ? 'Diurno' : foco.daynight === 'N' ? 'Noturno' : '—'}
+          label="Period"
+          valor={foco.daynight === 'D' ? 'Daytime' : foco.daynight === 'N' ? 'Nighttime' : '—'}
         />
       </div>
 
@@ -141,11 +141,11 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
               <Loader2 size={16} className="animate-spin text-fire-600 absolute -bottom-1 -right-1" />
             </div>
             <div className="text-center">
-              <p className="text-sm text-slate-600 font-medium">Agente analisando...</p>
-              <p className="text-xs text-slate-500 mt-1">Consultando clima real e intensidade</p>
+              <p className="text-sm text-slate-600 font-medium">Agent analyzing...</p>
+              <p className="text-xs text-slate-500 mt-1">Querying real weather and intensity</p>
             </div>
             <div className="flex gap-1 mt-2">
-              {['Clima', 'Intensidade', 'Diagnóstico'].map((s, i) => (
+              {['Weather', 'Intensity', 'Diagnosis'].map((s, i) => (
                 <span
                   key={s}
                   className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded-full animate-pulse"
@@ -162,7 +162,7 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
           <div className="m-4 bg-red-50 border border-red-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle size={16} className="text-red-600" />
-              <span className="text-sm font-medium text-red-800">Erro na análise</span>
+              <span className="text-sm font-medium text-red-800">Analysis error</span>
             </div>
             <p className="text-xs text-red-600">{erro}</p>
           </div>
@@ -180,10 +180,10 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
               <div className="flex items-center gap-2">
                 <Bot size={14} className="text-fire-600" />
                 <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-                  Análise do Agente
+                  Agent Analysis
                 </span>
                 <span className="text-xs text-slate-400 ml-auto">
-                  {(dados.analise_agente.nivel_confianca * 100).toFixed(0)}% confiança
+                  {(dados.analise_agente.nivel_confianca * 100).toFixed(0)}% confidence
                 </span>
               </div>
               <div className="bg-slate-100 rounded-xl p-3">
@@ -212,7 +212,7 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
                   className="w-full flex items-center justify-between px-3 py-2 text-xs text-slate-500 hover:bg-slate-100 transition-colors"
                   aria-expanded={expandirPassos}
                 >
-                  <span>Raciocínio do agente ({dados.analise_agente.passos_raciocinio.length} passos)</span>
+                  <span>Agent reasoning ({dados.analise_agente.passos_raciocinio.length} steps)</span>
                   {expandirPassos ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                 </button>
                 {expandirPassos && (
@@ -230,8 +230,8 @@ export default function PainelExplicacaoFoco({ foco, onFechar }: Props) {
 
             {/* Timestamp */}
             <p className="text-xs text-slate-400 text-right">
-              Análise gerada em{' '}
-              {format(new Date(dados.analise_agente.gerado_em), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+              Analysis generated on{' '}
+              {format(new Date(dados.analise_agente.gerado_em), "MM/dd/yyyy 'at' HH:mm", { locale: enUS })}
             </p>
           </div>
         )}
@@ -260,26 +260,26 @@ function PainelClima({ clima }: { clima: ClimaReal }) {
   const itens = [
     {
       icon: <Thermometer size={14} className="text-red-600" />,
-      label: 'Temperatura',
+      label: 'Temperature',
       valor: clima.temperatura_c != null ? `${clima.temperatura_c.toFixed(1)}°C` : null,
       alerta: (clima.temperatura_c ?? 0) >= 35,
     },
     {
       icon: <Droplets size={14} className="text-sky-600" />,
-      label: 'Umidade',
+      label: 'Humidity',
       valor: clima.umidade_relativa != null ? `${clima.umidade_relativa.toFixed(0)}%` : null,
       alerta: (clima.umidade_relativa ?? 100) < 40,
     },
     {
       icon: <Wind size={14} className="text-cyan-400" />,
-      label: 'Vento',
+      label: 'Wind',
       valor: clima.velocidade_vento_ms != null ? `${clima.velocidade_vento_ms.toFixed(1)} m/s` : null,
       alerta: (clima.velocidade_vento_ms ?? 0) >= 7,
     },
     {
       icon: <CloudRain size={14} className="text-indigo-400" />,
-      label: 'Dias sem chuva',
-      valor: clima.dias_sem_chuva != null ? `${clima.dias_sem_chuva} dias` : null,
+      label: 'Days without rain',
+      valor: clima.dias_sem_chuva != null ? `${clima.dias_sem_chuva} days` : null,
       alerta: (clima.dias_sem_chuva ?? 0) >= 10,
     },
   ].filter(i => i.valor != null)
@@ -291,7 +291,7 @@ function PainelClima({ clima }: { clima: ClimaReal }) {
       <div className="flex items-center gap-2">
         <CloudRain size={14} className="text-sky-600" />
         <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-          Clima Real (Open-Meteo)
+          Real Weather (Open-Meteo)
         </span>
       </div>
       <div className="grid grid-cols-2 gap-2">

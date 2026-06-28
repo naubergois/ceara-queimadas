@@ -7,7 +7,7 @@ import { Send, User, Loader2, FileText } from 'lucide-react'
 import MascoteGuia, { NOME_MASCOTE } from './MascoteGuia'
 import { clsx } from 'clsx'
 import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import { chatPesquisa, getStatusPesquisa, type RespostaPesquisa } from '../services/api'
 
 interface Mensagem {
@@ -20,12 +20,12 @@ interface Mensagem {
 }
 
 const SUGESTOES = [
-  'Qual é o objetivo da pesquisa?',
-  'Como funciona a arquitetura?',
-  'Quais fontes de dados estão ativas?',
-  'Como usar o mapa real?',
-  'O que faz o agente DeepSeek?',
-  'Como fazer deploy na EC2?',
+  'What is the research goal?',
+  'How does the architecture work?',
+  'Which data sources are active?',
+  'How do I use the real map?',
+  'What does the DeepSeek agent do?',
+  'How do I deploy on EC2?',
 ]
 
 export default function ChatPesquisa() {
@@ -34,7 +34,7 @@ export default function ChatPesquisa() {
       id: '0',
       tipo: 'agente',
       texto:
-        `Oxente! Eu sou o ${NOME_MASCOTE} — o mapa do Ceará com olhos, seu guia nesta plataforma. Pergunte sobre a pesquisa, arquitetura, NASA FIRMS, agentes de IA ou como usar cada tela do sistema.`,
+        `Hey! I'm ${NOME_MASCOTE} — the map of Ceará with eyes, your guide on this platform. Ask about the research, architecture, NASA FIRMS, AI agents, or how to use each screen.`,
       timestamp: new Date(),
     },
   ])
@@ -84,7 +84,7 @@ export default function ChatPesquisa() {
             ? {
                 ...m,
                 texto:
-                  'Não foi possível consultar o guia. Verifique se o backend está ativo.',
+                  'Could not reach the guide. Check that the backend is running.',
                 carregando: false,
               }
             : m,
@@ -108,7 +108,7 @@ export default function ChatPesquisa() {
       {indicePronto === false && (
         <div className="mx-4 mt-3 alert-warning flex items-center gap-2">
           <MascoteGuia size={20} className="shrink-0" />
-          Índice em construção. Aguarde alguns segundos e tente novamente.
+          Index building. Wait a few seconds and try again.
         </div>
       )}
 
@@ -147,7 +147,7 @@ export default function ChatPesquisa() {
                 {msg.carregando ? (
                   <div className="flex items-center gap-2 text-slate-500">
                     <Loader2 size={14} className="animate-spin text-violet-500" />
-                    <span>Consultando documentação...</span>
+                    <span>Searching documentation...</span>
                   </div>
                 ) : (
                   <p className="whitespace-pre-wrap">{msg.texto}</p>
@@ -167,7 +167,7 @@ export default function ChatPesquisa() {
                 </div>
               )}
               <time className="text-xs text-slate-400 block">
-                {format(msg.timestamp, 'HH:mm', { locale: ptBR })}
+                {format(msg.timestamp, 'HH:mm', { locale: enUS })}
               </time>
             </div>
           </div>
@@ -195,24 +195,24 @@ export default function ChatPesquisa() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={`Pergunte ao ${NOME_MASCOTE} sobre a pesquisa ou o sistema...`}
+            placeholder={`Ask ${NOME_MASCOTE} about the research or the system...`}
             rows={2}
             disabled={enviando}
             className="input-field flex-1 resize-none"
-            aria-label="Pergunta sobre a aplicação"
+            aria-label="Question about the application"
           />
           <button
             type="button"
             onClick={() => enviar(input)}
             disabled={!input.trim() || enviando}
             className="p-3 bg-violet-600 hover:bg-violet-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-xl transition-colors shadow-sm"
-            aria-label="Enviar"
+            aria-label="Send"
           >
             {enviando ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           </button>
         </div>
         <p className="text-xs text-slate-400 mt-2 text-center">
-          {NOME_MASCOTE} · documentação do projeto · FAISS + DeepSeek
+          {NOME_MASCOTE} · project documentation · FAISS + DeepSeek
         </p>
       </div>
     </div>

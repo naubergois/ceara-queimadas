@@ -14,14 +14,14 @@ import DialogoGuiaPesquisa from './components/DialogoGuiaPesquisa'
 import { clsx } from 'clsx'
 
 const navItems = [
-  { to: '/',          label: 'Dashboard',    icon: BarChart3 },
-  { to: '/mapa-real', label: 'Mapa Real',    icon: Satellite },
-  { to: '/mapa',      label: 'Mapa',         icon: Map },
-  { to: '/upload',    label: 'Upload',       icon: Upload },
-  { to: '/alertas',   label: 'Alertas',      icon: Bell },
-  { to: '/inovacao',  label: 'Predição IA',  icon: Flame },
-  { to: '/chat',      label: 'Chat IA',      icon: MessageSquare },
-  { to: '/boletim',   label: 'Boletim',      icon: FileText },
+  { to: '/',          label: 'Dashboard',      icon: BarChart3 },
+  { to: '/mapa-real', label: 'Real Map',       icon: Satellite },
+  { to: '/mapa',      label: 'Map',            icon: Map },
+  { to: '/upload',    label: 'Upload',         icon: Upload },
+  { to: '/alertas',   label: 'Alerts',         icon: Bell },
+  { to: '/inovacao',  label: 'AI Prediction',  icon: Flame },
+  { to: '/chat',      label: 'AI Chat',        icon: MessageSquare },
+  { to: '/boletim',   label: 'Bulletin',       icon: FileText },
 ]
 
 function AppShell() {
@@ -43,8 +43,8 @@ function AppShell() {
             <Flame className="text-white" size={22} />
           </div>
           <span className="hidden lg:block font-semibold text-sm text-slate-900 leading-tight">
-            Gêmeo Digital
-            <span className="block text-fire-600 font-medium text-xs mt-0.5">Ceará Queimadas</span>
+            Digital Twin
+            <span className="block text-fire-600 font-medium text-xs mt-0.5">Ceará Wildfires</span>
           </span>
         </div>
 
@@ -66,7 +66,7 @@ function AppShell() {
                   ? 'border-violet-500 bg-violet-600 shadow-md'
                   : 'border-violet-200 bg-gradient-to-br from-violet-50 via-white to-orange-50 hover:border-violet-400 hover:shadow-soft',
               )}
-              aria-label={`Abrir guia com ${NOME_MASCOTE}`}
+              aria-label={`Open guide with ${NOME_MASCOTE}`}
             >
               <div className="flex items-center gap-2 px-2 py-2.5 lg:px-3 lg:py-3">
                 <MascoteGuia
@@ -89,7 +89,7 @@ function AppShell() {
                       guiaAberto ? 'text-violet-100' : 'text-violet-600',
                     )}
                   >
-                    Guia cearense
+                    Ceará guide
                   </p>
                 </div>
                 <span
@@ -100,7 +100,7 @@ function AppShell() {
                       : 'bg-violet-600 text-white',
                   )}
                 >
-                  Ajuda
+                  Help
                 </span>
               </div>
             </button>
@@ -110,14 +110,14 @@ function AppShell() {
         <div className="px-3 pb-3">
           <div className="hidden lg:flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            <span className="text-xs text-emerald-800 font-medium">Dados em tempo real</span>
+            <span className="text-xs text-emerald-800 font-medium">Real-time data</span>
           </div>
         </div>
 
         <div className="px-4 py-4 border-t border-slate-100">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500" />
-            <span className="hidden lg:block text-xs text-slate-500">Sistema ativo</span>
+            <span className="hidden lg:block text-xs text-slate-500">System active</span>
           </div>
         </div>
       </aside>

@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react'
 import { Flame, Filter, ArrowUpDown, Satellite } from 'lucide-react'
 import { clsx } from 'clsx'
 import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import type { FocoReal } from '../services/api'
 
 interface Props {
@@ -25,6 +25,12 @@ const SEV_COR = {
   media:   'bg-yellow-500',
   alta:    'bg-orange-500',
   critica: 'bg-red-500',
+}
+const SEV_LABEL: Record<string, string> = {
+  baixa: 'low',
+  media: 'medium',
+  alta: 'high',
+  critica: 'critical',
 }
 const SEV_TEXT = {
   baixa:   'text-emerald-600',
@@ -68,9 +74,9 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
           type="text"
           value={busca}
           onChange={e => setBusca(e.target.value)}
-          placeholder="Buscar município ou sensor..."
+          placeholder="Search municipality or sensor..."
           className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-orange-500"
-          aria-label="Buscar focos"
+          aria-label="Search hotspots"
         />
         <div className="flex gap-1.5">
           {/* Filtro severidade */}
@@ -80,13 +86,13 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
               value={filtroSev}
               onChange={e => setFiltroSev(e.target.value)}
               className="flex-1 bg-slate-100 border border-slate-200 rounded text-xs text-slate-600 px-1.5 py-1 focus:outline-none"
-              aria-label="Filtrar por severidade"
+              aria-label="Filter by severity"
             >
-              <option value="todos">Todas</option>
-              <option value="critica">Crítica</option>
-              <option value="alta">Alta</option>
-              <option value="media">Média</option>
-              <option value="baixa">Baixa</option>
+              <option value="todos">All</option>
+              <option value="critica">Critical</option>
+              <option value="alta">High</option>
+              <option value="media">Medium</option>
+              <option value="baixa">Low</option>
             </select>
           </div>
           {/* Ordenação */}
@@ -96,21 +102,21 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
               value={ordenacao}
               onChange={e => setOrdenacao(e.target.value as Ordenacao)}
               className="flex-1 bg-slate-100 border border-slate-200 rounded text-xs text-slate-600 px-1.5 py-1 focus:outline-none"
-              aria-label="Ordenar focos"
+              aria-label="Sort hotspots"
             >
-              <option value="recente">Mais recente</option>
-              <option value="frp">Maior FRP</option>
-              <option value="severidade">Severidade</option>
+              <option value="recente">Most recent</option>
+              <option value="frp">Highest FRP</option>
+              <option value="severidade">Severity</option>
             </select>
           </div>
         </div>
         <p className="text-xs text-slate-400">
-          {focosFiltrados.length} de {focos.length} focos
+          {focosFiltrados.length} of {focos.length} hotspots
         </p>
       </div>
 
       {/* Lista */}
-      <div className="flex-1 overflow-y-auto" role="list" aria-label="Lista de focos reais">
+      <div className="flex-1 overflow-y-auto" role="list" aria-label="Real hotspot list">
         {carregando ? (
           <div className="space-y-2 p-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -120,7 +126,7 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
         ) : focosFiltrados.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-slate-500">
             <Flame size={32} className="mb-2 opacity-30" />
-            <p className="text-sm">Nenhum foco encontrado</p>
+            <p className="text-sm">No hotspots found</p>
           </div>
         ) : (
           focosFiltrados.map(foco => (
@@ -146,7 +152,7 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
                       {foco.municipio ?? `${foco.lat.toFixed(3)}, ${foco.lon.toFixed(3)}`}
                     </span>
                     <span className={clsx('text-xs font-bold shrink-0', SEV_TEXT[foco.severidade])}>
-                      {foco.severidade}
+                      {SEV_LABEL[foco.severidade] ?? foco.severidade}
                     </span>
                   </div>
 
@@ -162,7 +168,7 @@ export default function ListaFocosReais({ focos, focoSelecionado, onSelecionarFo
                       </div>
                     )}
                     <span className="text-xs text-slate-400 ml-auto">
-                      {format(new Date(foco.data_hora), 'dd/MM HH:mm', { locale: ptBR })}
+                      {format(new Date(foco.data_hora), 'MM/dd HH:mm', { locale: enUS })}
                     </span>
                   </div>
                 </div>

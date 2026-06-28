@@ -8,7 +8,7 @@ import { Send, Bot, User, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
 import { clsx } from 'clsx'
 import { perguntarAgente, type RespostaAgente } from '../services/api'
 import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 
 interface Mensagem {
   id: string
@@ -20,12 +20,12 @@ interface Mensagem {
 }
 
 const SUGESTOES = [
-  'Quais municípios estão com maior risco hoje?',
-  'Existe algum foco próximo a unidade de conservação?',
-  'O GOES-16 confirmou crescimento do fogo nas últimas imagens?',
-  'Quais focos apareceram nas últimas 3 horas?',
-  'Gere um boletim para a Defesa Civil.',
-  'Compare os focos do INPE com os do NASA FIRMS.',
+  'Which municipalities have the highest risk today?',
+  'Is there a hotspot near a conservation unit?',
+  'Did GOES-16 confirm fire growth in the latest images?',
+  'Which hotspots appeared in the last 3 hours?',
+  'Generate a bulletin for Civil Defense.',
+  'Compare INPE hotspots with NASA FIRMS.',
 ]
 
 export default function ChatAgente() {
@@ -33,7 +33,7 @@ export default function ChatAgente() {
     {
       id: '0',
       tipo: 'agente',
-      texto: 'Olá! Sou o agente de monitoramento de queimadas do Ceará. Posso consultar focos ativos, dados climáticos, GOES-16 e calcular riscos. Como posso ajudar?',
+      texto: 'Hello! I am the Ceará wildfire monitoring agent. I can query active hotspots, weather data, GOES-16, and calculate risks. How can I help?',
       timestamp: new Date(),
     },
   ])
@@ -74,7 +74,7 @@ export default function ChatAgente() {
       setMensagens((prev) =>
         prev.map((m) =>
           m.id === idAgent
-            ? { ...m, texto: 'Erro ao consultar o agente. Tente novamente.', carregando: false }
+            ? { ...m, texto: 'Failed to query the agent. Please try again.', carregando: false }
             : m,
         ),
       )
@@ -94,7 +94,7 @@ export default function ChatAgente() {
   return (
     <div className="flex flex-col h-full">
       {/* Mensagens */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" role="log" aria-live="polite" aria-label="Conversa com o agente">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4" role="log" aria-live="polite" aria-label="Agent conversation">
         {mensagens.map((msg) => (
           <MensagemItem key={msg.id} mensagem={msg} />
         ))}
@@ -123,22 +123,22 @@ export default function ChatAgente() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Pergunte sobre queimadas no Ceará..."
+            placeholder="Ask about wildfires in Ceará..."
             rows={2}
             disabled={enviando}
             className="flex-1 bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 resize-none focus:outline-none focus:border-orange-500 disabled:opacity-50"
-            aria-label="Campo de pergunta"
+            aria-label="Question field"
           />
           <button
             onClick={() => enviar(input)}
             disabled={!input.trim() || enviando}
             className="p-3 bg-orange-600 hover:bg-orange-500 disabled:bg-slate-200 disabled:text-slate-500 text-white rounded-xl transition-colors"
-            aria-label="Enviar pergunta"
+            aria-label="Send question"
           >
             {enviando ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           </button>
         </div>
-        <p className="text-xs text-slate-400 mt-1.5">Enter para enviar · Shift+Enter para nova linha</p>
+        <p className="text-xs text-slate-400 mt-1.5">Enter to send · Shift+Enter for new line</p>
       </div>
     </div>
   )
@@ -176,7 +176,7 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
           {mensagem.carregando ? (
             <div className="flex items-center gap-2 text-slate-500">
               <Loader2 size={14} className="animate-spin" />
-              <span>Consultando ferramentas...</span>
+              <span>Querying tools...</span>
             </div>
           ) : (
             <p className="whitespace-pre-wrap">{mensagem.texto}</p>
@@ -192,8 +192,8 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
               aria-expanded={expandido}
             >
               <span>
-                Confiança: {(mensagem.resposta.nivel_confianca * 100).toFixed(0)}% ·{' '}
-                {mensagem.resposta.ferramentas_usadas.length} ferramentas consultadas
+                Confidence: {(mensagem.resposta.nivel_confianca * 100).toFixed(0)}% ·{' '}
+                {mensagem.resposta.ferramentas_usadas.length} tools queried
               </span>
               {expandido ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
             </button>
@@ -202,13 +202,13 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
               <div className="px-3 pb-3 space-y-2 text-xs">
                 {mensagem.resposta.recomendacao_operacional && (
                   <div>
-                    <p className="text-fire-600 font-medium mb-0.5">Recomendação</p>
+                    <p className="text-fire-600 font-medium mb-0.5">Recommendation</p>
                     <p className="text-slate-600">{mensagem.resposta.recomendacao_operacional}</p>
                   </div>
                 )}
                 {mensagem.resposta.evidencias.length > 0 && (
                   <div>
-                    <p className="text-sky-600 font-medium mb-0.5">Evidências</p>
+                    <p className="text-sky-600 font-medium mb-0.5">Evidence</p>
                     <ul className="space-y-0.5">
                       {mensagem.resposta.evidencias.map((e, i) => (
                         <li key={i} className="text-slate-500 truncate">{e}</li>
@@ -218,7 +218,7 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
                 )}
                 {mensagem.resposta.fontes.length > 0 && (
                   <div>
-                    <p className="text-emerald-600 font-medium mb-0.5">Fontes</p>
+                    <p className="text-emerald-600 font-medium mb-0.5">Sources</p>
                     <p className="text-slate-500">{mensagem.resposta.fontes.join(', ')}</p>
                   </div>
                 )}
@@ -228,7 +228,7 @@ function MensagemItem({ mensagem }: { mensagem: Mensagem }) {
         )}
 
         <time className="text-xs text-slate-400 px-1">
-          {format(mensagem.timestamp, 'HH:mm', { locale: ptBR })}
+          {format(mensagem.timestamp, 'HH:mm', { locale: enUS })}
         </time>
       </div>
     </div>

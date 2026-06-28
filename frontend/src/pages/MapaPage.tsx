@@ -23,21 +23,21 @@ export default function MapaPage() {
             value={filtroHoras}
             onChange={(e) => setFiltroHoras(Number(e.target.value))}
             className="bg-white/90 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
-            aria-label="Filtrar por período"
+            aria-label="Filter by time period"
           >
-            <option value={6}>Últimas 6h</option>
-            <option value={24}>Últimas 24h</option>
-            <option value={48}>Últimas 48h</option>
-            <option value={168}>Últimos 7 dias</option>
+            <option value={6}>Last 6h</option>
+            <option value={24}>Last 24h</option>
+            <option value={48}>Last 48h</option>
+            <option value={168}>Last 7 days</option>
           </select>
 
           <select
             value={filtroFonte ?? ''}
             onChange={(e) => setFiltroFonte(e.target.value || null)}
             className="bg-white/90 border border-slate-200 text-slate-700 text-xs rounded-lg px-3 py-2 focus:outline-none focus:border-orange-500"
-            aria-label="Filtrar por fonte"
+            aria-label="Filter by source"
           >
-            <option value="">Todas as fontes</option>
+            <option value="">All sources</option>
             <option value="INPE">INPE</option>
             <option value="NASA_FIRMS">NASA FIRMS</option>
             <option value="GOES16">GOES-16</option>
@@ -45,7 +45,7 @@ export default function MapaPage() {
 
           {carregando && (
             <div className="bg-white/90 border border-slate-200 rounded-lg px-3 py-2 text-xs text-fire-600">
-              Atualizando...
+              Updating...
             </div>
           )}
         </div>

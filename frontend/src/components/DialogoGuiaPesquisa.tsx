@@ -65,7 +65,7 @@ export default function DialogoGuiaPesquisa({ aberto, onFechar, onAbrir }: Props
             aria-hidden
           >
             <span className="text-violet-700 font-semibold">{NOME_MASCOTE}</span>
-            <span className="text-slate-600"> — seu guia cearense da pesquisa!</span>
+            <span className="text-slate-600"> — your Ceará research guide!</span>
             <span
               className="absolute -bottom-2 right-6 w-4 h-4 bg-white border-r-2 border-b-2 border-violet-200 rotate-45"
               aria-hidden
@@ -84,7 +84,7 @@ export default function DialogoGuiaPesquisa({ aberto, onFechar, onAbrir }: Props
               'ring-4 ring-violet-300/50',
               destacar && 'animate-guia-pulse ring-violet-400/60',
             )}
-            aria-label={`Abrir guia com ${NOME_MASCOTE} — tire dúvidas sobre a pesquisa`}
+            aria-label={`Open guide with ${NOME_MASCOTE} — ask about the research`}
           >
             {destacar && (
               <span
@@ -98,7 +98,7 @@ export default function DialogoGuiaPesquisa({ aberto, onFechar, onAbrir }: Props
             <span className="flex flex-col items-start text-left pr-1">
               <span className="text-sm font-bold leading-tight">{NOME_MASCOTE}</span>
               <span className="text-[11px] font-medium text-white/90 leading-tight">
-                Guia cearense
+                Ceará guide
               </span>
             </span>
           </button>
@@ -116,7 +116,7 @@ export default function DialogoGuiaPesquisa({ aberto, onFechar, onAbrir }: Props
             type="button"
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"
             onClick={onFechar}
-            aria-label="Fechar diálogo"
+            aria-label="Close dialog"
           />
 
           <div
@@ -135,10 +135,10 @@ export default function DialogoGuiaPesquisa({ aberto, onFechar, onAbrir }: Props
                 </div>
                 <div className="min-w-0">
                   <h2 id="dialogo-guia-titulo" className="text-base font-bold text-slate-900 truncate">
-                    {NOME_MASCOTE} — Guia da aplicação
+                    {NOME_MASCOTE} — Application guide
                   </h2>
                   <p className="text-xs text-violet-700 font-medium truncate">
-                    O mapa do Ceará que explica a pesquisa
+                    The map of Ceará that explains the research
                   </p>
                 </div>
               </div>
@@ -146,7 +146,7 @@ export default function DialogoGuiaPesquisa({ aberto, onFechar, onAbrir }: Props
                 type="button"
                 onClick={onFechar}
                 className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-white/80 transition-colors shrink-0"
-                aria-label="Fechar"
+                aria-label="Close"
               >
                 <X size={20} />
               </button>

@@ -51,7 +51,7 @@ export default function StatusFontes() {
           ))}
           {status && (
             <span className="text-slate-400 hidden md:inline border-l border-slate-200 pl-3">
-              {status.cache_focos} focos
+              {status.cache_focos} hotspots
             </span>
           )}
         </>
@@ -60,7 +60,7 @@ export default function StatusFontes() {
         type="button"
         onClick={verificar}
         className="ml-auto p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-white transition-colors"
-        aria-label="Verificar status das fontes"
+        aria-label="Check data source status"
       >
         <RefreshCw size={12} className={carregando ? 'animate-spin' : ''} />
       </button>

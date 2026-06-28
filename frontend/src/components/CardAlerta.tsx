@@ -5,7 +5,7 @@
 import { AlertTriangle, CheckCircle, Info, Zap } from 'lucide-react'
 import { clsx } from 'clsx'
 import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { enUS } from 'date-fns/locale'
 import type { Alerta } from '../services/api'
 
 interface Props {
@@ -18,28 +18,28 @@ const nivelConfig = {
     bg: 'bg-sky-50 border-sky-200',
     text: 'text-sky-800',
     badge: 'bg-sky-100 text-sky-800',
-    label: 'Informativo',
+    label: 'Informational',
   },
   atencao: {
     icon: AlertTriangle,
     bg: 'bg-amber-50 border-amber-200',
     text: 'text-amber-800',
     badge: 'bg-amber-100 text-amber-900',
-    label: 'Atenção',
+    label: 'Attention',
   },
   alerta: {
     icon: AlertTriangle,
     bg: 'bg-orange-50 border-orange-200',
     text: 'text-orange-800',
     badge: 'bg-orange-100 text-orange-900',
-    label: 'Alerta',
+    label: 'Alert',
   },
   emergencia: {
     icon: Zap,
     bg: 'bg-red-50 border-red-200',
     text: 'text-red-800',
     badge: 'bg-red-100 text-red-900',
-    label: 'Emergência',
+    label: 'Emergency',
   },
 }
 
@@ -55,7 +55,7 @@ export default function CardAlerta({ alerta }: Props) {
         alerta.nivel === 'emergencia' && 'animate-pulse',
       )}
       role="alert"
-      aria-label={`Alerta ${config.label} em ${alerta.municipio}`}
+      aria-label={`${config.label} alert in ${alerta.municipio}`}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
@@ -68,7 +68,7 @@ export default function CardAlerta({ alerta }: Props) {
             {config.label}
           </span>
           {alerta.auditado && (
-            <CheckCircle size={14} className="text-emerald-600" aria-label="Alerta auditado" />
+            <CheckCircle size={14} className="text-emerald-600" aria-label="Audited alert" />
           )}
         </div>
       </div>
@@ -79,7 +79,7 @@ export default function CardAlerta({ alerta }: Props) {
       {/* Recomendação */}
       {alerta.recomendacao && (
         <div className="bg-white/70 border border-slate-200/80 rounded-lg p-2">
-          <p className="text-xs text-slate-500 font-medium mb-0.5">Recomendação</p>
+          <p className="text-xs text-slate-500 font-medium mb-0.5">Recommendation</p>
           <p className="text-xs text-slate-600">{alerta.recomendacao}</p>
         </div>
       )}
@@ -87,9 +87,9 @@ export default function CardAlerta({ alerta }: Props) {
       {/* Footer */}
       <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
         <time dateTime={alerta.data_hora}>
-          {format(new Date(alerta.data_hora), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+          {format(new Date(alerta.data_hora), "MM/dd/yyyy 'at' HH:mm", { locale: enUS })}
         </time>
-        <span>Confiança: {(alerta.nivel_confianca * 100).toFixed(0)}%</span>
+        <span>Confidence: {(alerta.nivel_confianca * 100).toFixed(0)}%</span>
       </div>
     </article>
   )

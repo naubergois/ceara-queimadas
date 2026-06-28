@@ -111,12 +111,12 @@ export default function InovacaoPage() {
               I
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Predição IA — NeKo-PIGNN v2</h1>
-              <p className="text-gray-400 text-sm">{modelo || "Koopman Determinístico + GNN + Rothermel Loss"}</p>
+              <h1 className="text-2xl font-bold">AI Prediction — NeKo-PIGNN v2</h1>
+              <p className="text-gray-400 text-sm">{modelo || "Koopman Deterministic + GNN + Rothermel Loss"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400">Previsão:</label>
+            <label className="text-xs text-gray-400">Forecast:</label>
             <select value={horasFrente} onChange={(e) => setHorasFrente(Number(e.target.value))}
               className="bg-[#111122] border border-gray-700 rounded px-2 py-1 text-sm">
               <option value={6}>6h</option>
@@ -132,15 +132,15 @@ export default function InovacaoPage() {
       <FadeIn delay={0.1}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: "Crítico", value: resumo.critico || 0, color: "text-red-400", bg: "bg-red-900/20" },
-            { label: "Alto", value: resumo.alto || 0, color: "text-orange-400", bg: "bg-orange-900/20" },
-            { label: "Médio", value: resumo.medio || 0, color: "text-yellow-400", bg: "bg-yellow-900/20" },
-            { label: "Baixo", value: resumo.baixo || 0, color: "text-green-400", bg: "bg-green-900/20" },
+            { label: "Critical", value: resumo.critico || 0, color: "text-red-400", bg: "bg-red-900/20" },
+            { label: "High", value: resumo.alto || 0, color: "text-orange-400", bg: "bg-orange-900/20" },
+            { label: "Medium", value: resumo.medio || 0, color: "text-yellow-400", bg: "bg-yellow-900/20" },
+            { label: "Low", value: resumo.baixo || 0, color: "text-green-400", bg: "bg-green-900/20" },
           ].map((k) => (
             <div key={k.label} className={`${k.bg} border border-gray-800 rounded-xl p-4 text-center`}>
               <div className="text-xs text-gray-500 uppercase">{k.label}</div>
               <div className={`text-3xl font-bold ${k.color}`}>{k.value}</div>
-              <div className="text-xs text-gray-500">municípios</div>
+              <div className="text-xs text-gray-500">municipalities</div>
             </div>
           ))}
         </div>
@@ -151,7 +151,7 @@ export default function InovacaoPage() {
         <FadeIn delay={0.15}>
           <div className="bg-[#111122] border border-gray-800 rounded-xl p-5 xl:col-span-3">
             <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
-              🔥 Detecção 3 Classes — NÃO / INCERTEZA / SIM (Precisão 82-92%)
+              🔥 3-Class Detection — NO / UNCERTAINTY / YES (82–92% precision)
             </h2>
             {deteccao3c ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -160,8 +160,8 @@ export default function InovacaoPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl">🚨</span>
                     <div>
-                      <div className="text-red-400 font-bold text-lg">ALERTA ({deteccao3c.resumo?.SIM || 0})</div>
-                      <div className="text-xs text-red-300/70">Precisão: 82-92%</div>
+                      <div className="text-red-400 font-bold text-lg">ALERT ({deteccao3c.resumo?.SIM || 0})</div>
+                      <div className="text-xs text-red-300/70">Precision: 82–92%</div>
                     </div>
                   </div>
                   <div className="space-y-1 max-h-40 overflow-y-auto">
@@ -171,7 +171,7 @@ export default function InovacaoPage() {
                         <span className="text-red-400 font-mono text-xs">{(m.p_sim * 100).toFixed(0)}%</span>
                       </div>
                     ))}
-                    {(deteccao3c.resumo?.SIM || 0) === 0 && <div className="text-sm text-gray-500 italic">Nenhum alerta ativo</div>}
+                    {(deteccao3c.resumo?.SIM || 0) === 0 && <div className="text-sm text-gray-500 italic">No active alerts</div>}
                   </div>
                 </div>
 
@@ -180,8 +180,8 @@ export default function InovacaoPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl">⚠️</span>
                     <div>
-                      <div className="text-yellow-400 font-bold text-lg">VIGÍLIA ({deteccao3c.resumo?.INCERTEZA || 0})</div>
-                      <div className="text-xs text-yellow-300/70">Verificar GOES-16</div>
+                      <div className="text-yellow-400 font-bold text-lg">WATCH ({deteccao3c.resumo?.INCERTEZA || 0})</div>
+                      <div className="text-xs text-yellow-300/70">Check GOES-16</div>
                     </div>
                   </div>
                   <div className="space-y-1 max-h-40 overflow-y-auto">
@@ -199,22 +199,22 @@ export default function InovacaoPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl">✅</span>
                     <div>
-                      <div className="text-green-400 font-bold text-lg">SEGURO ({deteccao3c.resumo?.NAO || 0})</div>
-                      <div className="text-xs text-green-300/70">Sem ação necessária</div>
+                      <div className="text-green-400 font-bold text-lg">SAFE ({deteccao3c.resumo?.NAO || 0})</div>
+                      <div className="text-xs text-green-300/70">No action required</div>
                     </div>
                   </div>
                   <div className="space-y-1 max-h-40 overflow-y-auto">
                     {(deteccao3c.municipios || []).filter((m: any) => m.classe === "NAO").map((m: any) => (
                       <div key={m.municipio} className="flex items-center justify-between text-sm bg-green-900/30 rounded px-2 py-1">
                         <span className="text-green-200">{m.municipio}</span>
-                        <span className="text-green-400 font-mono text-xs">seguro</span>
+                        <span className="text-green-400 font-mono text-xs">safe</span>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="text-center py-6 text-gray-500">Carregando detecção...</div>
+              <div className="text-center py-6 text-gray-500">Loading detection...</div>
             )}
           </div>
         </FadeIn>
@@ -225,10 +225,10 @@ export default function InovacaoPage() {
         <FadeIn delay={0.2}>
           <div className="bg-[#111122] border border-gray-800 rounded-xl p-5 xl:col-span-2">
             <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
-              Risco por Município — Previsão {horasFrente}h
+              Risk by Municipality — {horasFrente}h forecast
             </h2>
             {loading ? (
-              <div className="text-center py-8 text-gray-500">Carregando...</div>
+              <div className="text-center py-8 text-gray-500">Loading...</div>
             ) : (
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {riscos.map((r, i) => (
@@ -257,25 +257,25 @@ export default function InovacaoPage() {
         {/* Simulador Causal */}
         <FadeIn delay={0.3}>
           <div className="bg-[#111122] border border-gray-800 rounded-xl p-5">
-            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Simulador "E se...?"</h2>
+            <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">&quot;What if...?&quot; Simulator</h2>
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-gray-400">Velocidade do Vento: {vento} m/s</label>
+                <label className="text-xs text-gray-400">Wind Speed: {vento} m/s</label>
                 <input type="range" min={0} max={15} value={vento} onChange={(e) => setVento(Number(e.target.value))}
                   className="w-full accent-yellow-500" />
               </div>
               <div>
-                <label className="text-xs text-gray-400">Cobertura Vegetal: {vegetacao}%</label>
+                <label className="text-xs text-gray-400">Vegetation Cover: {vegetacao}%</label>
                 <input type="range" min={10} max={100} value={vegetacao} onChange={(e) => setVegetacao(Number(e.target.value))}
                   className="w-full accent-green-500" />
               </div>
               <button onClick={simularIntervencao}
                 className="w-full py-2 bg-gradient-to-r from-[#f5c518] to-[#e94560] rounded-lg font-semibold text-sm hover:opacity-90 transition">
-                Simular Intervenção
+                Simulate Intervention
               </button>
               {riscoSimulado !== null && (
                 <div className="text-center p-3 bg-[#0d1117] rounded-lg">
-                  <span className="text-xs text-gray-400">Risco Predito:</span>
+                  <span className="text-xs text-gray-400">Predicted Risk:</span>
                   <div className={`text-2xl font-bold ${riscoSimulado > 0.7 ? 'text-red-400' : riscoSimulado > 0.4 ? 'text-yellow-400' : 'text-green-400'}`}>
                     {(riscoSimulado * 100).toFixed(1)}%
                   </div>
@@ -284,8 +284,8 @@ export default function InovacaoPage() {
             </div>
             <div className="mt-4 p-3 bg-[#0d1117] rounded-lg">
               <p className="text-xs text-gray-500">
-                <strong>Metodologia:</strong> Linha B (PEAK+PERSIST+FUSÃO) + Linha E (Consenso multi-vista).
-                Score composto: 40% Koopman + 30% Rothermel + 30% condições climáticas.
+                <strong>Methodology:</strong> Line B (PEAK+PERSIST+FUSION) + Line E (multi-view consensus).
+                Composite score: 40% Koopman + 30% Rothermel + 30% weather conditions.
               </p>
             </div>
           </div>
@@ -296,16 +296,16 @@ export default function InovacaoPage() {
       <FadeIn delay={0.4}>
         <div className="bg-[#111122] border border-gray-800 rounded-xl p-5 mb-6">
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
-            Benchmark — Dados Reais (NASA FIRMS + INPE + Open-Meteo) — Detecção 3-Classes
+            Benchmark — Real Data (NASA FIRMS + INPE + Open-Meteo) — 3-Class Detection
           </h2>
           {baselines.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-gray-500 border-b border-gray-800">
-                    <th className="text-left py-2">Modelo</th>
+                    <th className="text-left py-2">Model</th>
                     <th className="text-right py-2">F1 ↑</th>
-                    <th className="text-right py-2">Precisão</th>
+                    <th className="text-right py-2">Precision</th>
                     <th className="text-right py-2">Inf. (ms)</th>
                   </tr>
                 </thead>
@@ -324,12 +324,12 @@ export default function InovacaoPage() {
                 </tbody>
               </table>
               <p className="text-xs text-gray-500 mt-3">
-                Métricas de detecção de fogo (classificação). 3-Class: NÃO/INCERTEZA/SIM — precisão medida apenas na classe SIM.
-                Dados: 97 dias, 15 municípios, 377 focos (NASA FIRMS + INPE + Open-Meteo).
+                Fire detection metrics (classification). 3-Class: NO/UNCERTAINTY/YES — precision measured on the YES class only.
+                Data: 97 days, 15 municipalities, 377 hotspots (NASA FIRMS + INPE + Open-Meteo).
               </p>
             </div>
           ) : (
-            <div className="text-center py-4 text-gray-500">Carregando benchmarks...</div>
+            <div className="text-center py-4 text-gray-500">Loading benchmarks...</div>
           )}
         </div>
       </FadeIn>
@@ -338,7 +338,7 @@ export default function InovacaoPage() {
       <FadeIn delay={0.5}>
         <div className="bg-[#111122] border border-gray-800 rounded-xl p-5">
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">
-            Benchmark — Dados Sintéticos (NeKo-PIGNN v2 é Best-in-Class)
+            Benchmark — Synthetic Data (NeKo-PIGNN v2 is Best-in-Class)
           </h2>
           {baselinesSintetico.length > 0 && (
             <ResponsiveContainer width="100%" height={280}>
@@ -360,8 +360,8 @@ export default function InovacaoPage() {
             </ResponsiveContainer>
           )}
           <p className="text-xs text-gray-500 mt-3">
-            Experimento v2: 500 timesteps, 30 municípios, Curriculum Learning.
-            NeKo-PIGNN v2 alcança RMSE=0.064 e R²=0.972 — superior a MLP, LSTM e XGBoost.
+            Experiment v2: 500 timesteps, 30 municipalities, Curriculum Learning.
+            NeKo-PIGNN v2 achieves RMSE=0.064 and R²=0.972 — outperforming MLP, LSTM, and XGBoost.
           </p>
         </div>
       </FadeIn>

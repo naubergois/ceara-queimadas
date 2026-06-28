@@ -33,10 +33,10 @@ export default function PainelClimaReal({ municipios, carregando }: Props) {
     .sort((a, b) => b.risco - a.risco)
 
   return (
-    <section className="card space-y-3" aria-label="Clima real dos municípios">
+    <section className="card space-y-3" aria-label="Real weather by municipality">
       <div className="flex items-center gap-2">
         <CloudRain size={15} className="text-sky-600" />
-        <h2 className="text-sm font-semibold text-slate-900">Clima Real — Open-Meteo</h2>
+        <h2 className="text-sm font-semibold text-slate-900">Real Weather — Open-Meteo</h2>
       </div>
 
       {carregando ? (
@@ -46,7 +46,7 @@ export default function PainelClimaReal({ municipios, carregando }: Props) {
           ))}
         </div>
       ) : ordenados.length === 0 ? (
-        <p className="text-xs text-slate-500 text-center py-4">Sem dados climáticos</p>
+        <p className="text-xs text-slate-500 text-center py-4">No weather data</p>
       ) : (
         <div className="space-y-1.5 max-h-80 overflow-y-auto pr-1">
           {ordenados.map(m => (

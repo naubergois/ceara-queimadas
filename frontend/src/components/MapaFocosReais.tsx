@@ -91,7 +91,7 @@ export default function MapaFocosReais({
   const focosNormais = focos.filter(f => f.severidade === 'media' || f.severidade === 'baixa')
 
   return (
-    <div className="relative w-full h-full" role="region" aria-label="Mapa de focos reais de queimadas">
+    <div className="relative w-full h-full" role="region" aria-label="Real wildfire hotspot map">
       <Map
         ref={mapRef}
         initialViewState={CEARA_CENTER}
@@ -203,7 +203,7 @@ export default function MapaFocosReais({
                 onMouseLeave={() => setPopupHover(null)}
                 className="relative cursor-pointer transition-transform hover:scale-125 focus:outline-none"
                 style={{ width: tamanho, height: tamanho }}
-                aria-label={`Foco ${foco.severidade} em ${foco.municipio ?? 'Ceará'}`}
+                aria-label={`${foco.severidade} hotspot in ${foco.municipio ?? 'Ceará'}`}
               >
                 {/* Anel pulsante para críticos */}
                 {foco.severidade === 'critica' && (
@@ -250,7 +250,7 @@ export default function MapaFocosReais({
                   selecionado ? 'border-white scale-150' : 'border-white/30'
                 )}
                 style={{ backgroundColor: SEV_COR[foco.severidade] }}
-                aria-label={`Foco ${foco.severidade} em ${foco.municipio ?? 'Ceará'}`}
+                aria-label={`${foco.severidade} hotspot in ${foco.municipio ?? 'Ceará'}`}
               />
             </Marker>
           )
@@ -279,10 +279,10 @@ export default function MapaFocosReais({
                 </p>
               )}
               <p>
-                <span className="text-slate-500">Confiança:</span>{' '}
+                <span className="text-slate-500">Confidence:</span>{' '}
                 <strong>{popupHover.confianca.toFixed(0)}%</strong>
               </p>
-              <p className="text-slate-500 pt-0.5">Clique para ver análise do agente</p>
+              <p className="text-slate-500 pt-0.5">Click to view agent analysis</p>
             </div>
           </Popup>
         )}
@@ -298,8 +298,8 @@ export default function MapaFocosReais({
             offset={12}
           >
             <div className="text-gray-900 text-xs p-1">
-              <p className="font-bold">📍 {focoSelecionado.municipio ?? 'Selecionado'}</p>
-              <p className="text-slate-500">Ver análise no painel →</p>
+              <p className="font-bold">📍 {focoSelecionado.municipio ?? 'Selected'}</p>
+              <p className="text-slate-500">View analysis in panel →</p>
             </div>
           </Popup>
         )}
@@ -307,12 +307,12 @@ export default function MapaFocosReais({
 
       {/* ── Legenda ── */}
       <div className="absolute bottom-4 left-4 bg-white/95 border border-slate-200 rounded-xl p-3 text-xs space-y-1.5 backdrop-blur-sm">
-        <p className="font-semibold text-slate-600 mb-2">Severidade (FRP)</p>
+        <p className="font-semibold text-slate-600 mb-2">Severity (FRP)</p>
         {[
-          { sev: 'critica', label: 'Crítica (≥50 MW)', pulse: true },
-          { sev: 'alta',    label: 'Alta (15–50 MW)',  pulse: false },
-          { sev: 'media',   label: 'Média (5–15 MW)',  pulse: false },
-          { sev: 'baixa',   label: 'Baixa (<5 MW)',    pulse: false },
+          { sev: 'critica', label: 'Critical (≥50 MW)', pulse: true },
+          { sev: 'alta',    label: 'High (15–50 MW)',  pulse: false },
+          { sev: 'media',   label: 'Medium (5–15 MW)',  pulse: false },
+          { sev: 'baixa',   label: 'Low (<5 MW)',    pulse: false },
         ].map(({ sev, label, pulse }) => (
           <div key={sev} className="flex items-center gap-2">
             <div className="relative w-3 h-3 shrink-0">
@@ -331,7 +331,7 @@ export default function MapaFocosReais({
           </div>
         ))}
         <div className="pt-1 border-t border-slate-200 text-slate-500">
-          Fonte: NASA FIRMS (VIIRS/MODIS)
+          Source: NASA FIRMS (VIIRS/MODIS)
         </div>
       </div>
     </div>
