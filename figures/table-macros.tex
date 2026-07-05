@@ -1,0 +1,15 @@
+%% Unified table typography — use resulttable for all manuscript tables.
+\makeatletter
+\newenvironment{resulttable}[2]{% #1=caption, #2=label
+  \begin{table}[!htbp]
+  \centering
+  \caption{#1}
+  \label{#2}
+  \small
+  \setlength{\tabcolsep}{5pt}
+  \renewcommand{\arraystretch}{1.08}
+}{%
+  \end{table}
+}
+\newcommand{\paneltitle}[1]{\textbf{#1}\par\vspace{0.35em}}
+\makeatother

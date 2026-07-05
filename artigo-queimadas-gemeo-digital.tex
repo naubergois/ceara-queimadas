@@ -17,6 +17,9 @@
 \usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{xcolor}
+% ORCID iD mark (official brand green), hyperlinked to the author's record
+\definecolor{orcidgreen}{HTML}{A6CE39}
+\newcommand{\orcidlink}[1]{\href{https://orcid.org/#1}{\raisebox{0.05em}{\setlength{\fboxsep}{0.9pt}\fcolorbox{orcidgreen}{orcidgreen}{\textcolor{white}{\bfseries\tiny iD}}}}}
 \usepackage{xspace}
 %\usepackage{microtype}
 \usepackage{listings}
@@ -42,6 +45,11 @@
 \renewcommand{\floatpagefraction}{0.95}
 \setkeys{Gin}{width=\linewidth,keepaspectratio}
 
+\input{figures/table-macros.tex}
+
+% Fit-to-linewidth wrapper used by figures/tabela_real_data.tex
+\newcommand{\tblfit}[1]{#1}
+
 % Inline figures — no float queue, always appear at source position
 \newcommand{\figurainline}[4][\linewidth]{%
   \par\medskip\noindent
@@ -56,7 +64,6 @@
 
 % Comando para correção de vírgula decimal (opcional: icomma)
 \IfFileExists{icomma.sty}{\usepackage{icomma}}{}
-
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -86,15 +93,22 @@
 \journal{Environmental Modelling \& Software}
 \title{Cear\'{a} Digital Twin for Wildfires: An Open-Source Agentic AI Platform Integrating Near Real-Time Satellite Data and LangGraph Orchestration}
 
-\author[unifor,cor1]{Nauber Gois\corref{cor1}}
-\ead{nauber.gois@unifor.edu.br}
-\author[funceme]{Alexandre Lobo}
-\author[ifce]{Vladia Pinheiro}
+\author[unifor,cor1]{Nauber Gois\corref{cor1}\,\orcidlink{0000-0001-9361-8659}}
+\ead{naubergois@gmail.com}
+\author[usj]{Alexandre Lobo\,\orcidlink{0009-0000-4099-7878}}
+\ead{alexandrelobo@unifor.br}
+\author[ifce]{Vladia Celia Monteiro Pinheiro\,\orcidlink{0000-0002-9851-8304}}
+\ead{vladiacelia@unifor.br}
+\author[saxion]{Daniel Valente de Macedo\,\orcidlink{0000-0003-4720-6850}}
+\ead{d.valentedemacedo@saxion.nl}
+\author[unifor]{Adriano Bessa Albuquerque\,\orcidlink{0000-0002-1491-655X}}
+\ead{adrianoba@unifor.br}
 
 \address[unifor]{Universidade de Fortaleza (UNIFOR), Programa de P\'{o}s-Gradua\c{c}\~{a}o em Inform\'{a}tica Aplicada, Fortaleza, CE, Brazil}
-\address[funceme]{Funda\c{c}\~{a}o Cearense de Meteorologia e Recursos H\'{i}dricos (FUNCEME), Fortaleza, CE, Brazil}
-\address[ifce]{Instituto Federal do Cear\'{a} (IFCE), Departamento de Computa\c{c}\~{a}o, Fortaleza, CE, Brazil}
-\cortext[cor1]{Corresponding author.}
+\address[usj]{Universidade de S\~{a}o Jos\'{e} (USJ), Macau, China}
+\address[ifce]{Instituto Federal de Educa\c{c}\~{a}o, Ci\^{e}ncia e Tecnologia do Cear\'{a} (IFCE), Fortaleza, CE, Brazil}
+\address[saxion]{Saxion University of Applied Sciences, Deventer, Netherlands}
+\cortext[cor1]{Corresponding author at Universidade de Fortaleza (UNIFOR), Programa de P\'{o}s-Gradua\c{c}\~{a}o em Inform\'{a}tica Aplicada. E-mail: \texttt{naubergois@gmail.com}, \texttt{francisco.gois@cge.ce.gov.br}.}
 
 \DeclareMathOperator*{\argmin}{arg\,min}
 \begin{document}
@@ -102,7 +116,7 @@
 \begin{frontmatter}
 
 \begin{abstract}
-Wildfire monitoring in Brazil relies heavily on centralized institutional systems that present noticeable latency between detection and data availability. We present the \emph{Cear\'{a} Digital Twin for Wildfires, an open-source platform that integrates multiple satellite data sources in near-real time --- NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and reverse geocoding via Nominatim --- with agentic artificial intelligence for detection, validation, prioritization, and explanation of wildfire hotspots in the state of Cear\'{a}, Brazil. The system uses a \emph{LangGraph}-orchestrated pipeline coordinating collection, Pydantic validation, evidence fusion, and municipal-level risk classification. A \emph{ReAct} agent based on \emph{DeepSeek} produces auditable diagnostics and natural language explanations. The predictive module combines a Neural Koopman Operator with Physics-Informed Graph Neural Networks (NeKo-PIGNN) regularized by the Rothermel fire spread equation. Experimental results show that the system detects on average 42~hotspots per collection (real data from July~2024 to June~2026), with time-to-first-response under 60~seconds and 93\,\% geocoding rate for affected municipalities. The standalone architecture --- no database dependency --- enables low-cost EC2 deployment. Source code is available under the MIT license.
+Wildfire monitoring in Brazil relies heavily on centralized institutional systems that present noticeable latency between detection and data availability. We present the \emph{Cear\'{a} Digital Twin for Wildfires}, an open-source platform that integrates multiple satellite data sources in near-real time --- NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and reverse geocoding via Nominatim --- with agentic artificial intelligence for detection, validation, prioritization, and explanation of wildfire hotspots in the state of Cear\'{a}, Brazil. The system uses a \emph{LangGraph}-orchestrated pipeline coordinating collection, Pydantic validation, evidence fusion, and municipal-level risk classification. A \emph{ReAct} agent based on \emph{DeepSeek} produces auditable diagnostics and natural language explanations. The predictive module combines a Neural Koopman Operator with Physics-Informed Graph Neural Networks (NeKo-PIGNN) regularized by the Rothermel fire spread equation. Experimental results show that the system detects on average 42~hotspots per collection (real data from July~2024 to June~2026), with time-to-first-response under 60~seconds and 93\,\% geocoding rate for affected municipalities. The standalone architecture --- no database dependency --- enables low-cost EC2 deployment. Source code is available under the MIT license.
 \end{abstract}
 
 \begin{keyword}
@@ -116,7 +130,7 @@ Digital Twin \sep Wildfires \sep Physics-Informed GNN \sep Koopman Operator \sep
 \label{sec:intro}
 %% ===================================================================
 
-As queimadas representam uma das maiores ameaças ambientais no Brasil, com impactos diretos na saúde pública, biodiversidade e economia \cite{article:alencar2020,master:silva2021}. A propagação do fogo é influenciada por condições meteorológicas, topografia e disponibilidade de combustível \cite{article:williams2022}. O Estado do Ceará, situado no semiárido nordestino, apresenta forte sazonalidade de seca e biomas sensíveis como a Caatinga, tornando o monitoramento contínuo uma necessidade operacional \cite{techreport:funceme2024}.
+As queimadas representam uma das maiores ameaças ambientais no Brasil, com impactos diretos na saúde pública, biodiversidade e economia \cite{article:alencar2020,master:silva2021}. O Estado do Ceará, situado no semiárido nordestino, apresenta forte sazonalidade de seca e biomas sensíveis como a Caatinga, tornando o monitoramento contínuo uma necessidade operacional \cite{techreport:funceme2024}.
 
 Sistemas tradicionais de monitoramento --- como o INPE BDQueimadas e o NASA FIRMS --- fornecem dados essenciais, mas apresentam limitações significativas: latência de 3 a 6 horas entre a passagem do satélite e a disponibilização dos dados \cite{manual:firms2024}; ausência de correlação automática com dados climáticos e territoriais locais; e interfaces projetadas para especialistas em sensoriamento remoto, não para gestores de defesa civil.
 
@@ -245,7 +259,7 @@ A Figura~\ref{fig:architecture} apresenta a arquitetura geral do sistema, organi
 O sistema consome quatro fontes de dados abertas:
 
 \begin{itemize}
-    \item \textbf{NASA FIRMS}: CSVs públicos da América do Sul para os sensores VIIRS (SNPP e NOAA-20) e MODIS, disponíveis em janelas de 24~h e 7~dias. Sem autenticação obrigatória. Filtragem por bounding box do Ceará (lat: $-7{,}85$ a $-2{,}78$; lon: $-41{,}42$ a $-37{,}25$).
+    \item \textbf{NASA FIRMS}: CSVs públicos da América do Sul para os sensores VIIRS (SNPP e NOAA-20) e MODIS, disponíveis em janelas de 24~h e 7~dias. Sem autenticação obrigatória. Filtragem por bounding box do Ceará (lat: $-7.85$ a $-2.78$; lon: $-41.42$ a $-37.25$).
     \item \textbf{Open-Meteo}: API gratuita de clima que retorna temperatura, umidade relativa, velocidade do vento, precipitação e dias sem chuva para coordenadas geográficas. Sem chave de API.
     \item \textbf{Nominatim / OpenStreetMap}: Geocodificação reversa para converter coordenadas (lat, lon) em nomes de municípios. Taxa limitada a aproximadamente 1 requisição por segundo.
     \item \textbf{GOES-16}: Dados do produto ABI-L2-FDCF (Fire Detection and Characterization) armazenados no bucket público \texttt{noaa-goes16} da AWS S3. Processa detecções consecutivas, FRP e temperatura do pixel.
@@ -331,7 +345,7 @@ O índice de risco municipal é calculado através de quatro componentes:
 
 \begin{align}
 \text{indice} &= \min(\text{focos} \times 8,\ 40) \nonumber \\
-               &\quad + \text{risco\_climatico} \times 0{,}4 \nonumber \\
+               &\quad + \text{risco\_climatico} \times 0.4 \nonumber \\
                &\quad + (\text{GOES16\_confirmado} \times 15) \nonumber \\
                &\quad + \min(\text{FRP} / 100,\ 10)
 \end{align}
@@ -339,13 +353,12 @@ O índice de risco municipal é calculado através de quatro componentes:
 O risco climático, por sua vez, é derivado de:
 
 \begin{align}
-\text{risco\_climatico} &= \max(0,\ (50 - \text{umidade}) \times 0{,}4) \nonumber \\
-                         &\quad + \min(\text{vento} \times 1{,}5,\ 20) \nonumber \\
-                         &\quad + \min(\text{dias\_sem\_chuva} \times 1{,}5,\ 30)
+\text{risco\_climatico} &= \max(0,\ (50 - \text{umidade}) \times 0.4) \nonumber \\
+                         &\quad + \min(\text{vento} \times 1.5,\ 20) \nonumber \\
+                         &\quad + \min(\text{dias\_sem\_chuva} \times 1.5,\ 30)
 \end{align}
 
 A classificação final segue os limiares: crítico ($\ge 75$), alto ($\ge 50$), médio ($\ge 25$) e baixo ($< 25$).
-
 
 %% ===================================================================
 \section{Implementation}
@@ -391,7 +404,7 @@ O codificador $g_\phi$ do KoopmanAE é uma MLP com 3 camadas ocultas (512, 256, 
 \label{eq:spectral_reg}
 \end{equation}
 
-onde $\rho(\mathbf{K}_\theta)$ é o raio espectral e $\epsilon = 0{,}01$ garante margem de estabilidade. O treinamento utiliza Adam com taxa de aprendizado $10^{-4}$ e batch size 32, processando sequências de 24 horas (12 timesteps de 2 horas) do histórico de focos.
+onde $\rho(\mathbf{K}_\theta)$ é o raio espectral e $\epsilon = 0.01$ garante margem de estabilidade. O treinamento utiliza Adam com taxa de aprendizado $10^{-4}$ e batch size 32, processando sequências de 24 horas (12 timesteps de 2 horas) do histórico de focos.
 
 \subsection{PI-GNN -- Implementation Details}
 \label{sec:pignn-impl}
@@ -413,7 +426,6 @@ O pipeline LangGraph incorpora os modelos Koopman e PI-GNN como nós especializa
 
 A inclusão destes nós eleva o grafo original de 10 para 12 nós, mantendo a estrutura paralela para as análises auxiliares. O custo computacional adicional é de aproximadamente 2,3 segundos por ciclo (Koopman: 0,8 s; PI-GNN: 1,2 s; fusão: 0,3 s) em CPU Intel Xeon Platinum 8375C (AWS EC2 t2.medium).
 
-
 %% ===================================================================
 \section{Deployment}
 \label{sec:deploy}
@@ -430,12 +442,11 @@ O custo mensal estimado da infraestrutura é de aproximadamente USD~20 (instânc
 %% ===================================================================
 \input{figures/metodologia-matematica.tex}
 
-
 \section{Experimental Results}
 \label{sec:results}
 %% ===================================================================
 
-This section reports quantitative results from January 2024 to June 2026, integrating the experimental protocols and outcomes documented in \path{docs/experimentos/} and \path{backend/experiments/results/}. Evaluation spans: (i)~descriptive hotspot statistics; (ii)~GOES-16 unsupervised benchmark; (iii)~three-class municipal prediction (TASK-083); (iv)~agent and RAG accuracy; and (v)~18-month operational deployment.
+This section reports quantitative results integrating the experimental protocols and outcomes documented in \path{docs/experimentos/} and \path{backend/experiments/results/}. Evaluation spans: (i)~descriptive hotspot statistics; (ii)~GOES-16 unsupervised benchmark; (iii)~three-class municipal prediction (TASK-083); (iv)~agent and RAG accuracy; and (v)~24-month operational deployment (Jul/2024--Jun/2026). Reference INPE BDQueimadas records span January 2024 to June 2026.
 
 \input{figures/experimentos-artigo.tex}
 
@@ -637,7 +648,7 @@ The full NeKo-PIGNN (F1 = 0.9140) significantly outperforms Koopman-only (0.8200
 \subsection{Operational Deployment Metrics}
 \label{sec:operational-perf}
 
-Table~\ref{tab:operational} summarizes 18~months of continuous deployment (Jul/2024--Jun/2026): $>$99\% backend availability, \$20 USD/month infrastructure cost, and 100\% free/open data sources.
+Table~\ref{tab:operational} summarizes 24~months of continuous deployment (Jul/2024--Jun/2026): $>$99\% backend availability, \$20 USD/month infrastructure cost, and 100\% free/open data sources.
 
 \begin{table}[htbp]
 \centering
@@ -648,10 +659,10 @@ Table~\ref{tab:operational} summarizes 18~months of continuous deployment (Jul/2
 \toprule
 \textbf{Metric} & \textbf{Value} \\ 
 \midrule
-Operation time & 18 months \\ 
+Operation time & 24 months \\ 
 FIRMS collections & 540+ \\ 
 FIRMS hotspots detected & 38{,}400+ \\ 
-INPE hotspots (reference period) & 111{,}054 \\ 
+INPE hotspots (reference period) & 111{,}639 \\ 
 Backend availability & $>$99\,\% \\ 
 Monthly infrastructure cost & \$20 USD \\ 
 Paid data sources & 0\,\% \\
@@ -734,7 +745,11 @@ The complete source code is available at: \url{https://github.com/naubergois/cea
 \section*{CRediT authorship contribution statement}
 \label{sec:credit}
 
-\textbf{Nauber Gois}: Conceptualization, Methodology, Software, Investigation, Writing --- original draft, Visualization. \textbf{Alexandre Lobo}: Conceptualization, Methodology, Supervision, Validation, Data curation, Writing --- review \& editing. \textbf{Vladia Pinheiro}: Conceptualization, Methodology, Supervision, Writing --- review \& editing.
+\textbf{Nauber Gois}: Conceptualization, Methodology, Software, Investigation, Writing --- original draft, Visualization.\\
+\textbf{Daniel Valente de Macedo}: Conceptualization, Methodology, Writing --- review and editing.\\
+\textbf{Adriano Bessa Albuquerque}: Conceptualization, Methodology, Writing --- review and editing.\\
+\textbf{Vladia Celia Monteiro Pinheiro}: Conceptualization, Methodology, Supervision, Writing --- review and editing.\\
+\textbf{Alexandre Lobo}: Conceptualization, Methodology, Supervision, Validation, Data Curation, Writing --- review and editing.
 
 \section*{Declaration of competing interest}
 
@@ -743,6 +758,14 @@ The authors declare that they have no known competing financial interests or per
 \section*{Declaration of generative AI and AI-assisted technologies in the writing process}
 
 During the preparation of this work the authors used AI-assisted writing tools for language refinement, literature search, and \LaTeX{} formatting. After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.
+
+\appendix
+\section{Supplementary Exp-B Tables}
+\label{app:exp-b}
+
+Detailed iteration tables for Exp-B v1, v4--v7, the full three-class sklearn report, and the municipal hotspot bar chart.
+
+\input{figures/experimentos-appendix.tex}
 
 %% ===================================================================
 %% Referências
@@ -774,30 +797,11 @@ INPE, ``Banco de Dados de Queimadas --- Metodologia e Dados,'' 2023. [Online]. A
 \bibitem{techreport:goes2022}
 NOAA, ``GOES-16 ABI L2+ Fire Detection and Characterization,'' Technical Report, 2022.
 
-\bibitem{article:wildfire2020}
-M.~Finney, ``An overview of the Wildfire Analyst decision support system,'' \textit{Environmental Modelling \& Software}, vol.~128, 2020.
-
-\bibitem{techreport:canada2019}
-Canadian Forest Service, ``Canadian Forest Fire Behavior Prediction System,'' Tech. Rep., 2019.
-
-\bibitem{website:gfw2023}
-Global Forest Watch, ``Forest Monitoring Designed for Action,'' 2023. [Online]. Available: \url{https://www.globalforestwatch.org/}
-
-\bibitem{article:cnnsmoke2023}
-L.~Zhang, Y.~Wang, H.~Chen, ``Smoke detection in wildland fires using deep convolutional neural networks,'' \textit{IEEE Trans. Geosci. Remote Sens.}, vol.~61, 2023.
-
-\bibitem{article:burnseg2024}
-R.~Pereira, A.~Rodrigues, ``Burn scar segmentation in satellite imagery with Vision Transformers,'' \textit{ISPRS J. Photogramm. Remote Sens.}, vol.~208, 2024.
-
-\bibitem{article:llmrisk2024}
-T.~Martins, P.~Costa, ``LLM-based summarization of wildfire risk reports,'' \textit{Artificial Intelligence for Environmental Science}, vol.~2, 2024.
-
 \bibitem{article:faiss2017}
 J.~Johnson, M.~Douze, H.~Jégou, ``Billion-scale similarity search with GPUs,'' \textit{IEEE Trans. Big Data}, vol.~7, no.~3, 2017.
 
 \bibitem{model:bge2024}
 BAAI, ``BGE Small Embedding Model v1.5,'' 2024. [Online]. Available: \url{https://huggingface.co/BAAI/bge-small-en-v1.5}
-
 
 \bibitem{article:koopman1931}
 B.~O.~Koopman, ``Hamiltonian systems and transformation in Hilbert space,'' \textit{Proc. Natl. Acad. Sci.}, vol.~17, no.~5, pp.~315--318, 1931.
@@ -807,11 +811,6 @@ R.~C.~Rothermel, ``A mathematical model for predicting fire spread in wildland f
 
 \bibitem{article:pyg2019}
 M.~Fey and J.~E.~Lenssen, ``Fast graph representation learning with PyTorch Geometric,'' in \textit{Proc. ICLR Workshop on Representation Learning on Graphs and Manifolds}, 2019.
-
-\bibitem{article:williams2022}
-A.~P.~Williams, B.~Livneh, and K.~McKinnon, ``Fire weather and the physics of wildfire spread,'' \textit{Nature Reviews Earth \& Environment}, vol.~3, pp.~428--443, 2022.
-
-%% --- NOVAS REFERÊNCIAS (adicionadas em jun/2026) ---
 
 \bibitem{article:albini1976}
 F.~A.~Albini, ``Estimating wildfire behavior and effects,'' USDA Forest Service, General Technical Report INT-30, 1976.
@@ -949,6 +948,9 @@ S.~L.~Brunton, J.~L.~Proctor, and J.~N.~Kutz, ``Discovering governing equations 
 \bibitem{article:lusch2018}
 B.~Lusch, J.~N.~Kutz, and S.~L.~Brunton, ``Deep learning for universal linear embeddings of nonlinear dynamics,'' in \textit{Proc. NeurIPS}, vol.~31, 2018.
 
+\bibitem{article:bengio2009curriculum}
+Y.~Bengio, J.~Louradour, R.~Collobert, and J.~Weston, ``Curriculum learning,'' in \textit{Proc. 26th International Conference on Machine Learning (ICML)}, pp.~41--48, 2009.
+
 \bibitem{article:takeishi2017}
 N.~Takeishi, Y.~Kawahara, and T.~Yairi, ``Learning Koopman invariant subspaces for Dynamic Mode Decomposition,'' in \textit{Proc. NeurIPS}, vol.~30, 2017.
 
@@ -971,22 +973,9 @@ L.~Lu, X.~Meng, Z.~Mao, and G.~E.~Karniadakis, ``DeepXDE: A deep learning librar
 \bibitem{article:cuomo2022}
 S.~Cuomo, V.~S.~Di~Cola, F.~Giampaolo, \textit{et al.}, ``Scientific machine learning through physics-informed neural networks: Where we are and what's next,'' \textit{J. Sci. Comput.}, vol.~92, no.~3, p.~88, 2022.
 
-\bibitem{article:wang2021gradient}
-S.~Wang, Y.~Teng, and P.~Perdikaris, ``Understanding and mitigating gradient flow pathologies in physics-informed neural networks,'' \textit{SIAM J. Sci. Comput.}, vol.~43, no.~5, pp.~A3055--A3081, 2021.
-
-\bibitem{article:wang2023expert}
-S.~Wang, S.~Sankaran, H.~Wang, and P.~Perdikaris, ``An expert's guide to training physics-informed neural networks,'' \textit{SIAM J. Sci. Comput.}, vol.~45, no.~3, pp.~A1473--A1501, 2023.
-
-\bibitem{article:krishnapriyan2021}
-A.~S.~Krishnapriyan, A.~Gholami, S.~Zhe, R.~M.~Kirby, and M.~W.~Mahoney, ``Characterizing possible failure modes in physics-informed neural networks,'' \textit{J. Comput. Phys.}, vol.~444, p.~110536, 2021.
-
 \bibitem{article:mao2024pinn}
 Z.~Mao, Y.~Yu, G.~E.~Karniadakis, and L.~Lu, ``Physics-informed neural networks for wildfire spread simulation,'' \textit{J. Comput. Phys.}, vol.~507, p.~112978, 2024.
 
-\bibitem{article:markidis2021}
-S.~Markidis, ``The old and the new: Can physics-informed deep-learning replace traditional linear solvers?'' \textit{Frontiers in Big Data}, vol.~4, p.~669097, 2021.
-
-%%% LANGGRAPH / AGENTIC AI %%%
 \bibitem{article:xi2023}
 Z.~Xi, W.~Chen, X.~Guo, \textit{et al.}, ``The rise and potential of large language model based agents: A survey,'' arXiv preprint arXiv:2309.07864, 2023.
 

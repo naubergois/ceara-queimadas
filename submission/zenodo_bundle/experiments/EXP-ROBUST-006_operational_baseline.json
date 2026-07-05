@@ -1,0 +1,145 @@
+{
+  "experiment": "EXP-ROBUST-006",
+  "timestamp": "2026-06-28T14:02:41.168382+00:00",
+  "documented_systems": {
+    "nasa_firms": {
+      "name": "NASA FIRMS (VIIRS/MODIS direct)",
+      "latency_hours": {
+        "min": 3.0,
+        "max": 6.0,
+        "typical": 4.5
+      },
+      "latency_note": "Satellite overpass to CSV availability (article \u00a7limitations)",
+      "precision": 0.8,
+      "precision_note": "~80% nominal confidence / literature proxy (DETECCOES_REAIS.md)",
+      "recall": null,
+      "role": "Primary detection feed",
+      "cost_usd_month": 0
+    },
+    "inpe_bdqueimadas": {
+      "name": "INPE BDQueimadas",
+      "latency_hours": {
+        "min": 3.0,
+        "max": 6.0,
+        "typical": 4.5
+      },
+      "latency_note": "Institutional processing delay; used as ground truth",
+      "precision": null,
+      "recall": null,
+      "role": "Ground-truth reference (official Brazilian hotspots)",
+      "cost_usd_month": 0
+    },
+    "langgraph_pipeline": {
+      "name": "LangGraph pipeline (this work)",
+      "latency_seconds_first_response": 52.4,
+      "latency_seconds_cached": 1.0,
+      "latency_note": "52.4s cold start (40s FIRMS + 12s geocoding); <1s with 5-min cache",
+      "precision_dry_season": 0.842,
+      "recall_dry_season": 0.918,
+      "precision_note": "EXP-ROBUST-003 dry season 2025, XGBoost YES @ P\u22650.30",
+      "fp_dry_season": 75,
+      "role": "Integrated ingestion, fusion, 3-class alerts, ReAct agent",
+      "cost_usd_month": 20,
+      "availability_pct": 99.0
+    }
+  },
+  "comparison_table": [
+    {
+      "system": "NASA FIRMS (VIIRS/MODIS direct)",
+      "latency": "3\u20136 h",
+      "latency_seconds": 16200.0,
+      "precision": 0.8,
+      "recall": 0.1566265060240964,
+      "spatial_note": "Recall proxy = INPE points matched by FIRMS (same-day, 1 km)",
+      "cost_usd_month": 0,
+      "role": "Primary detection feed"
+    },
+    {
+      "system": "INPE BDQueimadas",
+      "latency": "3\u20136 h",
+      "latency_seconds": 16200.0,
+      "precision": null,
+      "recall": null,
+      "spatial_note": "Ground truth; spatial overlap computed vs FIRMS",
+      "cost_usd_month": 0,
+      "role": "Ground-truth reference (official Brazilian hotspots)"
+    },
+    {
+      "system": "LangGraph pipeline (this work)",
+      "latency": "52.4 s (cold) / <1 s (cache)",
+      "latency_seconds": 52.4,
+      "precision": 0.842,
+      "recall": 0.918,
+      "spatial_note": "Dry season 2025 municipal YES alerts (EXP-ROBUST-003)",
+      "cost_usd_month": 20,
+      "role": "Integrated ingestion, fusion, 3-class alerts, ReAct agent"
+    }
+  ],
+  "spatial_overlap": {
+    "match_radius_km": 1.0,
+    "ceara_bbox": {
+      "lat_min": -7.85,
+      "lat_max": -2.78,
+      "lon_min": -41.42,
+      "lon_max": -37.25
+    },
+    "firms_points": 128,
+    "inpe_points": 249,
+    "firms_matched_to_inpe": 33,
+    "firms_unmatched": 95,
+    "firms_match_rate": 0.2578125,
+    "inpe_matched_to_firms": 39,
+    "inpe_match_rate": 0.1566265060240964,
+    "unique_dates": 8,
+    "per_date_summary": {
+      "2026-06-01": {
+        "firms": 16,
+        "matched": 7,
+        "match_rate": 0.4375
+      },
+      "2026-06-02": {
+        "firms": 34,
+        "matched": 5,
+        "match_rate": 0.14705882352941177
+      },
+      "2026-06-03": {
+        "firms": 13,
+        "matched": 4,
+        "match_rate": 0.3076923076923077
+      },
+      "2026-06-04": {
+        "firms": 26,
+        "matched": 5,
+        "match_rate": 0.19230769230769232
+      },
+      "2026-06-05": {
+        "firms": 9,
+        "matched": 2,
+        "match_rate": 0.2222222222222222
+      },
+      "2026-06-06": {
+        "firms": 10,
+        "matched": 4,
+        "match_rate": 0.4
+      },
+      "2026-06-07": {
+        "firms": 3,
+        "matched": 0,
+        "match_rate": 0.0
+      },
+      "2026-06-08": {
+        "firms": 17,
+        "matched": 6,
+        "match_rate": 0.35294117647058826
+      }
+    }
+  },
+  "key_findings": {
+    "langgraph_latency_advantage_vs_firms_hours": 309.2,
+    "langgraph_dry_season_precision": 0.842,
+    "langgraph_dry_season_recall": 0.918,
+    "firms_documented_precision": 0.8,
+    "firms_to_inpe_match_rate": 0.2578125
+  },
+  "runtime_sec": 0.0
+}

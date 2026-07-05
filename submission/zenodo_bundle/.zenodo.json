@@ -1,0 +1,23 @@
+{
+  "title": "Ceará Wildfire Digital Twin — reproducibility archive (EMS submission)",
+  "description": "Reproducibility bundle for the manuscript submitted to Environmental Modelling & Software: LaTeX/PDF, EXP-ROBUST-001–006 results, INPE CSV sample, and reproduction scripts.",
+  "upload_type": "other",
+  "publication_type": "other",
+  "publication_date": "2026-07-04",
+  "creators": [
+    {"name": "Gois, Nauber", "affiliation": "Universidade de Fortaleza (UNIFOR)", "orcid": "0000-0001-9361-8659"},
+    {"name": "Lobo, Alexandre", "affiliation": "Universidade de São José (USJ)", "orcid": "0009-0000-4099-7878"},
+    {"name": "Pinheiro, Vladia Celia Monteiro", "affiliation": "Instituto Federal do Ceará (IFCE)", "orcid": "0000-0002-9851-8304"},
+    {"name": "Macedo, Daniel Valente de", "affiliation": "Saxion University of Applied Sciences", "orcid": "0000-0003-4720-6850"},
+    {"name": "Albuquerque, Adriano Bessa", "affiliation": "Universidade de Fortaleza (UNIFOR)", "orcid": "0000-0002-1491-655X"}
+  ],
+  "keywords": ["wildfire", "digital twin", "LangGraph", "INPE", "FIRMS", "NeKo-PIGNN", "environmental modelling"],
+  "license": "cc-by-4.0",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/naubergois/ceara-queimadas",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

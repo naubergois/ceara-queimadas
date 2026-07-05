@@ -12,6 +12,15 @@ Portal: https://www.editorialmanager.com/envsoft/
 | `refs-ems.bib` | BibTeX database (83 entries) |
 | `highlights.txt` | Highlights (upload separately) |
 | `cover_letter.pdf` | Cover letter |
+| `graphical_abstract.png` | Graphical abstract (1328×531, EMS minimum) |
+| `graphical_abstract_2k.png` | Full 2K source (2816×1584) |
+| `manuscript.pdf` | Compiled PDF for upload (copy of main PDF) |
+| `supplementary.pdf` | Supplementary Information |
+| `latex_source.zip` | LaTeX source bundle for EM (`scripts/package_ems_upload.sh`) |
+| `scripts/publish_zenodo_deposit.sh` | GitHub release + optional Zenodo DOI (TASK-014) |
+| `zenodo_bundle_v1.0.0-ems-submission.zip` | Reproducibility archive for Zenodo |
+| `SUBMISSION_UPLOAD.md` | Final upload checklist |
+| `ORCID_AUTHORS.md` | ORCID registration guide |
 | `checklist_envmod.md` | Internal checklist |
 | `ZENODO.md` | DOI release instructions |
 

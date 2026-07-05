@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\caption{Model comparison on real wildfire data from Cear\'a (NASA FIRMS + INPE + Open-Meteo). 15 municipalities, 97 days of climate data, 377 fire detections.}
+\label{tab:real_data}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Model} & \textbf{RMSE}$\downarrow$ & \textbf{MAE}$\downarrow$ & \textbf{R\textsuperscript{2}}$\uparrow$ & \textbf{F1}$\uparrow$ & \textbf{Inf. (ms)} \\
+\midrule
+MLP & \textbf{0.1377} & 0.0993 & \textbf{0.7986} & 0.9407 & 0.0 \\
+LSTM & 0.1631 & 0.1268 & 0.7182 & 0.9431 & 0.4 \\
+XGBoost & 0.1485 & 0.1115 & 0.7660 & 0.9311 & 5.6 \\
+Koopman-Det (ours) & 0.1569 & 0.1148 & 0.7388 & 0.9243 & 0.1 \\
+NeKo-PIGNN v2 (ours) & 0.1516 & 0.1099 & 0.7561 & 0.9257 & 0.3 \\
+\bottomrule
+\end{tabular}
+\end{table}

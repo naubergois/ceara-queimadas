@@ -1,0 +1,69 @@
+{
+  "experiment": "v9 \u2014 3 classes redefinidas (SIM=todo foco)",
+  "xgb_report": {
+    "NO": {
+      "precision": 0.6934865900383141,
+      "recall": 0.9731182795698925,
+      "f1-score": 0.8098434004474273,
+      "support": 186.0
+    },
+    "UNCERTAIN": {
+      "precision": 0.6689655172413793,
+      "recall": 0.6736111111111112,
+      "f1-score": 0.671280276816609,
+      "support": 144.0
+    },
+    "YES": {
+      "precision": 0.5,
+      "recall": 0.07777777777777778,
+      "f1-score": 0.1346153846153846,
+      "support": 90.0
+    },
+    "accuracy": 0.6785714285714286,
+    "macro avg": {
+      "precision": 0.6208173690932312,
+      "recall": 0.5748357228195938,
+      "f1-score": 0.5385796872931402,
+      "support": 420.0
+    },
+    "weighted avg": {
+      "precision": 0.6436179529282977,
+      "recall": 0.6785714285714286,
+      "f1-score": 0.617644326095709,
+      "support": 420.0
+    }
+  },
+  "neko_report": {
+    "NO": {
+      "precision": 0.6329113924050633,
+      "recall": 0.26881720430107525,
+      "f1-score": 0.37735849056603776,
+      "support": 186.0
+    },
+    "UNCERTAIN": {
+      "precision": 0.40264026402640263,
+      "recall": 0.8472222222222222,
+      "f1-score": 0.5458612975391499,
+      "support": 144.0
+    },
+    "YES": {
+      "precision": 0.18421052631578946,
+      "recall": 0.07777777777777778,
+      "f1-score": 0.109375,
+      "support": 90.0
+    },
+    "accuracy": 0.4261904761904762,
+    "macro avg": {
+      "precision": 0.40658739424908513,
+      "recall": 0.39793906810035834,
+      "f1-score": 0.34419826270172926,
+      "support": 420.0
+    },
+    "weighted avg": {
+      "precision": 0.4578111056561067,
+      "recall": 0.4261904761904762,
+      "f1-score": 0.37770584783552524,
+      "support": 420.0
+    }
+  }
+}

@@ -1,0 +1,16 @@
+\begin{table}[!htbp]
+\centering
+\caption{Paired significance tests: Wilcoxon (regression RMSE) and McNemar (classification).}
+\label{tab:paired-tests}
+\footnotesize
+\tblfit{%
+\begin{tabular}{@{}p{3.6cm}rrrl@{}}
+\toprule
+\textbf{Test} & \textbf{Stat.} & \textbf{$p$} & \textbf{Sig.} & \textbf{Notes} \\
+\midrule
+Wilcoxon: MLP vs XGB RMSE & 0.00 & 0.0625 & No & $\Delta$=-0.0099 \\
+McNemar: 3-class vs persist. & 15 & 0.1418 & No & acc 73.2\% vs 67.9\% \\
+McNemar: YES alert vs persist. & 2 & 0.8714 & No & prec 100\% vs 53.8\% \\
+\bottomrule
+\end{tabular}}
+\end{table}

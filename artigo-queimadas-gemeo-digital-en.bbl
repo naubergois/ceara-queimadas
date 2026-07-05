@@ -1,0 +1,464 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{article:alencar2020}
+A.~Alencar, V.~Arruda, L.~Silva, et~al., {Amazonia on fire: A satellite-based
+  assessment of fires during the 2019 drought}, Environmental Research Letters
+  15~(3) (2020).
+\newblock \href {https://doi.org/10.1088/1748-9326/ab5b10}
+  {\path{doi:10.1088/1748-9326/ab5b10}}.
+
+\bibitem{master:silva2021}
+J.~Silva, {Impacts of wildfires on public health in the Brazilian semi-arid
+  region}, Master's thesis, Universidade Federal do Ceará (2021).
+
+\bibitem{techreport:funceme2024}
+{FUNCEME}, {Drought monitoring bulletin --- Ceará 2024}, Tech. rep., FUNCEME
+  (2024).
+
+\bibitem{manual:firms2024}
+{NASA FIRMS}, \href{https://firms.modaps.eosdis.nasa.gov/}{{Fire Information
+  for Resource Management System --- User Guide}} (2024).
+\newline\urlprefix\url{https://firms.modaps.eosdis.nasa.gov/}
+
+\bibitem{article:react2023}
+S.~Yao, J.~Zhao, D.~Yu, et~al., {ReAct: Synergizing Reasoning and Acting in
+  Language Models}, in: International Conference on Learning Representations
+  (ICLR), 2023.
+
+\bibitem{manual:langgraph2024}
+{LangChain}, \href{https://langchain-ai.github.io/langgraph/}{{LangGraph
+  Documentation}} (2024).
+\newline\urlprefix\url{https://langchain-ai.github.io/langgraph/}
+
+\bibitem{article:bauer2023natrev}
+P.~Bauer, T.~Quintino, N.~Wedi, A.~Bonanni, I.~Hadade, R.~Hill, T.~Kimpson,
+  H.~Munji, F.~Pappenberger, M.~Sima, et~al., Earth system digital twins: A new
+  paradigm for environmental science, Nature Reviews Earth and Environment
+  4~(8) (2023) 545--558.
+
+\bibitem{article:grieves2014}
+M.~Grieves, {Digital Twin: Manufacturing Excellence through Virtual Factory
+  Replication}, White paper, Florida Institute of Technology (2014).
+
+\bibitem{article:tao2019}
+F.~Tao, H.~Zhang, A.~Liu, A.~Y.~C. Nee, Digital twin in industry:
+  State-of-the-art, IEEE Transactions on Industrial Informatics 15~(4) (2019)
+  2405--2415.
+\newblock \href {https://doi.org/10.1109/TII.2018.2876766}
+  {\path{doi:10.1109/TII.2018.2876766}}.
+
+\bibitem{article:barricelli2019}
+B.~R. Barricelli, E.~Casiraghi, D.~Fogli, A survey on digital twin:
+  Definitions, characteristics, applications, and design implications, IEEE
+  Access 7 (2019) 167653--167671.
+\newblock \href {https://doi.org/10.1109/ACCESS.2019.2947385}
+  {\path{doi:10.1109/ACCESS.2019.2947385}}.
+
+\bibitem{article:rasheed2020}
+A.~Rasheed, O.~San, T.~Kvamsdal, Digital twin: Values, challenges and enablers
+  from a modeling perspective, IEEE Access 8 (2020) 21980--22012.
+\newblock \href {https://doi.org/10.1109/ACCESS.2020.2970143}
+  {\path{doi:10.1109/ACCESS.2020.2970143}}.
+
+\bibitem{article:fuller2020}
+A.~Fuller, Z.~Fan, C.~Day, C.~Barlow, Digital twin: Enabling technologies,
+  challenges and open research, IEEE Access 8 (2020) 108952--108971.
+\newblock \href {https://doi.org/10.1109/ACCESS.2020.2998358}
+  {\path{doi:10.1109/ACCESS.2020.2998358}}.
+
+\bibitem{article:jones2020}
+D.~Jones, C.~Snider, A.~Nassehi, J.~Yon, B.~Hicks, Characterising the digital
+  twin: A systematic literature review, CIRP Journal of Manufacturing Science
+  and Technology 29 (2020) 36--52.
+\newblock \href {https://doi.org/10.1016/j.cirpj.2020.02.002}
+  {\path{doi:10.1016/j.cirpj.2020.02.002}}.
+
+\bibitem{article:voosen2020}
+P.~Voosen, Europe builds 'digital twin' of earth to hone climate forecasts,
+  Science 370~(6513) (2020) 158.
+\newblock \href {https://doi.org/10.1126/science.370.6513.158}
+  {\path{doi:10.1126/science.370.6513.158}}.
+
+\bibitem{article:bauer2021nature}
+P.~Bauer, P.~D. Dueben, T.~Hoefler, T.~Quintino, T.~C. Schulthess, N.~Wedi,
+  {The Digital Twin of the Earth System}, Nature Computational Science 1~(10)
+  (2021) 654--656.
+\newblock \href {https://doi.org/10.1038/s43588-021-00148-7}
+  {\path{doi:10.1038/s43588-021-00148-7}}.
+
+\bibitem{article:nativi2021}
+S.~Nativi, P.~Mazzetti, M.~Santoro, A.~Papeschi, M.~Craglia, {Digital Twin
+  Earth: Could it provide an answer to global environmental challenges?},
+  Environmental Science \& Policy 126 (2021) 10--18.
+\newblock \href {https://doi.org/10.1016/j.envsci.2021.08.002}
+  {\path{doi:10.1016/j.envsci.2021.08.002}}.
+
+\bibitem{article:morsali2026}
+M.~Morsali, S.~H. Khajavi, \href{https://arxiv.org/abs/2602.08949}{{Digital
+  Twin and Agentic AI for Wild Fire Disaster Management: Intelligent Virtual
+  Situation Room (IVSR)}}, arXiv preprint arXiv:2602.08949 (2026).
+\newblock \href {http://arxiv.org/abs/2602.08949} {\path{arXiv:2602.08949}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2602.08949}
+
+\bibitem{article:webb2026}
+C.~Webb, M.~Habibpour, M.~H. Raha, A.~R. Tavakkoli, J.~Coen, F.~Afghah,
+  \href{https://arxiv.org/abs/2601.03449}{{FIRE-VLM: A Vision-Language-Driven
+  Reinforcement Learning Framework for UAV Wildfire Tracking in a
+  Physics-Grounded Fire Digital Twin}}, arXiv preprint arXiv:2601.03449 (2026).
+\newblock \href {http://arxiv.org/abs/2601.03449} {\path{arXiv:2601.03449}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2601.03449}
+
+\bibitem{article:raha2025}
+M.~H. Raha, A.~R. Tavakkoli, C.~Webb, M.~Habibpour, J.~Coen, E.~Rowell,
+  F.~Afghah, \href{https://arxiv.org/abs/2510.18879}{{FIRETWIN: Digital Twin
+  Advancing Multi-Modal Sensing, Interactive Analytics for Tactical Wildfire
+  Response}}, in: 2025 IEEE 30th International Workshop on Computer Aided
+  Modeling and Design of Communication Links and Networks (CAMAD), 2025, pp.
+  1--6.
+\newblock \href {http://arxiv.org/abs/2510.18879} {\path{arXiv:2510.18879}},
+  \href {https://doi.org/10.1109/camad67323.2025.11229918}
+  {\path{doi:10.1109/camad67323.2025.11229918}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2510.18879}
+
+\bibitem{article:aimnet2025}
+Z.~Zhou, X.~Wang, Y.~Yan, L.~Mijiddorj, Y.~Ding, T.~Beringer, P.~M. Khiabani,
+  W.~G. Jentner, X.-M. Hu, C.~Wang, B.~M. Carroll, M.~Xue, D.~Ebert, J.~Li,
+  \href{https://arxiv.org/abs/2512.06148}{{AIMNET: An IoT-Empowered Digital
+  Twin for Continuous Gas Emission Monitoring and Early Hazard Detection}},
+  arXiv preprint arXiv:2512.06148 (2025).
+\newblock \href {http://arxiv.org/abs/2512.06148} {\path{arXiv:2512.06148}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2512.06148}
+
+\bibitem{article:hrdt2025}
+Z.~Shen, H.~Zhou, \href{https://arxiv.org/abs/2510.22941}{{Hazard-Responsive
+  Digital Twin for Climate-Driven Urban Resilience and Equity}}, arXiv preprint
+  arXiv:2510.22941 (2025).
+\newblock \href {http://arxiv.org/abs/2510.22941} {\path{arXiv:2510.22941}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2510.22941}
+
+\bibitem{article:esparza2025}
+I.~Esparza, A.~Battal, A.~Mostafavi,
+  \href{https://arxiv.org/abs/2512.20813}{{GraphFire-X: Physics-Informed Graph
+  Attention Networks for Building-Scale Wildfire Preparedness}}, arXiv preprint
+  arXiv:2512.20813 (2025).
+\newblock \href {http://arxiv.org/abs/2512.20813} {\path{arXiv:2512.20813}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2512.20813}
+
+\bibitem{article:michail2025}
+D.~Michail, I.~Davalas, K.~Chafis, L.~I. Panagiotou, I.~Prapas, N.~I. Bountos,
+  S.~Kondylatos, I.~Papoutsis,
+  \href{https://arxiv.org/abs/2502.01550}{{FireCastNet: Earth-as-a-Graph for
+  Seasonal Fire Prediction}}, Scientific Reports (2025).
+\newblock \href {http://arxiv.org/abs/2502.01550} {\path{arXiv:2502.01550}},
+  \href {https://doi.org/10.1038/s41598-025-30645-7}
+  {\path{doi:10.1038/s41598-025-30645-7}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2502.01550}
+
+\bibitem{article:giglio2016}
+L.~Giglio, W.~Schroeder, C.~O. Justice, The collection 6 modis active fire
+  detection algorithm and fire products, Remote Sensing of Environment 178
+  (2016) 31--41.
+\newblock \href {https://doi.org/10.1016/j.rse.2016.02.054}
+  {\path{doi:10.1016/j.rse.2016.02.054}}.
+
+\bibitem{article:schroeder2014}
+W.~Schroeder, P.~Oliva, L.~Giglio, I.~A. Csiszar, The new viirs 375m active
+  fire detection data product: Algorithm description and initial assessment,
+  Remote Sensing of Environment 143 (2014) 85--96.
+\newblock \href {https://doi.org/10.1016/j.rse.2014.01.008}
+  {\path{doi:10.1016/j.rse.2014.01.008}}.
+
+\bibitem{article:inpe2023}
+{INPE}, \href{https://queimadas.dgi.inpe.br/}{{Wildfire Database ---
+  Methodology and Data}} (2023).
+\newline\urlprefix\url{https://queimadas.dgi.inpe.br/}
+
+\bibitem{article:wooster2021}
+M.~J. Wooster, G.~J. Roberts, L.~Giglio, et~al., {Satellite remote sensing of
+  active fires: History and current status, applications and future
+  requirements}, Remote Sensing of Environment 267 (2021) 112694.
+\newblock \href {https://doi.org/10.1016/j.rse.2021.112694}
+  {\path{doi:10.1016/j.rse.2021.112694}}.
+
+\bibitem{techreport:goes2022}
+{NOAA}, {GOES-16 ABI L2+ Fire Detection and Characterization}, Tech. rep., NOAA
+  (2022).
+
+\bibitem{website:mapbiomas}
+{MapBiomas}, \href{https://mapbiomas.org/}{{MapBiomas Fogo}}, accessed 2025
+  (2025).
+\newline\urlprefix\url{https://mapbiomas.org/}
+
+\bibitem{article:mccarty2024}
+J.~L. McCarty, T.~Smith, D.~P. Roy, {Trends in fire activity and associated
+  emissions in South America from 2003 to 2023}, Global Change Biology 30~(4)
+  (2024) e17243.
+\newblock \href {https://doi.org/10.1111/gcb.17243}
+  {\path{doi:10.1111/gcb.17243}}.
+
+\bibitem{article:alves2023}
+D.~B. Alves, F.~J.~S. Moreira, R.~L.~S. Souza, {Machine learning for wildfire
+  prediction in the Brazilian Cerrado and Caatinga biomes}, Ecological
+  Informatics 78 (2023) 102362.
+\newblock \href {https://doi.org/10.1016/j.ecoinf.2023.102362}
+  {\path{doi:10.1016/j.ecoinf.2023.102362}}.
+
+\bibitem{article:arruda2025}
+V.~S. Arruda, A.~P.~M. Ramos, C.~H.~L. Silva, {Deep learning approaches for
+  burned area mapping in the Amazon and Caatinga biomes using Sentinel-2
+  imagery}, ISPRS Journal of Photogrammetry and Remote Sensing 219 (2025)
+  245--261.
+\newblock \href {https://doi.org/10.1016/j.isprsjprs.2025.01.015}
+  {\path{doi:10.1016/j.isprsjprs.2025.01.015}}.
+
+\bibitem{article:gargiulo2023}
+F.~Gargiulo, D.~G. Marino, A.~Zinno, et~al., {A multi-source satellite data
+  approach for wildfire detection and monitoring}, Remote Sensing 15~(8) (2023)
+  1987.
+\newblock \href {https://doi.org/10.3390/rs15081987}
+  {\path{doi:10.3390/rs15081987}}.
+
+\bibitem{article:hodzic2024}
+E.~Hodzic, A.~R.~F. O.~P., J.~Davila, {Fire Risk Prediction based on Satellite
+  Data and Machine Learning: A Systematic Literature Review}, IEEE Access 12
+  (2024) 106557--106583.
+\newblock \href {https://doi.org/10.1109/ACCESS.2024.3356789}
+  {\path{doi:10.1109/ACCESS.2024.3356789}}.
+
+\bibitem{article:koopman1931}
+B.~O. Koopman, {Hamiltonian Systems and Transformation in Hilbert Space},
+  Proceedings of the National Academy of Sciences 17~(5) (1931) 315--318.
+\newblock \href {https://doi.org/10.1073/pnas.17.5.315}
+  {\path{doi:10.1073/pnas.17.5.315}}.
+
+\bibitem{article:rowley2009}
+C.~W. Rowley, I.~Mezi\'{c}, S.~Bagheri, P.~Schlatter, D.~S. Henningson,
+  Spectral analysis of nonlinear flows, Journal of Fluid Mechanics 641 (2009)
+  115--127.
+\newblock \href {https://doi.org/10.1017/S0022112009992059}
+  {\path{doi:10.1017/S0022112009992059}}.
+
+\bibitem{article:mezic2013}
+I.~Mezi\'{c}, Analysis of fluid flows via spectral properties of the koopman
+  operator, Annual Review of Fluid Mechanics 45 (2013) 357--378.
+\newblock \href {https://doi.org/10.1146/annurev-fluid-011302-120652}
+  {\path{doi:10.1146/annurev-fluid-011302-120652}}.
+
+\bibitem{article:schmid2010}
+P.~J. Schmid, {Dynamic mode decomposition of numerical and experimental data},
+  Journal of Fluid Mechanics 656 (2010) 5--28.
+\newblock \href {https://doi.org/10.1017/S0022112010001217}
+  {\path{doi:10.1017/S0022112010001217}}.
+
+\bibitem{article:proctor2016}
+J.~L. Proctor, S.~L. Brunton, J.~N. Kutz, Dynamic mode decomposition with
+  control, SIAM Journal on Applied Dynamical Systems 15~(1) (2016) 142--161.
+\newblock \href {https://doi.org/10.1137/15M1013857}
+  {\path{doi:10.1137/15M1013857}}.
+
+\bibitem{article:brunton2016sindy}
+S.~L. Brunton, J.~L. Proctor, J.~N. Kutz, Discovering governing equations from
+  data by sparse identification of nonlinear dynamical systems, Proceedings of
+  the National Academy of Sciences 113~(15) (2016) 3932--3937.
+\newblock \href {https://doi.org/10.1073/pnas.1517384113}
+  {\path{doi:10.1073/pnas.1517384113}}.
+
+\bibitem{article:baddoo2023}
+P.~J. Baddoo, B.~Herrmann, B.~J. McKeon, J.~N. Kutz, S.~L. Brunton,
+  Physics-informed dynamic mode decomposition, Proceedings of the Royal Society
+  A 479~(2271) (2023) 20220576.
+\newblock \href {https://doi.org/10.1098/rspa.2022.0576}
+  {\path{doi:10.1098/rspa.2022.0576}}.
+
+\bibitem{article:brunton2021}
+S.~L. Brunton, M.~Budi{\v{s}}i{\'{c}}, E.~Kaiser, J.~N. Kutz, {Modern Koopman
+  Theory for Dynamical Systems}, SIAM Review 64~(1) (2022) 229--340.
+\newblock \href {https://doi.org/10.1137/21M1401243}
+  {\path{doi:10.1137/21M1401243}}.
+
+\bibitem{article:kutz2016}
+J.~N. Kutz, S.~L. Brunton, B.~W. Brunton, J.~L. Proctor, {Dynamic Mode
+  Decomposition: Data-Driven Modeling of Complex Systems}, SIAM, 2016.
+\newblock \href {https://doi.org/10.1137/1.9781611974508}
+  {\path{doi:10.1137/1.9781611974508}}.
+
+\bibitem{article:lusch2018}
+B.~Lusch, J.~N. Kutz, S.~L. Brunton, Deep learning for universal linear
+  embeddings of nonlinear dynamics, in: Advances in Neural Information
+  Processing Systems (NeurIPS), Vol.~31, 2018.
+
+\bibitem{article:takeishi2017}
+N.~Takeishi, Y.~Kawahara, T.~Yairi, Learning koopman invariant subspaces for
+  dynamic mode decomposition, in: Advances in Neural Information Processing
+  Systems (NeurIPS), Vol.~30, 2017.
+
+\bibitem{article:morton2019}
+J.~Morton, F.~D. Witherden, A.~Jameson, M.~J. Kochenderfer, Deep dynamical
+  modeling and control of unsteady fluid flows, Neural Computation 31~(12)
+  (2019) 2469--2501.
+
+\bibitem{article:raissi2019}
+M.~Raissi, P.~Perdikaris, G.~E. Karniadakis, {Physics-informed neural networks:
+  A deep learning framework for solving forward and inverse problems involving
+  nonlinear partial differential equations}, Journal of Computational Physics
+  378 (2019) 686--707.
+\newblock \href {https://doi.org/10.1016/j.jcp.2018.10.045}
+  {\path{doi:10.1016/j.jcp.2018.10.045}}.
+
+\bibitem{article:karniadakis2021}
+G.~E. Karniadakis, I.~G. Kevrekidis, L.~Lu, P.~Perdikaris, S.~Wang, L.~Yang,
+  Physics-informed machine learning, Nature Reviews Physics 3~(6) (2021)
+  422--440.
+\newblock \href {https://doi.org/10.1038/s42254-021-00314-5}
+  {\path{doi:10.1038/s42254-021-00314-5}}.
+
+\bibitem{article:rothermel1972}
+R.~C. Rothermel, {A mathematical model for predicting fire spread in wildland
+  fuels}, Tech. Rep. INT-115, USDA Forest Service (1972).
+
+\bibitem{article:scott2001}
+J.~H. Scott, R.~E. Burgan, {Standard fire behavior fuel models: a comprehensive
+  set for use with Rothermel's surface fire spread model}, Tech. Rep.
+  RMRS-GTR-153, USDA Forest Service (2005).
+
+\bibitem{article:andrews2014}
+P.~L. Andrews, {Current status and future needs of the BehavePlus Fire Modeling
+  System}, International Journal of Wildland Fire 23~(1) (2014) 21--33.
+\newblock \href {https://doi.org/10.1071/WF13098} {\path{doi:10.1071/WF13098}}.
+
+\bibitem{article:finney2011}
+M.~A. Finney, I.~C. Grenfell, C.~W. McHugh, et~al., {A method for ensemble
+  wildland fire simulation}, Environmental Modeling and Assessment 16~(2)
+  (2011) 153--167.
+\newblock \href {https://doi.org/10.1007/s10666-010-9218-7}
+  {\path{doi:10.1007/s10666-010-9218-7}}.
+
+\bibitem{article:albini1976}
+F.~A. Albini, {Estimating wildfire behavior and effects}, Tech. Rep. INT-30,
+  USDA Forest Service (1976).
+
+\bibitem{article:vogiatzoglou2024}
+K.~Vogiatzoglou, C.~Papadimitriou, V.~Bontozoglou, K.~Ampountolas,
+  \href{https://arxiv.org/abs/2406.14591}{{Physics-informed neural networks for
+  parameter learning of wildfire spreading}}, Computer Methods in Applied
+  Mechanics and Engineering 437 (2024) 117545.
+\newblock \href {http://arxiv.org/abs/2406.14591} {\path{arXiv:2406.14591}},
+  \href {https://doi.org/10.1016/j.cma.2024.117545}
+  {\path{doi:10.1016/j.cma.2024.117545}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2406.14591}
+
+\bibitem{article:mao2024pinn}
+Z.~Mao, Y.~Yu, G.~E. Karniadakis, L.~Lu, Physics-informed neural networks for
+  wildfire spread simulation, Journal of Computational Physics 507 (2024)
+  112978.
+
+\bibitem{article:gigante2025}
+G.~Gigante, M.~Gualtieri, L.~Lauriola, F.~Aiolli,
+  \href{https://arxiv.org/abs/2503.11209}{{Physics-Informed Graph Neural
+  Networks: A Systematic Survey}}, arXiv preprint arXiv:2503.11209 (2025).
+\newblock \href {http://arxiv.org/abs/2503.11209} {\path{arXiv:2503.11209}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2503.11209}
+
+\bibitem{article:gao2023}
+Z.~Gao, T.~Yan, H.~Hu, {Physics-informed graph neural networks for predicting
+  wildfire spread}, in: NeurIPS Workshop on Machine Learning for the Physical
+  Sciences, 2023.
+
+\bibitem{article:li2025}
+S.~Li, Y.~Wang, S.~Pai, {A physics-informed graph neural network approach for
+  wildfire spread forecasting}, Environmental Modelling \& Software 186 (2025)
+  106315.
+\newblock \href {https://doi.org/10.1016/j.envsoft.2025.106315}
+  {\path{doi:10.1016/j.envsoft.2025.106315}}.
+
+\bibitem{article:xi2023}
+Z.~Xi, W.~Chen, X.~Guo, W.~He, Y.~Ding, B.~Hong, M.~Zhang, J.~Wang, S.~B. Roy,
+  L.~Yao, et~al., \href{https://arxiv.org/abs/2309.07864}{The rise and
+  potential of large language model based agents: A survey}, arXiv preprint
+  arXiv:2309.07864 (2023).
+\newblock \href {http://arxiv.org/abs/2309.07864} {\path{arXiv:2309.07864}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2309.07864}
+
+\bibitem{article:wang2024survey}
+L.~Wang, C.~Ma, X.~Feng, Z.~Zhang, H.~Yang, J.~Zhang, Z.~Chen, J.~Tang,
+  X.~Chen, Y.~Lin, W.~X. Zhao, Z.~Wei, J.-R. Wen, A survey on large language
+  model based autonomous agents, Frontiers of Computer Science 18~(6) (2024)
+  186345.
+\newblock \href {https://doi.org/10.1007/s11704-024-40231-1}
+  {\path{doi:10.1007/s11704-024-40231-1}}.
+
+\bibitem{article:shinn2023}
+N.~Shinn, F.~Cassano, A.~Gopinath, K.~Narasimhan, S.~Yao,
+  \href{https://arxiv.org/abs/2303.11366}{{Reflexion: Language Agents with
+  Verbal Reinforcement Learning}}, in: Advances in Neural Information
+  Processing Systems (NeurIPS), Vol.~36, 2023.
+\newblock \href {http://arxiv.org/abs/2303.11366} {\path{arXiv:2303.11366}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2303.11366}
+
+\bibitem{article:schick2023}
+T.~Schick, J.~Dwivedi-Yu, R.~Dess{\`\i}, R.~Raileanu, M.~Lomeli,
+  L.~Zettlemoyer, N.~Cancedda, T.~Scialom, Toolformer: Language models can
+  teach themselves to use tools, in: Advances in Neural Information Processing
+  Systems (NeurIPS), Vol.~36, 2023.
+
+\bibitem{article:patil2023}
+S.~G. Patil, T.~Zhang, X.~Wang, J.~E. Gonzalez, Gorilla: Large language model
+  connected with massive apis, in: Advances in Neural Information Processing
+  Systems (NeurIPS), Vol.~36, 2023.
+
+\bibitem{article:park2023}
+J.~S. Park, J.~C. O'Brien, C.~J. Cai, M.~R. Morris, P.~Liang, M.~S. Bernstein,
+  Generative agents: Interactive simulacra of human behavior, in: Proceedings
+  of the 36th Annual ACM Symposium on User Interface Software and Technology
+  (UIST), 2023.
+\newblock \href {https://doi.org/10.1145/3586183.3606763}
+  {\path{doi:10.1145/3586183.3606763}}.
+
+\bibitem{article:lewis2020}
+P.~Lewis, E.~Perez, A.~Piktus, et~al., {Retrieval-augmented generation for
+  knowledge-intensive {NLP} tasks}, in: Advances in Neural Information
+  Processing Systems (NeurIPS), 2020.
+
+\bibitem{article:faiss2017}
+J.~Johnson, M.~Douze, H.~Jégou, {Billion-scale similarity search with GPUs},
+  IEEE Transactions on Big Data 7~(3) (2021) 535--547.
+\newblock \href {https://doi.org/10.1109/TBDATA.2019.2921572}
+  {\path{doi:10.1109/TBDATA.2019.2921572}}.
+
+\bibitem{model:bge2024}
+{BAAI}, \href{https://huggingface.co/BAAI/bge-small-en-v1.5}{{BGE Small
+  Embedding Model v1.5}} (2024).
+\newline\urlprefix\url{https://huggingface.co/BAAI/bge-small-en-v1.5}
+
+\bibitem{article:gao2024rag}
+Y.~Gao, Y.~Xiong, X.~Gao, K.~Jia, J.~Pan, Y.~Bi, Y.~Dai, J.~Sun, Q.~Guo,
+  M.~Wang, H.~Wang, \href{https://arxiv.org/abs/2312.10997}{Retrieval-augmented
+  generation for large language models: A survey}, arXiv preprint
+  arXiv:2312.10997 (2024).
+\newblock \href {http://arxiv.org/abs/2312.10997} {\path{arXiv:2312.10997}}.
+\newline\urlprefix\url{https://arxiv.org/abs/2312.10997}
+
+\bibitem{article:lu2021deepxde}
+L.~Lu, X.~Meng, Z.~Mao, G.~E. Karniadakis, Deepxde: A deep learning library for
+  solving differential equations, SIAM Review 63~(1) (2021) 208--228.
+\newblock \href {https://doi.org/10.1137/19M1274067}
+  {\path{doi:10.1137/19M1274067}}.
+
+\bibitem{article:cuomo2022}
+S.~Cuomo, V.~S.~D. Cola, F.~Giampaolo, G.~Rozza, M.~Raissi, F.~Piccialli,
+  Scientific machine learning through physics-informed neural networks: Where
+  we are and what's next, Journal of Scientific Computing 92~(3) (2022) 88.
+\newblock \href {https://doi.org/10.1007/s10915-022-01939-3}
+  {\path{doi:10.1007/s10915-022-01939-3}}.
+
+\bibitem{article:pyg2019}
+M.~Fey, J.~E. Lenssen, {Fast graph representation learning with PyTorch
+  Geometric}, in: ICLR Workshop on Representation Learning on Graphs and
+  Manifolds, 2019.
+
+\end{thebibliography}

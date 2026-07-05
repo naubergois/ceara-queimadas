@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\caption{Bootstrap 95\% confidence intervals (2{,}000 resamples, test holdout).}
+\label{tab:bootstrap-ci}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Metric (YES alerts, $P\geq 0.30$)} & \textbf{Point} & \textbf{CI 95\% low} & \textbf{CI 95\% high} \\
+\midrule
+Precision & 64.8\% & 0.0\% & 100.0\% \\
+Recall & 3.2\% & 0.0\% & 10.3\% \\
+F1 & 0.061 & 0.000 & 0.188 \\
+\midrule
+MLP RMSE (5 seeds) & 0.1372 & 0.1334 & 0.1429 \\
+MLP R$^2$ (5 seeds) & 0.800 & 0.783 & 0.811 \\
+\bottomrule
+\end{tabular}
+\end{table}

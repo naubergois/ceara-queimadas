@@ -1,0 +1,81 @@
+{
+  "experiment": "TASK-083 v4 \u2014 Improved NeKo-PIGNN on Real Data",
+  "date": "2026-06-08",
+  "improvements": [
+    "Feature Engineering (15 features incl. moving avg, interactions, dry spell)",
+    "Lookback window = 7 days",
+    "Data Augmentation 3x (noise jitter)",
+    "NeKo-PIGNN v3 with temporal encoder",
+    "Ensemble stacking (NeKo + XGBoost)"
+  ],
+  "config": {
+    "num_municipalities": 15,
+    "num_days": 97,
+    "raw_features": 6,
+    "engineered_features": 15,
+    "lookback": 7,
+    "augmentation_factor": 3
+  },
+  "results": [
+    {
+      "model": "MLP plain (v3 ref)",
+      "rmse": 0.1434,
+      "mae": 0.1045,
+      "r2": 0.7817,
+      "f1_score": 0.9364,
+      "precision": 0.9106,
+      "recall": 0.9637,
+      "inference_ms": 0.01
+    },
+    {
+      "model": "XGBoost (ensemble base)",
+      "rmse": 0.1484,
+      "mae": 0.112,
+      "r2": 0.7676,
+      "f1_score": 0.935,
+      "precision": 0.9019,
+      "recall": 0.9706,
+      "inference_ms": 63742.552042007446
+    },
+    {
+      "model": "XGBoost + FeatEng",
+      "rmse": 0.1486,
+      "mae": 0.1123,
+      "r2": 0.7671,
+      "f1_score": 0.935,
+      "precision": 0.9011,
+      "recall": 0.9716,
+      "inference_ms": 323.2834109553584
+    },
+    {
+      "model": "Ensemble (NeKo+XGB)",
+      "rmse": 0.149,
+      "mae": 0.1112,
+      "r2": 0.7657,
+      "f1_score": 0.9302,
+      "precision": 0.8957,
+      "recall": 0.9675,
+      "inference_ms": 63743.55506896973
+    },
+    {
+      "model": "NeKo-PIGNN v3",
+      "rmse": 0.1725,
+      "mae": 0.1273,
+      "r2": 0.686,
+      "f1_score": 0.906,
+      "precision": 0.9065,
+      "recall": 0.9056,
+      "inference_ms": 1.0030269622802734
+    },
+    {
+      "model": "MLP + FeatEng + LB7",
+      "rmse": 0.2759,
+      "mae": 0.1941,
+      "r2": 0.197,
+      "f1_score": 0.8298,
+      "precision": 0.9362,
+      "recall": 0.7452,
+      "inference_ms": 0.052558051215277776
+    }
+  ]
+}

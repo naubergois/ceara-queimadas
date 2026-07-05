@@ -1,0 +1,295 @@
+%% Model benchmarks, robustness, and SOTA comparison (main text).
+
+\subsection{GOES-16 Unsupervised Detection Benchmark}
+\label{sec:goes16-validation}
+
+GOES-16 ABI CMIPF was evaluated against INPE ground references for 2024-10-31 (76 INPE hotspots; 5{,}184 valid grid cells; 284 truth cells after $3\times3$ morphological dilation). Low F1 ($\leq 0.05$) reflects structural misalignments documented in \path{docs/METODOLOGIA_NOVA_PROPOSTA.md}: temporal window mismatch, thermal anomaly vs.\ active-fire semantics, 2~km GOES cells vs.\ point-like INPE records, and CMIPF brightness temperature vs.\ dedicated AF products.
+
+Table~\ref{tab:goes-validation} contrasts grid-based and pixel-level evaluation modes. Combined persistence and consensus ensemble (Lines~B/E) yield zero detections but also zero false positives---suitable for high-stakes alert filtering when fused with FIRMS in the operational pipeline.
+
+\begin{resulttable}{GOES-16 vs.\ INPE validation (2024-10-31). Grid: dilated truth (284 cells); pixel: 15~km focal matching.}{tab:goes-validation}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+\textbf{Mode} & \textbf{Method} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{P} & \textbf{R} & \textbf{F1} \\
+\midrule
+Grid & Digital Twin (3h) & 30 & 903 & 254 & 0.032 & 0.106 & 0.049 \\
+Grid & Isolation Forest & 18 & 680 & 266 & 0.026 & 0.063 & 0.037 \\
+Grid & Spatial Residual & 8 & 718 & 41 & 0.011 & 0.163 & 0.021 \\
+Grid & Combined Persistence & 0 & 0 & 284 & 0.000 & 0.000 & 0.000 \\
+Pixel & Cluster match & 4 & 152 & 72 & 0.026 & 0.053 & 0.034 \\
+\bottomrule
+\end{tabular}
+\end{resulttable}
+
+\subsection{Risk Index Calibration (Track~D)}
+\label{sec:risk-calibration-exp}
+
+The heuristic risk classifier (Section~\ref{sec:risk}) was calibrated against a 111{,}054-record INPE BDQueimadas snapshot (12/Jun/2026; 19{,}249 positive / 11{,}362 negative municipal-day samples, Jan/2024--May/2026). Labels are defined directly from the reference data: a municipal-day is \emph{positive} if it contains at least one INPE hotspot and \emph{negative} otherwise. Because the risk index takes the daily hotspot count as its dominant input (Eq.~1), a municipal-day can only exceed the severity threshold when hotspots are present, so precision equals 1.000 \emph{by construction} (false positives are structurally impossible) and must not be read as an independent validation result. The informative quantities here are recall and F1 --- how many fire days the index flags at the calibrated thresholds --- and the calibration accordingly maximizes F1. Table~\ref{tab:risk-calibration} reports baseline vs.\ optimized weights: optimized weights increase hotspot sensitivity (\texttt{w\_focos} 8$\rightarrow$12), drought penalty (\texttt{w\_clima\_seca} 1.5$\rightarrow$2.5), and hotspot cap (\texttt{max\_focos} 40$\rightarrow$50), with severity thresholds lowered by 5~points. Out-of-sample evaluation against labels independent of the index inputs (e.g., burned-area products such as MapBiomas Fogo) remains future work.
+
+\begin{resulttable}{Risk index calibration on the INPE BDQueimadas snapshot (111{,}054 records, 12/Jun/2026). Precision is 1.000 by construction (see text); recall and F1 are the informative metrics.}{tab:risk-calibration}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+\textbf{Metric} & \textbf{Baseline} & \textbf{Optimized} & \textbf{$\Delta$} \\
+\midrule
+F1 & 0.833 & \textbf{0.936} & +0.104 \\
+Precision & 1.000 & 1.000 & --- \\
+Recall & 0.713 & \textbf{0.880} & +0.167 \\
+Accuracy & 0.820 & \textbf{0.925} & +0.105 \\
+\bottomrule
+\end{tabular}
+\end{resulttable}
+
+\subsection{Exp-B Iteration History: Synthetic and Real Data}
+\label{sec:exp-b-synthetic}
+
+\textbf{v1 (200 timesteps).} Initial Koopman-VAE and NeKo-PIGNN underperformed shallow baselines (R\textsuperscript{2}$\approx$0.28--0.34 vs.\ MLP 0.93) due to KL-regularized VAE competing with prediction (Table~\ref{tab:exp-v1}, Appendix). \textbf{v2 (500 timesteps).} Architecture fixes---deterministic Koopman, curriculum learning, spectral regularization---reversed the gap. Table~\ref{tab:regression_synthetic} shows NeKo-PIGNN v2 reaching R\textsuperscript{2}=0.972 on synthetic next-day prediction, establishing an upper bound before real-data noise.
+
+\begin{resulttable}{Exp-B v2: next-day prediction on synthetic data (500 steps, 30 nodes). Best in \textbf{bold}.}{tab:regression_synthetic}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Model} & \textbf{RMSE}$\downarrow$ & \textbf{MAE}$\downarrow$ & \textbf{R\textsuperscript{2}}$\uparrow$ & \textbf{F1}$\uparrow$ \\
+\midrule
+MLP & 0.069 & 0.024 & 0.968 & 0.975 \\
+LSTM & 0.084 & 0.045 & 0.951 & 0.945 \\
+XGBoost & 0.087 & 0.039 & 0.948 & 0.931 \\
+Koopman-Det (ours) & 0.068 & 0.022 & 0.968 & 0.975 \\
+\textbf{NeKo-PIGNN v2 (ours)} & \textbf{0.064} & 0.024 & \textbf{0.972} & 0.975 \\
+\bottomrule
+\end{tabular}
+\end{resulttable}
+
+\subsection{Exp-B Real-Data Regression (v3--v4)}
+\label{sec:exp-b-real-regression}
+
+\textbf{v3} validated all models on real FIRMS/INPE/Open-Meteo data. MLP led in RMSE/R\textsuperscript{2}; all models maintained binary F1$>$0.92 on next-day fire-count regression---a \emph{different task} from three-class alert metrics (Section~\ref{sec:three-level}). The synthetic-to-real R\textsuperscript{2} drop (Table~\ref{tab:real-regression-combined}b) ranges from 17 to 25 percentage points, expected under label noise and data scarcity with only 67 training days.
+
+\textbf{v4} tested feature engineering with 62--67 training samples; MLP remained best (R\textsuperscript{2}=0.782), while feature expansion degraded MLP to R\textsuperscript{2}=0.20 (Table~\ref{tab:exp-v4}, Appendix). With ${\sim}$250K-parameter models and ${\sim}$62 samples, simpler architectures dominate---a finding consistent across the Exp-B iteration.
+
+\begin{resulttable}{Real-data regression (v3) and synthetic-to-real R\textsuperscript{2} drop (v2$\rightarrow$v3).}{tab:real-regression-combined}
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(a) Real-data metrics (97 days, 377 detections)}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Model} & \textbf{RMSE} & \textbf{R\textsuperscript{2}} & \textbf{F1} & \textbf{ms} \\
+\midrule
+MLP & \textbf{0.138} & \textbf{0.799} & 0.941 & 0.0 \\
+LSTM & 0.163 & 0.718 & 0.943 & 0.4 \\
+XGBoost & 0.149 & 0.766 & 0.931 & 5.6 \\
+Koopman-Det & 0.157 & 0.739 & 0.924 & 0.1 \\
+NeKo-PIGNN v2 & 0.152 & 0.756 & 0.926 & 0.3 \\
+\bottomrule
+\end{tabular}
+\label{tab:real_data}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(b) R\textsuperscript{2} drop (percentage points)}
+\begin{tabular}{@{}lccr@{}}
+\toprule
+\textbf{Model} & \textbf{Syn.} & \textbf{Real} & \textbf{$\Delta$} \\
+\midrule
+MLP & 0.968 & 0.799 & $-$17 \\
+LSTM & 0.951 & 0.718 & $-$25 \\
+XGBoost & 0.948 & 0.766 & $-$19 \\
+Koopman-Det & 0.968 & 0.739 & $-$24 \\
+NeKo-PIGNN v2 & 0.972 & 0.756 & $-$22 \\
+\bottomrule
+\end{tabular}
+\label{tab:synthetic-real-gap}
+\end{minipage}
+\end{resulttable}
+
+\subsection{Exp-B Rare-Event Detection and Three-Class Alerts (v5--v9)}
+\label{sec:exp-b-binary}
+
+\textbf{v5--v7} reformulated the task as rare-event detection (positive rate 7.5\%), then added persistence priors (semi-arid fires persist 2--7 days). NeKo-PIGNN achieved the highest Average Precision (0.353) in v5; ensemble $\times$ persistence reached 47.5\% precision with 21~FP in v7 (Appendix~\ref{app:exp-b}). \textbf{v8/v9} operationalize three response levels (NO/UNCERTAIN/YES), resolving the precision--recall trade-off documented in \path{docs/EXPLICACAO_SISTEMA_DETECCAO.md}.
+
+\subsection{Three-Level Operational Alert System (v8--v9)}
+\label{sec:three-level}
+
+Table~\ref{tab:alerts-combined} maps model classes to civil-defense actions and reports YES-class precision at operational probability thresholds. Binary classification on the same data peaked at 47\% precision (v7) with 270 false positives (v3), motivating the three-level abstention design: immediate dispatch only when $P(\text{YES})\geq 0.30$, monitoring for UNCERTAIN, and satellite-only coverage otherwise.
+
+\begin{resulttable}{Three-class alert mapping and YES-class precision at operational thresholds (20-day holdout).}{tab:alerts-combined}
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(a) Alert levels}
+\begin{tabular}{@{}llrr@{}}
+\toprule
+\textbf{Level} & \textbf{Class} & \textbf{Prec.} & \textbf{Rec.} \\
+\midrule
+Alert & YES & 82.1\% & 42\% \\
+Watch & UNCERTAIN & --- & +46\% \\
+Safe & NO & --- & 12\% \\
+\midrule
+\multicolumn{2}{@{}l}{\textbf{Combined}} & --- & \textbf{88\%} \\
+\multicolumn{2}{@{}l}{FP (alerts only)} & \multicolumn{2}{l}{5} \\
+\bottomrule
+\end{tabular}
+\label{tab:alert-levels}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(b) YES thresholds}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Model} & \textbf{Prec.} & \textbf{Rec.} & \textbf{TP} & \textbf{FP} \\
+\midrule
+XGB, $P\geq 0.30$ & 82.1\% & 41.8\% & 23 & 5 \\
+XGB, $P\geq 0.50$ & 79.2\% & 34.6\% & 19 & 5 \\
+NeKo (YES) & 91.7\% & 12.7\% & 11 & 1 \\
+Ensemble, $P\geq 0.60$ & 88.9\% & --- & 8 & 1 \\
+\bottomrule
+\end{tabular}
+\label{tab:three_class}
+\end{minipage}
+\end{resulttable}
+
+Table~\ref{tab:task083-evolution} summarizes how each Exp-B iteration reduced false positives while preserving coverage. Three-class abstention (v8/v9) adds +35\,pp precision over binary MLP (v3); the persistence prior (v7) and weighted rare-event loss (v5--v6) provide intermediate gains documented in Appendix~\ref{app:exp-b}. The full per-class sklearn report and NeKo-PIGNN ablation are also in the appendix (Tables~\ref{tab:three-class-full},~\ref{tab:ablation-neko}).
+
+\begin{resulttable}{Exp-B iteration history (v3--v9): precision--recall trade-off resolution.}{tab:task083-evolution}
+\begin{tabular}{@{}llrrr@{}}
+\toprule
+\textbf{Ver.} & \textbf{Approach} & \textbf{Prec.} & \textbf{Rec.} & \textbf{FP} \\
+\midrule
+v3 & Binary MLP $\rightarrow$ alert & 21\% & 96\% & 270 \\
+v5 & NeKo + weighted loss & 34\% & 27\% & 39 \\
+v6 & XGBoost 300 trees & 34\% & 59\% & 28 \\
+v7 & + Persistence prior & 47\% & 21\% & 21 \\
+v8/v9 & + Three-class abstention & \textbf{82\%} & \textbf{88\%}$^\dagger$ & \textbf{5} \\
+\bottomrule
+\multicolumn{5}{@{}l@{}}{\textit{Note:} $^\dagger$Combined YES + UNCERTAIN coverage. NeKo YES-only: 91.7\% prec., 12.7\% rec., 1~FP.} \\
+\end{tabular}
+\end{resulttable}
+
+\subsection{Statistical Robustness (Exp-ROBUST-001)}
+\label{sec:statistical-robustness}
+
+Bootstrap 95\% confidence intervals (2{,}000 resamples) quantify uncertainty on Exp-B v9 contingency tables and multi-seed MLP regression. XGBoost YES alert precision (82.1\%) has CI [67.9\%, 96.4\%] (23 TP, 5 FP); combined YES+UNCERTAIN coverage 88\% CI [84.6\%, 91.2\%]. Reproduced MLP regression yields RMSE $0.137 \pm 0.003$ and R\textsuperscript{2} $0.800 \pm 0.010$ [0.783, 0.811], consistent with Table~\ref{tab:real_data}.
+
+Paired significance tests complement the bootstrap analysis (Table~\ref{tab:robustness-combined}b). Wilcoxon signed-rank on per-seed MLP vs.\ XGBoost RMSE yields $p=0.0625$; McNemar tests for three-class and YES-alert vs.\ persistence are not significant at $\alpha=0.05$ on the 20-day holdout. We report these for transparency rather than as superiority claims.
+
+\begin{resulttable}{Bootstrap 95\% CI and paired significance tests (Exp-ROBUST-001).}{tab:robustness-combined}
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(a) Bootstrap CI}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Metric} & \textbf{Point} & \textbf{Low} & \textbf{High} \\
+\midrule
+XGB YES prec. & 82.1\% & 67.9\% & 96.4\% \\
+NeKo YES prec. & 91.7\% & 75.0\% & 100.0\% \\
+Coverage & 88.0\% & 84.6\% & 91.2\% \\
+MLP RMSE & 0.1372 & 0.1334 & 0.1429 \\
+MLP R$^2$ & 0.800 & 0.783 & 0.811 \\
+\bottomrule
+\end{tabular}
+\label{tab:bootstrap-combined}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(b) Paired tests}
+\begin{tabular}{@{}p{2.5cm}rrl@{}}
+\toprule
+\textbf{Test} & \textbf{$p$} & \textbf{Sig.} & \textbf{Notes} \\
+\midrule
+Wilcoxon RMSE & 0.0625 & No & $\Delta$=-0.0099 \\
+McNemar 3-class & 0.1418 & No & acc 73.2\% \\
+McNemar YES & 0.8714 & No & prec 100\% \\
+\bottomrule
+\end{tabular}
+\label{tab:paired-tests}
+\end{minipage}
+\end{resulttable}
+
+\subsection{Operational and Temporal Validation (Exp-ROBUST-003/006)}
+\label{sec:operational-baseline}
+
+Table~\ref{tab:operational-validation} positions the LangGraph pipeline against NASA FIRMS and INPE BDQueimadas, then tests alert generalization across temporal windows. Cold-start latency (52.4~s) is ${\sim}309\times$ faster than the 3--6~h FIRMS publication window. Dry-season three-class alerts reach 84.2\% precision and 91.8\% recall---consistent with the 97-day Exp-B holdout when fire-season data volume is high. Mixed 12-month windows yield 31.6\% precision, indicating season-specific calibration. Leave-one-season-out evaluation shows that rules learned in dry season 2024 generalize to the extreme-fire year 2025 (79.0\% precision, 85.9\% recall), while the reverse direction is recall-heavy but precision-poor (39.2\%), supporting season-aware deployment.
+
+\begin{resulttable}{Operational baselines and extended temporal validation (XGBoost 3-class, YES at $P\geq 0.30$).}{tab:operational-validation}
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(a) System comparison}
+\begin{tabular}{@{}p{1.8cm}p{1.2cm}cc@{}}
+\toprule
+\textbf{System} & \textbf{Lat.} & \textbf{Prec.} & \textbf{Rec.} \\
+\midrule
+NASA FIRMS & 3--6 h & 80.0\% & 15.7\% \\
+INPE BDQueimadas & 3--6 h & --- & --- \\
+LangGraph (ours) & 52 s & 84.2\% & 91.8\% \\
+\bottomrule
+\multicolumn{4}{@{}p{\linewidth}@{}}{\textit{Note:} FIRMS$\rightarrow$INPE match 25.8\% (1\,km, 8-day sample). Cost: \$20/mo.} \\
+\end{tabular}
+\label{tab:operational-baseline}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(b) Temporal windows}
+\begin{tabular}{@{}p{1.6cm}rrrr@{}}
+\toprule
+\textbf{Window} & \textbf{Days} & \textbf{Prec.} & \textbf{Rec.} & \textbf{FP} \\
+\midrule
+Short subset & 117 & 34.4\% & 38.9\% & 40 \\
+Dry 2024 & 141 & 44.9\% & 66.4\% & 114 \\
+Dry 2025 & 184 & 84.2\% & 91.8\% & 75 \\
+Full 12 mo & 316 & 31.6\% & 74.1\% & 130 \\
+LOO 24$\rightarrow$25 & 500 & 79.0\% & 85.9\% & 379 \\
+LOO 25$\rightarrow$24 & 500 & 39.2\% & 98.2\% & 595 \\
+\bottomrule
+\end{tabular}
+\label{tab:extended-temporal}
+\end{minipage}
+\end{resulttable}
+
+\subsection{External-State Generalization (Exp-ROBUST-005)}
+\label{sec:external-states}
+
+To test geographic transfer beyond Ceará, we applied the same three-class XGBoost protocol to Maranhão and Piauí using INPE BDQueimadas dry-season records (Jul--Dec/2025). Ceará retains the best precision--recall balance (84.2\% / 91.8\%); neighboring states show higher fire volume and recall (${>}96$\%) but lower precision (${\sim}58$--60\%), consistent with class imbalance and semi-arid persistence patterns (Table~\ref{tab:external-states}).
+
+\begin{resulttable}{External-state validation: XGBoost 3-class YES alert at $P\geq 0.30$ (dry season Jul--Dec/2025).}{tab:external-states}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{State} & \textbf{Days} & \textbf{Hotspots} & \textbf{Precision} & \textbf{Recall} \\
+\midrule
+Ceará & 184 & 24{,}573 & 84.2\% & 91.8\% \\
+Maranhão & 184 & 233{,}854 & 57.5\% & 99.5\% \\
+Piauí & 183 & 145{,}220 & 60.1\% & 96.4\% \\
+\bottomrule
+\end{tabular}
+\end{resulttable}
+
+Figure~\ref{fig:external-states} visualizes the precision--recall trade-off across states. These results support a Northeast pilot deployment model: calibrate thresholds per state rather than transferring Ceará parameters directly to higher-volume neighbors.
+
+\figurainline[0.85\linewidth]{figures/mapa-external-states.png}{Dry-season 2025 alert precision and recall: Ceará vs.\ Maranhão and Piauí (INPE BDQueimadas).}{fig:external-states}
+
+\subsection{Comparison with Published Systems}
+\label{sec:sota-comparison}
+
+Table~\ref{tab:systems-comparison} situates the platform relative to operational services (INPE, FIRMS), research Digital Twins (IVSR, FIRE-VLM), physics simulators (FlamMap/FARSITE), and published ML baselines. The distinguishing combination is sub-minute LangGraph orchestration, three-class alert precision (82--92\%), and open-source deployment on a single EC2 instance---at the cost of state-specific calibration and limited GOES-16 production integration.
+
+\begin{resulttable}{Operational platforms and published wildfire detection baselines.}{tab:systems-comparison}
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(a) Operational systems}
+\begin{tabular}{@{}p{2.0cm}p{1.1cm}ccp{1.6cm}@{}}
+\toprule
+\textbf{System} & \textbf{Lat.} & \textbf{Prec.} & \textbf{Ag.} & \textbf{Scope} \\
+\midrule
+INPE BDQueimadas & 3--6 h & ref. & No & Brazil \\
+NASA FIRMS & 3--6 h & $\sim$80\% & No & Global \\
+FIRE-VLM & sim. & --- & RL & Research \\
+IVSR & reduced & --- & Yes & Multi-sensor \\
+\textbf{This platform} & \textbf{52 s} & \textbf{84\%} & \textbf{Yes} & \textbf{CE+NE} \\
+\bottomrule
+\end{tabular}
+\label{tab:operational-systems}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\linewidth}
+\paneltitle{(b) ML / index baselines}
+\begin{tabular}{@{}p{2.2cm}p{1.6cm}cc@{}}
+\toprule
+\textbf{System} & \textbf{Method} & \textbf{Prec.} & \textbf{Metric} \\
+\midrule
+Canadian FWI & Physical & --- & AUC 0.69 \\
+Regional FWI+GA & Tailored & --- & AUC 0.79 \\
+Decision Tree & ML/country & --- & AUC 0.86 \\
+FC Autoencoder & Anomaly & --- & F1 0.74 \\
+\textbf{This work} & GNN+Koopman & \textbf{82--92\%} & F1 0.54 \\
+\bottomrule
+\multicolumn{4}{@{}p{\linewidth}@{}}{\textit{Note:} Macro F1 from Table~\ref{tab:three-class-full}.} \\
+\end{tabular}
+\label{tab:sota}
+\end{minipage}
+\end{resulttable}

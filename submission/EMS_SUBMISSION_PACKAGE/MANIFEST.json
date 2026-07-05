@@ -1,0 +1,73 @@
+{
+  "journal": "Environmental Modelling & Software (Elsevier)",
+  "portal": "https://www.editorialmanager.com/envsoft/",
+  "article_type": "Research Article",
+  "title": "Ceará Digital Twin for Wildfires: An Open-Source Agentic AI Platform Integrating Near Real-Time Satellite Data and LangGraph Orchestration",
+  "date_built": "2026-07-04",
+  "abstract_words": 123,
+  "keywords_count": 7,
+  "keywords": [
+    "Digital Twin",
+    "Wildfires",
+    "Physics-Informed GNN",
+    "Koopman Operator",
+    "Three-Class Detection",
+    "LangGraph",
+    "NASA FIRMS"
+  ],
+  "highlights": [
+    "Open-source agentic wildfire platform with LangGraph and three-class alerts",
+    "Dry season 2025: 84% precision and 92% recall on 184 days of INPE data",
+    "NASA FIRMS pipeline with ReAct agent and RAG on a single EC2 instance",
+    "NeKo-PIGNN synthetic R²=0.972; optional GOES-16 for research benchmarks",
+    "MIT-licensed deployment integrating FIRMS, INPE, and Open-Meteo"
+  ],
+  "files": [
+    {
+      "name": "01_Manuscript.pdf",
+      "role": "Main manuscript PDF"
+    },
+    {
+      "name": "02_LaTeX_Source.zip",
+      "role": "LaTeX source + figures + BibTeX"
+    },
+    {
+      "name": "03_Cover_Letter.pdf",
+      "role": "Cover letter to editor"
+    },
+    {
+      "name": "04_Highlights.txt",
+      "role": "Highlights (3-5 bullets, upload separately)"
+    },
+    {
+      "name": "05_Graphical_Abstract.png",
+      "role": "Graphical abstract 1328x531 px"
+    },
+    {
+      "name": "06_Supplementary_Information.pdf",
+      "role": "Supplementary material"
+    },
+    {
+      "name": "07_Zenodo_Reproducibility_Bundle.zip",
+      "role": "Optional: upload to Zenodo for DOI"
+    },
+    {
+      "name": "ORCID_AUTHORS.md",
+      "role": "Register ORCID in Editorial Manager"
+    },
+    {
+      "name": "ZENODO.md",
+      "role": "Zenodo DOI instructions"
+    },
+    {
+      "name": "README_SUBMISSION.txt",
+      "role": "Upload guide"
+    }
+  ],
+  "github_release": "https://github.com/naubergois/ceara-queimadas/releases/tag/v1.0.0-ems-submission",
+  "pending_manual": [
+    "Upload files 01-06 to Editorial Manager (https://www.editorialmanager.com/envsoft/)",
+    "Confirm ORCID for all 5 authors in Editorial Manager",
+    "Optional: mint Zenodo DOI with ZENODO_ACCESS_TOKEN + scripts/publish_zenodo_deposit.sh"
+  ]
+}

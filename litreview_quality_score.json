@@ -1,0 +1,66 @@
+{
+  "paper_title": "Ceará Digital Twin for Wildfires: An Open-Source Agentic AI Platform Integrating Near Real-Time Satellite Data and LangGraph Orchestration",
+  "autorater": "Literature Review Quality (PaperOrchestra arXiv:2604.05018, App. F.3)",
+  "avg_citation_count_baseline": 65,
+  "citation_statistics": {
+    "estimated_unique_citations": 71,
+    "citation_density_assessment": "appropriate",
+    "breadth_across_subareas": "broad",
+    "comparison_to_baseline": "71 unique citations vs. baseline 65 (~109%); within the literature-review function (Intro + Related Work) approximately 55-60 unique works are cited, ~85-92% of baseline.",
+    "notes": "Five distinct threads covered: environmental Digital Twins, wildfire Digital Twins, satellite fire remote sensing, Koopman/PINN methods, and LLM agents/RAG. Mix of foundational (Koopman 1931, Rothermel 1972, Grieves 2014) and recent (2024-2026) work."
+  },
+  "axis_scores": {
+    "coverage_and_completeness": {
+      "score": 72,
+      "justification": "The review spans all subfields implied by the contributions, from DT theory through fire remote sensing to agent orchestration, with both foundational and 2025-2026 works. Citation volume is at ~109% of the venue baseline overall and ~90% within the review sections. No obvious thread is missing, though operational fire-danger-rating systems (e.g., FWI-based national systems) receive no direct treatment."
+    },
+    "relevance_and_focus": {
+      "score": 70,
+      "justification": "Citations align closely with the stated problem; each Related Work subsection maps to a system component. The Koopman/DMD thread is deeper than strictly needed for a platform paper, and the agents subsection cites several general-purpose agent works (Toolformer, Gorilla, social simulation) that are ecosystem padding rather than direct comparators."
+    },
+    "critical_analysis_and_synthesis": {
+      "score": 62,
+      "justification": "The wildfire-DT subsection groups works into four architectural categories and notes concrete limitations per system (no Brazilian-biome validation, UAV-only scope). Two comparison tables synthesize across systems. However, the remote sensing and Koopman subsections are largely sequential descriptions with limited comparison of trade-offs between the cited approaches."
+    },
+    "positioning_and_novelty": {
+      "score": 68,
+      "justification": "A dedicated Gap Analysis subsection with a feature-comparison table grounds the novelty claim, and the closest work (IVSR) is explicitly identified and differentiated. Absolute claims — 'no published work to date uses Koopman for fire modeling' and 'first known application of LangGraph' — are asserted without a described search protocol, weakening an otherwise explicit positioning."
+    },
+    "organization_and_writing": {
+      "score": 75,
+      "justification": "The review opens with a clear three-front roadmap, uses consistent subsectioning, paragraph-level signposting in the wildfire-DT taxonomy, and two well-placed tables. Prose is precise and definitions (DT requirements) are stated before use."
+    },
+    "citation_practices_and_rigor": {
+      "score": 70,
+      "justification": "Key claims carry citations, density is consistent across sections, and foundational/recent balance is good. A few grey-literature sources (product manuals, website) are used where peer-reviewed alternatives exist, but they are appropriate for data-source documentation."
+    }
+  },
+  "penalties": [
+    {
+      "reason": "Overclaiming novelty: absolute negative claims ('no published work to date uses Koopman for fire modeling', 'first known application of LangGraph') without evidence of a systematic search.",
+      "points_deducted": 5
+    }
+  ],
+  "summary": {
+    "strengths": [
+      "Broad, current coverage across five relevant subfields with foundational anchors",
+      "Explicit gap-analysis table and named closest competitor (IVSR) with concrete differentiation",
+      "Architectural taxonomy of wildfire DTs with per-system limitation notes",
+      "Clear structure and signposting; comparison tables aid synthesis"
+    ],
+    "weaknesses": [
+      "Remote sensing and Koopman subsections are mostly descriptive, work-by-work",
+      "Absolute 'first/no published work' novelty claims lack a stated search protocol",
+      "Agent-ecosystem citations include tangential works not compared to the proposal",
+      "No treatment of operational fire-danger rating systems as baselines in the review"
+    ],
+    "top_improvements": [
+      "Soften absolute novelty claims to 'to the best of our knowledge, based on searches in X/Y' and state the search scope",
+      "Add 2-3 sentences of cross-work trade-off synthesis at the end of the remote sensing and Koopman subsections",
+      "Trim tangential agent-ecosystem citations or tie each explicitly to a design decision of the platform",
+      "Briefly position against operational fire-danger indices (e.g., FWI-based systems) in the gap analysis"
+    ]
+  },
+  "weighted_axis_score": 68.4,
+  "overall_score": 63
+}

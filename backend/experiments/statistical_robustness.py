@@ -2,9 +2,10 @@
 Exp-B robustness: bootstrap 95% CI, multi-seed regression, paired model comparison.
 
 Outputs:
-  results/EXP-ROBUST-001_bootstrap.json
+  results/EXP-ROBUST-001_bootstrap.json  (includes paired_tests)
   results/EXP-ROBUST-001_bootstrap.md
   results/tabela_bootstrap_ci.tex
+  results/tabela_paired_tests.tex
 
 Run:
   cd backend && python -m experiments.statistical_robustness
@@ -18,9 +19,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
+from scipy.stats import binom, wilcoxon
 from sklearn.metrics import precision_recall_fscore_support
 from sklearn.neural_network import MLPRegressor
-from xgboost import XGBClassifier
+from xgboost import XGBClassifier, XGBRegressor
 
 RESULTS_DIR = Path(__file__).parent / "results"
 DATA_DIR = Path(__file__).parent / "data"
@@ -198,6 +200,144 @@ def regression_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
     return {"rmse": rmse, "mae": mae, "r2": r2, "f1_score": f1}
 
 
+PERS_FEAT_IDX = 18
+FIRE_TODAY_FEAT_IDX = 20
+
+
+def persistence_3class_predict(X: np.ndarray) -> np.ndarray:
+    """NeKo-style persistence-only 3-class baseline (no climate features)."""
+    pers = X[:, PERS_FEAT_IDX]
+    fire_today = X[:, FIRE_TODAY_FEAT_IDX]
+    fire_signal = fire_today > 0.01
+    preds = np.zeros(len(X), dtype=np.int64)
+    preds[(pers > 0.3) & fire_signal] = 2
+    preds[(preds == 0) & (fire_signal | (pers > 0.25))] = 1
+    return preds
+
+
+def mcnemar_exact(b: int, c: int) -> dict:
+    """Two-sided exact McNemar test from discordant counts (b=A wrong B right, c=A right B wrong)."""
+    n = b + c
+    if n == 0:
+        return {"discordant": 0, "b": b, "c": c, "p_value": 1.0, "statistic": 0.0}
+    k = min(b, c)
+    p_one = float(binom.cdf(k, n, 0.5))
+    p_two = min(1.0, 2.0 * p_one)
+    return {
+        "discordant": n,
+        "b": int(b),
+        "c": int(c),
+        "p_value": p_two,
+        "statistic": float(abs(b - c)),
+    }
+
+
+def run_paired_tests(
+    mlp_ms: dict,
+    xgb_ms: dict,
+    y_test: np.ndarray,
+    y_pred_xgb: np.ndarray,
+    X_test: np.ndarray,
+    proba_yes: np.ndarray,
+) -> dict:
+    """Wilcoxon (per-seed RMSE) and McNemar (3-class vs persistence baseline)."""
+    mlp_rmses = np.array([m["rmse"] for m in mlp_ms["per_seed"]], dtype=np.float64)
+    xgb_rmses = np.array([m["rmse"] for m in xgb_ms["per_seed"]], dtype=np.float64)
+    try:
+        w_stat, w_p = wilcoxon(mlp_rmses, xgb_rmses, alternative="two-sided")
+    except ValueError:
+        w_stat, w_p = 0.0, 1.0
+
+    y_pred_pers = persistence_3class_predict(X_test)
+    correct_xgb = y_pred_xgb == y_test
+    correct_pers = y_pred_pers == y_test
+    mcnemar_3class = mcnemar_exact(
+        int((~correct_xgb & correct_pers).sum()),
+        int((correct_xgb & ~correct_pers).sum()),
+    )
+
+    xgb_yes = proba_yes >= YES_THRESH
+    pers_yes = y_pred_pers == 2
+    true_yes = y_test == 2
+    xgb_yes_ok = xgb_yes == true_yes
+    pers_yes_ok = pers_yes == true_yes
+    mcnemar_yes = mcnemar_exact(
+        int((~xgb_yes_ok & pers_yes_ok).sum()),
+        int((xgb_yes_ok & ~pers_yes_ok).sum()),
+    )
+
+    return {
+        "wilcoxon_rmse_mlp_vs_xgb": {
+            "comparison": "MLP vs XGBoost regressor (per-seed RMSE, n=5)",
+            "mlp_rmse_per_seed": mlp_rmses.tolist(),
+            "xgb_rmse_per_seed": xgb_rmses.tolist(),
+            "mean_diff_mlp_minus_xgb": float((mlp_rmses - xgb_rmses).mean()),
+            "statistic": float(w_stat),
+            "p_value": float(w_p),
+            "significant_005": bool(w_p < 0.05),
+        },
+        "mcnemar_3class_xgb_vs_persistence": {
+            "comparison": "XGBoost 3-class vs NeKo-style persistence-only baseline",
+            "xgb_accuracy": float(correct_xgb.mean()),
+            "persistence_accuracy": float(correct_pers.mean()),
+            **mcnemar_3class,
+            "significant_005": bool(mcnemar_3class["p_value"] < 0.05),
+        },
+        "mcnemar_yes_alert_xgb_vs_persistence": {
+            "comparison": f"YES alert (XGB P>={YES_THRESH}) vs persistence YES (class 2)",
+            "xgb_yes_precision": float(yes_alert_metrics(y_test, proba_yes)["precision"]),
+            "persistence_yes_precision": float(
+                yes_alert_metrics(y_test, pers_yes.astype(np.float64))["precision"]
+            ),
+            **mcnemar_yes,
+            "significant_005": bool(mcnemar_yes["p_value"] < 0.05),
+        },
+    }
+
+
+def run_multiseed_xgb_regression(x_data: np.ndarray, seeds: list[int]) -> dict:
+    """Multi-seed XGBoost regressor on flattened next-step prediction task."""
+    splits = temporal_split(x_data)
+    x_train, x_test = splits["train"], splits["test"]
+    input_dim = x_data.shape[2]
+    metrics_by_seed = []
+
+    x_tr_flat = x_train[:-1].reshape(-1, input_dim)
+    y_tr_flat = x_train[1:].reshape(-1, input_dim)
+    x_te_flat = x_test[:-1].reshape(-1, input_dim)
+    y_te_flat = x_test[1:].reshape(-1, input_dim)
+
+    for seed in seeds:
+        xgb = XGBRegressor(
+            n_estimators=200,
+            max_depth=5,
+            learning_rate=0.05,
+            random_state=seed,
+            n_jobs=-1,
+            verbosity=0,
+        )
+        xgb.fit(x_tr_flat, y_tr_flat)
+        y_pred = xgb.predict(x_te_flat)
+        metrics_by_seed.append(regression_metrics(y_te_flat, y_pred))
+
+    rmses = np.array([m["rmse"] for m in metrics_by_seed])
+    f1s = np.array([m["f1_score"] for m in metrics_by_seed])
+    r2s = np.array([m["r2"] for m in metrics_by_seed])
+    return {
+        "seeds": seeds,
+        "rmse": {"mean": float(rmses.mean()), "std": float(rmses.std()), **dict(zip(
+            ["ci95_lo", "ci95_hi"],
+            [float(np.percentile(rmses, 2.5)), float(np.percentile(rmses, 97.5))],
+        ))},
+        "r2": {"mean": float(r2s.mean()), "std": float(r2s.std()), **dict(zip(
+            ["ci95_lo", "ci95_hi"],
+            [float(np.percentile(r2s, 2.5)), float(np.percentile(r2s, 97.5))],
+        ))},
+        "f1": {"mean": float(f1s.mean()), "std": float(f1s.std())},
+        "per_seed": metrics_by_seed,
+    }
+
+
 def run_multiseed_regression(x_data: np.ndarray, seeds: list[int]) -> dict:
     splits = temporal_split(x_data)
     x_train, x_test = splits["train"], splits["test"]
@@ -334,6 +474,42 @@ def write_latex_table(boot: dict, mlp_ms: dict, path: Path) -> None:
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def write_latex_paired_tests(paired: dict, path: Path) -> None:
+    w = paired["wilcoxon_rmse_mlp_vs_xgb"]
+    m3 = paired["mcnemar_3class_xgb_vs_persistence"]
+    my = paired["mcnemar_yes_alert_xgb_vs_persistence"]
+
+    def p_fmt(p: float) -> str:
+        if p < 0.001:
+            return "$<0.001$"
+        return f"{p:.4f}"
+
+    lines = [
+        r"\begin{table}[htbp]",
+        r"\centering",
+        r"\caption{Paired significance tests: Wilcoxon signed-rank (regression RMSE) and exact McNemar (classification).}",
+        r"\label{tab:paired-tests}",
+        r"\small",
+        r"\begin{tabular}{@{}lrrrr@{}}",
+        r"\toprule",
+        r"\textbf{Test} & \textbf{Statistic} & \textbf{$p$-value} & \textbf{Sig.\ @0.05} & \textbf{Notes} \\",
+        r"\midrule",
+        f"Wilcoxon: MLP vs XGB RMSE & {w['statistic']:.2f} & {p_fmt(w['p_value'])} & "
+        f"{'Yes' if w['significant_005'] else 'No'} & "
+        f"mean $\\Delta$={w['mean_diff_mlp_minus_xgb']:.4f} \\\\",
+        f"McNemar: 3-class XGB vs persistence & {m3['statistic']:.0f} & {p_fmt(m3['p_value'])} & "
+        f"{'Yes' if m3['significant_005'] else 'No'} & "
+        f"acc {m3['xgb_accuracy']:.1%} vs {m3['persistence_accuracy']:.1%} \\\\",
+        f"McNemar: YES alert XGB vs persistence & {my['statistic']:.0f} & {p_fmt(my['p_value'])} & "
+        f"{'Yes' if my['significant_005'] else 'No'} & "
+        f"prec {my['xgb_yes_precision']:.1%} vs {my['persistence_yes_precision']:.1%} \\\\",
+        r"\bottomrule",
+        r"\end{tabular}",
+        r"\end{table}",
+    ]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main() -> None:
     t0 = time.time()
     print("=" * 72)
@@ -386,6 +562,16 @@ def main() -> None:
     print("\n  Multi-seed MLP regression (5 seeds)...")
     mlp_ms = run_multiseed_regression(x_data, SEEDS)
 
+    print("  Multi-seed XGBoost regression (5 seeds)...")
+    xgb_ms = run_multiseed_xgb_regression(x_data, SEEDS)
+
+    print("  Paired tests (Wilcoxon RMSE + McNemar 3-class)...")
+    paired = run_paired_tests(mlp_ms, xgb_ms, y_test, y_pred, X_test, proba_yes)
+    w = paired["wilcoxon_rmse_mlp_vs_xgb"]
+    m3 = paired["mcnemar_3class_xgb_vs_persistence"]
+    print(f"    Wilcoxon RMSE: p={w['p_value']:.4f} (MLP mean={mlp_ms['rmse']['mean']:.4f}, XGB={xgb_ms['rmse']['mean']:.4f})")
+    print(f"    McNemar 3-class: p={m3['p_value']:.4f} (acc {m3['xgb_accuracy']:.1%} vs {m3['persistence_accuracy']:.1%})")
+
     payload = {
         "experiment": "EXP-ROBUST-001",
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -401,6 +587,8 @@ def main() -> None:
         "yes_alert_bootstrap": boot,
         "macro_f1_test": float(macro[2]),
         "mlp_multiseed_regression": mlp_ms,
+        "xgb_multiseed_regression": xgb_ms,
+        "paired_tests": paired,
         "runtime_sec": round(time.time() - t0, 2),
     }
 
@@ -426,6 +614,17 @@ def main() -> None:
         "",
         f"- RMSE: {mlp_ms['rmse']['mean']:.4f} ± {mlp_ms['rmse']['std']:.4f} (95% CI [{mlp_ms['rmse']['ci95_lo']:.4f}, {mlp_ms['rmse']['ci95_hi']:.4f}])",
         f"- R²: {mlp_ms['r2']['mean']:.3f} (95% CI [{mlp_ms['r2']['ci95_lo']:.3f}, {mlp_ms['r2']['ci95_hi']:.3f}])",
+        "",
+        "## XGBoost regression (5 seeds, temporal split)",
+        "",
+        f"- RMSE: {xgb_ms['rmse']['mean']:.4f} ± {xgb_ms['rmse']['std']:.4f}",
+        f"- R²: {xgb_ms['r2']['mean']:.3f}",
+        "",
+        "## Paired significance tests",
+        "",
+        f"- Wilcoxon RMSE (MLP vs XGB): p={w['p_value']:.4f}, Δmean={w['mean_diff_mlp_minus_xgb']:.4f}",
+        f"- McNemar 3-class (XGB vs persistence): p={m3['p_value']:.4f}",
+        f"- McNemar YES alert: p={paired['mcnemar_yes_alert_xgb_vs_persistence']['p_value']:.4f}",
         "",
         "## Reproduce",
         "```bash",
@@ -456,7 +655,11 @@ def main() -> None:
 
     write_latex_table_v9(pub, RESULTS_DIR / "tabela_bootstrap_v9.tex")
 
-    print(f"\n  Saved: {json_path.name}, {md_path.name}, {tex_path.name}, tabela_bootstrap_v9.tex")
+    paired_tex = RESULTS_DIR / "tabela_paired_tests.tex"
+    write_latex_paired_tests(paired, paired_tex)
+    json_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+    print(f"\n  Saved: {json_path.name}, {md_path.name}, {tex_path.name}, tabela_bootstrap_v9.tex, {paired_tex.name}")
     print("=" * 72)
 
 

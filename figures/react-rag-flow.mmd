@@ -1,0 +1,56 @@
+---
+title: ReAct agents, LangGraph orchestration, and RAG research chat
+---
+flowchart TB
+    subgraph Input["User / sensor input"]
+        Q["Natural-language question"]
+        S["Live hotspot + weather feed"]
+    end
+
+    subgraph LangGraph["LangGraph supervisor (10 nodes)"]
+        LG["StateGraph pipeline"]
+        W1["agente\_geoespacial"]
+        W2["agente\_goes16"]
+        W3["agente\_climatico"]
+        FU["fundir\_evidencias"]
+        RC["classificar\_risco"]
+    end
+
+    subgraph ReAct["ReAct diagnostic loop"]
+        T["Thought"]
+        A["Action: tool call"]
+        O["Observation"]
+    end
+
+    subgraph RAG["Research RAG (offline docs)"]
+        E["BGE embeddings + FAISS"]
+        K["Knowledge chunks\n(glossary + 6 manuals)"]
+    end
+
+    subgraph Out["Outputs"]
+        AL["Three-class alert\nNO / UNCERTAIN / YES"]
+        DB["Dashboard + bulletin"]
+        CH["Research chat answer"]
+    end
+
+    Q --> LG
+    S --> LG
+    LG --> W1
+    LG --> W2
+    LG --> W3
+    W1 --> FU
+    W2 --> FU
+    W3 --> FU
+    FU --> RC
+    RC --> T
+    T --> A --> O --> T
+    O --> AL
+    AL --> DB
+    Q --> E
+    K --> E
+    E --> CH
+
+    style LG fill:#3D348B,color:#fff
+    style RC fill:#E85D26,color:#fff
+    style AL fill:#7F2D2D,color:#fff
+    style E fill:#1A5B3A,color:#fff

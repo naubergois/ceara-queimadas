@@ -1,0 +1,120 @@
+{
+  "experiment": "EXP-ROBUST-005",
+  "window": {
+    "start": "2025-07-01",
+    "end": "2025-12-31"
+  },
+  "states": [
+    {
+      "state": "CE",
+      "label": "Cear\u00e1",
+      "start": "2025-07-01",
+      "end": "2025-12-31",
+      "num_days": 184,
+      "num_municipalities": 15,
+      "municipalities": [
+        "CRATEUS",
+        "SOBRAL",
+        "ICO",
+        "SANTA QUITERIA",
+        "QUITERIANOPOLIS",
+        "ARACATI",
+        "CARIRE",
+        "GRANJA",
+        "ACOPIARA",
+        "QUIXERAMOBIM",
+        "CANINDE",
+        "BOA VIAGEM",
+        "VICOSA DO CEARA",
+        "IPUEIRAS",
+        "TAUA"
+      ],
+      "total_focos": 24573,
+      "samples": 2700,
+      "test_samples": 541,
+      "yes_in_test": 437,
+      "xgb_yes_alert": {
+        "precision": 0.842436974789916,
+        "recall": 0.9176201372997712,
+        "tp": 401,
+        "fp": 75,
+        "fn": 36
+      },
+      "xgb_macro_f1": 0.5102568652767834
+    },
+    {
+      "state": "MA",
+      "label": "Maranh\u00e3o",
+      "start": "2025-07-01",
+      "end": "2025-12-31",
+      "num_days": 184,
+      "num_municipalities": 15,
+      "municipalities": [
+        "MIRADOR",
+        "BALSAS",
+        "ALTO PARNAIBA",
+        "BARRA DO CORDA",
+        "GRAJAU",
+        "CAXIAS",
+        "FERNANDO FALCAO",
+        "BENEDITO LEITE",
+        "RIACHAO",
+        "ALDEIAS ALTAS",
+        "SAO FELIX DE BALSAS",
+        "COLINAS",
+        "BURITI BRAVO",
+        "CAROLINA",
+        "LAGOA DO MATO"
+      ],
+      "total_focos": 233854,
+      "samples": 2700,
+      "test_samples": 541,
+      "yes_in_test": 201,
+      "xgb_yes_alert": {
+        "precision": 0.5747126436781609,
+        "recall": 0.9950248756218906,
+        "tp": 200,
+        "fp": 148,
+        "fn": 1
+      },
+      "xgb_macro_f1": 0.34659997076807025
+    },
+    {
+      "state": "PI",
+      "label": "Piau\u00ed",
+      "start": "2025-07-01",
+      "end": "2025-12-31",
+      "num_days": 183,
+      "num_municipalities": 15,
+      "municipalities": [
+        "URUCUI",
+        "BAIXA GRANDE DO RIBEIRO",
+        "CANTO DO BURITI",
+        "SANTA FILOMENA",
+        "RIBEIRO GONCALVES",
+        "FLORIANO",
+        "SEBASTIAO LEAL",
+        "SAO MIGUEL DO TAPUIO",
+        "PIMENTEIRAS",
+        "PALMEIRAIS",
+        "PARNAGUA",
+        "BOM JESUS",
+        "GUADALUPE",
+        "REGENERACAO",
+        "BURITI DOS MONTES"
+      ],
+      "total_focos": 145220,
+      "samples": 2685,
+      "test_samples": 538,
+      "yes_in_test": 197,
+      "xgb_yes_alert": {
+        "precision": 0.6012658227848101,
+        "recall": 0.9644670050761421,
+        "tp": 190,
+        "fp": 126,
+        "fn": 7
+      },
+      "xgb_macro_f1": 0.5180563389108228
+    }
+  ]
+}

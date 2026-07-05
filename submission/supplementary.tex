@@ -1,0 +1,62 @@
+%% Supplementary Information — Environmental Modelling & Software
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\title{Supplementary Material:\\Ceará Digital Twin for Wildfires}
+\author{Gois et al.}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Exp-B iteration tables (v1--v9)}
+Full Exp-B tables are reproduced from \texttt{figures/experimentos-artigo.tex} in the main manuscript. This supplement archives machine-readable logs under \texttt{backend/experiments/results/}.
+
+\section{Bootstrap and paired significance tests}
+\input{../backend/experiments/results/tabela_bootstrap_v9.tex}
+\input{../backend/experiments/results/tabela_paired_tests.tex}
+
+\section{Extended temporal and external-state validation}
+\input{../backend/experiments/results/tabela_extended_temporal.tex}
+\input{../backend/experiments/results/tabela_external_states.tex}
+
+\section{Operational baseline comparison}
+\input{../backend/experiments/results/tabela_operational_baseline.tex}
+
+\section{RAG benchmark}
+\input{../backend/experiments/results/tabela_rag_benchmark.tex}
+
+\section{Model hyperparameters}
+\begin{table}[htbp]
+\centering
+\caption{NeKo-PIGNN and alert-model hyperparameters.}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Component} & \textbf{Setting} \\
+\midrule
+KoopmanAE encoder & MLP 512-256-128, $d=64$, Adam $10^{-4}$, batch 32 \\
+PI-GNN & 3$\times$GCNConv, 128 channels, $r=3$ cells, $\lambda_2=0.05$ \\
+XGBoost 3-class & 300--400 trees, depth 4--5, lr 0.04--0.05 \\
+YES alert threshold & $P(\text{YES}) \geq 0.30$ \\
+RAG index & chunk 900, overlap 120, top\_k=5, BGE-small-en-v1.5 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Experiment JSON logs}
+Reproduce with:
+\begin{verbatim}
+cd backend && python -m experiments.statistical_robustness
+cd backend && python -m experiments.extended_temporal_benchmark
+cd backend && python -m experiments.external_state_benchmark
+cd backend && python -m experiments.operational_baseline_benchmark
+cd backend && python -m experiments.rag_benchmark
+\end{verbatim}
+
+\end{document}

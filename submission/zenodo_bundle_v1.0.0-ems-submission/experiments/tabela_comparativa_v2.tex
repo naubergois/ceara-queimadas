@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\caption{Model comparison v2: Curriculum Learning + Deterministic Koopman + GNN on synthetic Cear\'a wildfire data (30 nodes, 500 timesteps). Best in \textbf{bold}.}
+\label{tab:model_comparison_v2}
+\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Model} & \textbf{RMSE}$\downarrow$ & \textbf{MAE}$\downarrow$ & \textbf{R\textsuperscript{2}}$\uparrow$ & \textbf{F1}$\uparrow$ & \textbf{Recall} & \textbf{Inf. (ms)} \\
+\midrule
+MLP & 0.0687 & 0.0237 & 0.9677 & 0.9750 & 0.9640 & 0.0 \\
+LSTM & 0.0841 & 0.0446 & 0.9512 & 0.9448 & 0.9002 & 0.8 \\
+XGBoost & 0.0871 & 0.0387 & 0.9480 & 0.9311 & 0.8714 & 4.4 \\
+Koopman-Det (ours) & 0.0680 & 0.0224 & 0.9683 & 0.9751 & 0.9624 & 0.1 \\
+NeKo-PIGNN v2 (ours) & \textbf{0.0640} & 0.0241 & \textbf{0.9719} & 0.9751 & 0.9650 & 0.4 \\
+NeKo-GNN (no physics) & 0.0664 & \textbf{0.0216} & 0.9698 & \textbf{0.9764} & 0.9665 & 0.4 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,6 @@
+Title: Ceará Wildfire Digital Twin — reproducibility archive
+Version: v1.0.0-ems-submission
+License: MIT (code) + CC-BY-4.0 (article PDF)
+Keywords: wildfire, digital twin, LangGraph, INPE, FIRMS, NeKo-PIGNN
+Upload: https://zenodo.org/deposit/new
+GitHub release: v1.0.0-ems-submission

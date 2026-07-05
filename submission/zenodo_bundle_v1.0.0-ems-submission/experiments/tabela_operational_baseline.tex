@@ -1,0 +1,18 @@
+\begin{table}[!htbp]
+\centering
+\caption{Operational baseline comparison: NASA FIRMS, INPE BDQueimadas, and LangGraph pipeline.}
+\label{tab:operational-baseline}
+\footnotesize
+\tblfit{%
+\begin{tabular}{@{}p{2.6cm}p{1.8cm}ccr@{}}
+\toprule
+\textbf{System} & \textbf{Latency} & \textbf{Prec.} & \textbf{Rec.} & \textbf{Cost} \\
+\midrule
+NASA FIRMS direct & 3--6 h & 80.0\% & 15.7\% & Free \\
+INPE BDQueimadas & 3--6 h & --- & --- & Free \\
+LangGraph (ours) & 52 s / $<$1 s & 84.2\% & 91.8\% & \$20 \\
+\midrule
+\multicolumn{5}{@{}p{\linewidth}@{}}{\footnotesize FIRMS$\rightarrow$INPE spatial match (1\,km, same day): 25.8\% of 128 FIRMS points; 8-day sample.} \\
+\bottomrule
+\end{tabular}}
+\end{table}

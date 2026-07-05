@@ -1,0 +1,89 @@
+🧠 NeKo-PIGNN — explicação didática
+
+═══════════════════════════════════════
+O QUE É?
+═══════════════════════════════════════
+
+NeKo-PIGNN = dois modelos de IA que trabalham juntos para PREVER risco de fogo no Ceará.
+
+• NeKo = Neural Koopman Operator  → entende o TEMPO (como o fogo evolui hora a hora)
+• PI-GNN = Physics-Informed Graph Neural Network → entende o ESPAÇO (como o fogo se espalha entre células vizinhas)
+
+Analogia simples:
+Imagine um tabuleiro (mapa do Ceará) onde cada casa de 1 km² conversa com as vizinhas.
+NeKo pergunta: "como vai ficar daqui a 12 horas?"
+PI-GNN pergunta: "para onde o fogo tende a ir, dado vento, vegetação e inclinação?"
+
+═══════════════════════════════════════
+PARTE 1 — NeKo (KOOPMAN NEURAL)
+═══════════════════════════════════════
+
+PROBLEMA: o fogo é caótico — difícil prever diretamente.
+
+IDEIA DO KOOPMAN (1931, revivida com deep learning):
+Transformar o caos numa evolução LINEAR num espaço oculto (como trocar de ângulo de câmera).
+
+COMO FUNCIONA (KoopmanAE):
+1. ENCODER — comprime o estado atual:
+   temperatura + NDVI + focos + umidade + vento (grade satélite)
+   → vetor latente z (64 dimensões)
+
+2. MATRIZ K — evolui no tempo de forma linear:
+   z(t+1) = K × z(t)
+   (prevê próximas horas sem re-simular tudo do zero)
+
+3. DECODER — reconstrói o mapa previsto
+
+TREINO: minimiza erro de reconstrução + previsão 1 passo + previsão multi-passos (até 12h)
+
+RESULTADO SINTÉTICO: R² = 0,972 (97,2% da variância explicada)
+
+═══════════════════════════════════════
+PARTE 2 — PI-GNN (GRAFO COM FÍSICA)
+═══════════════════════════════════════
+
+PROBLEMA: prever só com dados históricos ignora COMO o fogo realmente se propaga.
+
+SOLUÇÃO: modelar o Ceará como GRAFO:
+• ~149.000 nós (células 1 km²)
+• arestas = vizinhos (raio 3 células)
+• cada nó recebe mensagens dos vizinhos (message passing, 3 camadas)
+
+FEATURES POR CÉLULA:
+GOES temperatura · VIIRS · NDVI · umidade/vento · histórico 7 dias · MapBiomas · declive SRTM
+
+INOVAÇÃO — LOSS FÍSICA (Rothermel 1972):
+Além de aprender com exemplos, o modelo é penalizado se prever propagação
+INCOMPATÍVEL com a física do fogo (vento, inclinação, densidade do combustível).
+
+Equação Rothermel → velocidade de propagação R (m/min)
+Loss física = diferença entre gradiente previsto pelo GNN e direção esperada pelo vento×R
+
+LOSS TOTAL = classificação (foco sim/não) + autoencoder + física + regularização L2
+
+═══════════════════════════════════════
+PARTE 3 — COMO SE INTEGRAM
+═══════════════════════════════════════
+
+CICLO NeKo ↔ PI-GNN:
+
+  Satélite → [NeKo prevê 12h] → estados futuros → [PI-GNN mapa risco espacial]
+                    ↑                                              ↓
+                    └──────── feedback para próxima janela ────────┘
+
+• NeKo captura DINÂMICA TEMPORAL (linearizada)
+• PI-GNN captura PROPAGAÇÃO ESPACIAL (com restrição física)
+• Juntos superam modelos puramente data-driven que ignoram física do fogo
+
+PAPEL NO SISTEMA:
+NeKo-PIGNN roda como módulo de INFERÊNCIA OFFLINE (não é nó do LangGraph operacional).
+Alimenta classificador municipal e experimentos de alerta de 3 classes.
+
+═══════════════════════════════════════
+EM UMA FRASE
+═══════════════════════════════════════
+
+NeKo-PIGNN = "prever o futuro do fogo no tempo (Koopman) + mapear para onde ele vai no espaço (GNN com física Rothermel)".
+
+📊 R²=0,972 sintético · 91,7% precisão YES em janela curta real
+📄 Artigo EMS · github.com/naubergois/ceara-queimadas

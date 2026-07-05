@@ -1,0 +1,68 @@
+🔬 INOVAÇÃO E MÉTODOS — Gêmeo Digital de Queimadas (Ceará)
+Explicação simples para o grupo de pesquisa
+
+═══════════════════════════════════════
+💡 O QUE É NOVO (INOVAÇÃO)
+═══════════════════════════════════════
+
+1) PLATAFORMA ÚNICA E ABERTA
+Nenhum sistema anterior junta, num só lugar open-source:
+• satélites em tempo quase real (NASA + INPE)
+• agentes de IA orquestrados (LangGraph)
+• chat que explica a metodologia (RAG)
+• foco no bioma brasileiro (Ceará)
+• roda num único servidor barato (EC2), sem banco institucional
+
+2) ALERTAS DE 3 CLASSES (NÃO · INCERTO · SIM)
+Em vez de só "fogo sim/não", o sistema pode dizer:
+• SIM → alerta imediato (alta confiança)
+• INCERTO → monitorar de perto
+• NÃO → sem ação
+Isso resolve o dilema clássico: alertar demais (falso alarme) vs. alertar de menos (perder focos reais).
+
+3) NeKo-PIGNN (MÓDULO PREDITIVO)
+Combinação inédita na literatura de queimadas:
+• Operador de Koopman (Neural) → prevê evolução temporal do fogo
+• PI-GNN → rede em grafo com física do fogo (equação de Rothermel)
+Resultado em dados sintéticos: R² = 0,972
+
+4) IA EXPLICÁVEL E AUDITÁVEL
+Cada alerta traz: fontes consultadas, evidências, nível de confiança e justificativa em português — via agente ReAct (raciocina passo a passo antes de responder).
+
+═══════════════════════════════════════
+⚙️ COMO FUNCIONAM OS MÉTODOS
+═══════════════════════════════════════
+
+PIPELINE LangGraph (10 etapas):
+
+ ① COLETAR → busca focos NASA FIRMS, clima Open-Meteo, dados INPE
+ ② VALIDAR → rejeita registros inválidos (Pydantic)
+ ③ ANALISAR (3 agentes em paralelo):
+      • Geoespacial → cruza focos com municípios e áreas protegidas
+      • GOES-16 → persistência e temperatura (módulo de pesquisa)
+      • Climático → chuva, vento, umidade, dias secos
+ ④ FUNDIR → combina todas as evidências num score único
+ ⑤ CLASSIFICAR → calcula risco municipal
+ ⑥ DIAGNOSTICAR → agente ReAct explica o porquê do risco
+ ⑦ ALERTAR → gera alertas NÃO / INCERTO / SIM
+ ⑧ BOLETIM → relatório técnico automático
+
+CHAT RAG (pesquisa):
+• Documentação do sistema indexada (FAISS + embeddings)
+• Usuário pergunta em linguagem natural
+• Sistema busca trechos relevantes e responde citando a fonte
+• Recall@5 = 98% no benchmark formal (50 perguntas)
+
+VALIDAÇÃO:
+• Estação seca 2025: 184 dias, 24.573 focos INPE
+• 84% precisão · 92% recall nos alertas de 3 classes
+• Intervalos de confiança bootstrap confirmam estabilidade
+
+═══════════════════════════════════════
+📊 EM UMA FRASE
+═══════════════════════════════════════
+
+Satélites entram → IA valida, cruza e classifica → alertas explicáveis saem — tudo open-source, auditável e validado com dados reais do Ceará.
+
+🔗 github.com/naubergois/ceara-queimadas
+📄 Submissão: Environmental Modelling & Software (Elsevier)

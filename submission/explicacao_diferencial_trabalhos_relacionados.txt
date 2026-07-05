@@ -1,0 +1,83 @@
+🔍 O QUE TEM DE DIFERENTE — vs. trabalhos relacionados
+Explicação didática + comparação
+
+═══════════════════════════════════════
+RESUMO EM UMA FRASE
+═══════════════════════════════════════
+
+Nenhum trabalho anterior junta, numa plataforma open-source única:
+satélite em tempo quase real + agentes LangGraph/ReAct + chat RAG + foco Caatinga/Ceará + deploy simples (EC2, sem banco) + alertas explicáveis de 3 classes + NeKo-PIGNN (Koopman + física Rothermel).
+
+═══════════════════════════════════════
+TABELA COMPARATIVA (Gêmeos Digitais de Fogo)
+═══════════════════════════════════════
+
+| Sistema        | Agentes IA | Open Source | Bioma BR | RAG |
+|----------------|------------|-------------|----------|-----|
+| IVSR           | Sim        | Não         | Não      | Não |
+| FIRE-VLM       | RL+VLM     | Não         | Não      | Não |
+| FIRETWIN       | Não        | Não         | Não      | Não |
+| GraphFire-X    | GNN+XGB    | Sim         | Não      | Não |
+| FireCastNet    | GNN        | Sim         | Parcial  | Não |
+| AIMNET         | IoT ML     | Não         | Não      | Não |
+| **Este trabalho** | **LangGraph+ReAct** | **Sim (MIT)** | **Sim** | **Sim** |
+
+═══════════════════════════════════════
+VS. CADA LINHA DE PESQUISA
+═══════════════════════════════════════
+
+📌 IVSR (Virtual Situation Room)
+• Parecido: agentes + gêmeo digital + projeção de propagação
+• Diferente nosso: OPEN SOURCE, validado no Ceará/Caatinga, RAG, roda num EC2 barato, alertas 3 classes auditáveis
+• IVSR: fechado, foco florestal 3D, sem validação bioma brasileiro
+
+📌 FIRE-VLM
+• Parecido: gêmeo digital + IA + física
+• Diferente nosso: monitoramento CONTÍNUO por satélite (FIRMS/INPE/GOES), não depende de drones/UAV
+• FIRE-VLM: foco em guiar UAVs com VLM+RL — outro problema operacional
+
+📌 FIRETWIN
+• Parecido: reconstrução de incêndios, multi-sensor
+• Diferente nosso: plataforma OPERACIONAL (alertas hoje), não simulação histórica imersiva (Unreal Engine)
+• FIRETWIN: King Fire reconstruído — pesquisa/visualização, não defesa civil diária
+
+📌 GraphFire-X
+• Parecido: GNN + física do fogo (atenção física)
+• Diferente nosso: escala REGIONAL (149 mil células 1 km² Ceará) + módulo TEMPORAL NeKo (Koopman)
+• GraphFire-X: escala edificações/interface urbano-florestal (Eaton Fire EUA)
+
+📌 FireCastNet
+• Parecido: grafo global, previsão sazonal, forte na América do Sul
+• Diferente nosso: tempo quase REAL + pipeline agentico + alertas 3 classes + explicação ReAct
+• FireCastNet: previsão sazonal global — não substitui monitoramento operacional diário
+
+📌 NASA FIRMS / INPE BDQueimadas
+• Parecido: dados satélite oficiais que nós também usamos
+• Diferente nosso: não só DETECTAR — cruzamos fontes, classificamos risco, explicamos, alertamos com 3 níveis
+• FIRMS/INPE: reativos (foco detectado → mapa), sem agentes, sem RAG, sem predição integrada
+
+📌 NeKo-PIGNN (Koopman + PI-GNN)
+• Koopman para dinâmica de fogo: LACUNA na literatura — nosso trabalho é inédito neste ponto
+• PI-GNN com loss Rothermel: comparable a GraphFire-X mas em escala regional + acoplado a Koopman
+• LangGraph para orquestração de queimadas: PRIMEIRA aplicação conhecida
+
+═══════════════════════════════════════
+5 DIFERENCIAIS ÚNICOS (checklist)
+═══════════════════════════════════════
+
+✅ Combinação sem precedente: satélite + LangGraph + RAG + open source
+✅ Foco bioma brasileiro (Ceará/Caatinga) com validação INPE 184 dias
+✅ Alertas 3 classes (NÃO/INCERTO/SIM) — equilibra precisão e recall
+✅ Arquitetura standalone — EC2 único, ~USD 20/mês, sem PostgreSQL obrigatório
+✅ NeKo-PIGNN — Koopman temporal + GNN física (Rothermel), R²=0,972 sintético
+
+═══════════════════════════════════════
+O QUE NÃO CLAIMAMOS SER DIFERENTE
+═══════════════════════════════════════
+
+• Detecção por satélite — FIRMS/INPE já fazem (nós integramos e cruzamos)
+• GNN para fogo — GraphFire-X, FireCastNet também usam
+• Gêmeo digital — IVSR, FIRE-VLM, FIRETWIN também propõem
+• A novidade está na COMBINAÇÃO operacional + abertura + Brasil + explicabilidade
+
+📄 Elsevier EMS · github.com/naubergois/ceara-queimadas

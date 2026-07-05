@@ -1,0 +1,49 @@
+{
+  "experiment": "TASK-083 v6 \u2014 Precision-Optimized NeKo-PIGNN",
+  "techniques": [
+    "Focal Loss (gamma=2.5)",
+    "Gated GNN (5 layers)",
+    "Confidence head",
+    "Spatial consistency loss",
+    "Spectral reg < 0.98"
+  ],
+  "MLP": {
+    "f1_score": 0.322,
+    "precision": 0.2023,
+    "recall": 0.7889,
+    "accuracy": 0.2881,
+    "rmse": 2.1435,
+    "rmse_fire_only": 4.5185,
+    "avg_precision": 0.2887,
+    "tp": 71,
+    "fp": 280,
+    "fn": 19,
+    "tn": 50
+  },
+  "PrecisionNeKo": {
+    "f1_score": 0.2524,
+    "precision": 0.1781,
+    "recall": 0.4333,
+    "accuracy": 0.45,
+    "rmse": 2.186,
+    "rmse_fire_only": 4.6689,
+    "avg_precision": 0.2427,
+    "tp": 39,
+    "fp": 180,
+    "fn": 51,
+    "tn": 150
+  },
+  "PrecisionNeKo+Confidence": {
+    "f1_score": 0.2629,
+    "precision": 0.205,
+    "recall": 0.3667,
+    "accuracy": 0.5595,
+    "rmse": 2.1855,
+    "rmse_fire_only": 4.6873,
+    "avg_precision": 0.2683,
+    "tp": 33,
+    "fp": 128,
+    "fn": 57,
+    "tn": 202
+  }
+}

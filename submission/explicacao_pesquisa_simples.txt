@@ -1,0 +1,31 @@
+🔥 Gêmeo Digital de Queimadas — Ceará (explicação simples)
+
+O QUE É?
+Um mapa vivo do Ceará que mostra focos de incêndio e risco de fogo quase em tempo real, com inteligência artificial explicando o que está acontecendo.
+
+DE ONDE VÊM OS DADOS?
+• INPE (focos oficiais no Brasil)
+• NASA FIRMS (satélites MODIS/VIIRS)
+• GOES-16 (detecção rápida)
+• Clima (chuva, vento, umidade)
+
+O QUE A IA FAZ?
+Em vez de só plotar pontos no mapa, agentes de IA:
+1. Coletam e validam dados de várias fontes
+2. Cruzam focos com municípios e clima
+3. Classificam o risco em 3 níveis: NÃO / INCERTO / SIM
+4. Geram alertas com justificativa em linguagem clara
+
+RESULTADOS (estação seca 2025)
+• 84% de precisão
+• 92% de recall
+• 184 dias validados com dados INPE
+
+PARA QUEM SERVE?
+Defesa civil, gestores ambientais e pesquisadores que precisam decidir rápido com evidência.
+
+CÓDIGO ABERTO
+MIT · github.com/naubergois/ceara-queimadas
+Demo: http://98.91.177.145
+
+Artigo em submissão: Environmental Modelling & Software (Elsevier)

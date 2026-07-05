@@ -1,0 +1,57 @@
+This is BibTeX, Version 0.99e (TeX Live 2026)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: artigo-queimadas-gemeo-digital-en.aux
+The style file: elsarticle-num.bst
+Database file #1: submission/refs-ems.bib
+Warning--empty pages in article:react2023
+Warning--empty pages in article:lusch2018
+Warning--empty pages in article:takeishi2017
+Warning--empty pages in article:gao2023
+Warning--empty pages in article:shinn2023
+Warning--empty pages in article:schick2023
+Warning--empty pages in article:patil2023
+Warning--empty pages in article:park2023
+Warning--empty pages in article:lewis2020
+Warning--empty pages in article:pyg2019
+You've used 71 entries,
+            2952 wiz_defined-function locations,
+            1097 strings with 20013 characters,
+and the built_in function-call counts, 22277 in all, are:
+= -- 2085
+> -- 905
+< -- 9
++ -- 349
+- -- 278
+* -- 1789
+:= -- 3166
+add.period$ -- 119
+call.type$ -- 71
+change.case$ -- 71
+chr.to.int$ -- 0
+cite$ -- 81
+duplicate$ -- 624
+empty$ -- 2432
+format.name$ -- 333
+if$ -- 5663
+int.to.chr$ -- 0
+int.to.str$ -- 71
+missing$ -- 60
+newline$ -- 286
+num.names$ -- 71
+pop$ -- 413
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 1391
+stack$ -- 0
+substring$ -- 890
+swap$ -- 191
+text.length$ -- 9
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 10
+while$ -- 137
+width$ -- 73
+write$ -- 699
+(There were 10 warnings)

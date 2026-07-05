@@ -1,0 +1,72 @@
+{
+  "experiment": "TASK-083 v2",
+  "date": "2026-06-08",
+  "config": {
+    "num_nodes": 30,
+    "seq_len": 500,
+    "input_dim": 6,
+    "approach": "Curriculum Learning + Deterministic Koopman + Simple GNN"
+  },
+  "results": [
+    {
+      "model": "MLP",
+      "rmse": 0.0687,
+      "mae": 0.0237,
+      "r2": 0.9677,
+      "f1_score": 0.975,
+      "precision": 0.9862,
+      "recall": 0.964,
+      "inference_ms": 0.016570091247558594
+    },
+    {
+      "model": "LSTM",
+      "rmse": 0.0841,
+      "mae": 0.0446,
+      "r2": 0.9512,
+      "f1_score": 0.9448,
+      "precision": 0.994,
+      "recall": 0.9002,
+      "inference_ms": 0.7558862368265787
+    },
+    {
+      "model": "XGBoost",
+      "rmse": 0.0871,
+      "mae": 0.0387,
+      "r2": 0.948,
+      "f1_score": 0.9311,
+      "precision": 0.9995,
+      "recall": 0.8714,
+      "inference_ms": 4.397394895553589
+    },
+    {
+      "model": "Koopman-Det (ours)",
+      "rmse": 0.068,
+      "mae": 0.0224,
+      "r2": 0.9683,
+      "f1_score": 0.9751,
+      "precision": 0.988,
+      "recall": 0.9624,
+      "inference_ms": 0.058531761169433594
+    },
+    {
+      "model": "NeKo-PIGNN v2 (ours)",
+      "rmse": 0.064,
+      "mae": 0.0241,
+      "r2": 0.9719,
+      "f1_score": 0.9751,
+      "precision": 0.9855,
+      "recall": 0.965,
+      "inference_ms": 0.37138938903808594
+    },
+    {
+      "model": "NeKo-GNN (no physics)",
+      "rmse": 0.0664,
+      "mae": 0.0216,
+      "r2": 0.9698,
+      "f1_score": 0.9764,
+      "precision": 0.9866,
+      "recall": 0.9665,
+      "inference_ms": 0.44513940811157227
+    }
+  ]
+}

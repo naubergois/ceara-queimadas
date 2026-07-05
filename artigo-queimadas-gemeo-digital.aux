@@ -6,12 +6,12 @@
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \Newlabel{cor1}{1}
 \citation{article:alencar2020,master:silva2021}
-\citation{article:williams2022}
 \citation{techreport:funceme2024}
 \babel@aux{english}{}
 \Newlabel{unifor}{a}
-\Newlabel{funceme}{b}
+\Newlabel{usj}{b}
 \Newlabel{ifce}{c}
+\Newlabel{saxion}{d}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \newlabel{sec:intro}{{1}{1}{Introduction}{section.1}{}}
 \citation{manual:firms2024}
@@ -42,16 +42,16 @@
 \citation{article:esparza2025}
 \citation{article:michail2025}
 \citation{article:aimnet2025}
-\citation{article:giglio2016}
-\citation{article:schroeder2014}
-\citation{manual:firms2024}
-\citation{article:inpe2023}
-\citation{article:wooster2021}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Digital Twins para Incêndios Florestais}{3}{subsection.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Abordagens orientadas a agentes e IA.}{3}{section*.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Abordagens baseadas em Visão-Linguagem e RL.}{3}{section*.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Abordagens de sensoriamento multi-modal.}{3}{section*.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Modelagem baseada em GNN e física.}{3}{section*.4}\protected@file@percent }
+\citation{article:giglio2016}
+\citation{article:schroeder2014}
+\citation{manual:firms2024}
+\citation{article:inpe2023}
+\citation{article:wooster2021}
 \citation{techreport:goes2022}
 \citation{article:inpe2023}
 \citation{website:mapbiomas}
@@ -73,7 +73,6 @@
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{tab:dt-comparison}{{1}{4}{Comparação de Digital Twins para incêndios florestais}{table.caption.5}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Sensoriamento Remoto de Queimadas}{4}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Operador de Koopman e PINNs para Dinâmica de Fogo}{4}{subsection.2.4}\protected@file@percent }
 \citation{article:lusch2018,article:takeishi2017}
 \citation{article:morton2019}
 \citation{article:raissi2019}
@@ -97,8 +96,9 @@
 \citation{article:faiss2017}
 \citation{model:bge2024}
 \citation{article:gao2024rag}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Operador de Koopman e PINNs para Dinâmica de Fogo}{5}{subsection.2.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Agentes Autônomos e LangGraph}{5}{subsection.2.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Análise de Lacunas}{5}{subsection.2.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Análise de Lacunas}{6}{subsection.2.6}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Análise de lacunas: sistemas existentes vs.\ plataforma proposta.}}{6}{table.caption.6}\protected@file@percent }
 \newlabel{tab:gap-analysis}{{2}{6}{Análise de lacunas: sistemas existentes vs.\ plataforma proposta}{table.caption.6}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}System Architecture}{6}{section.3}\protected@file@percent }
@@ -114,45 +114,45 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}LangGraph Pipeline}{8}{subsection.3.4}\protected@file@percent }
 \newlabel{sec:langgraph}{{3.4}{8}{LangGraph Pipeline}{subsection.3.4}{}}
 \citation{article:react2023}
+\citation{article:lewis2020,article:izacard2022,article:gao2024rag}
+\citation{article:faiss2017}
+\citation{model:bge2024}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces LangGraph state graph of the agent pipeline. Analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}}{9}{figure.2}\protected@file@percent }
 \newlabel{fig:langgraph}{{2}{9}{LangGraph state graph of the agent pipeline. Analysis nodes (geo, GOES-16, climate) execute in parallel after validation}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.5}ReAct Agent}{9}{subsection.3.5}\protected@file@percent }
 \newlabel{sec:react}{{3.5}{9}{ReAct Agent}{subsection.3.5}{}}
-\citation{article:lewis2020,article:izacard2022,article:gao2024rag}
-\citation{article:faiss2017}
-\citation{model:bge2024}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.6}RAG Module -- Research Chat}{10}{subsection.3.6}\protected@file@percent }
 \newlabel{sec:rag}{{3.6}{10}{RAG Module -- Research Chat}{subsection.3.6}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.7}React Frontend}{10}{subsection.3.7}\protected@file@percent }
 \newlabel{sec:frontend}{{3.7}{10}{React Frontend}{subsection.3.7}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Risk Classifier}{11}{subsection.3.8}\protected@file@percent }
-\newlabel{sec:risk}{{3.8}{11}{Risk Classifier}{subsection.3.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}Risk Classifier}{10}{subsection.3.8}\protected@file@percent }
+\newlabel{sec:risk}{{3.8}{10}{Risk Classifier}{subsection.3.8}{}}
+\citation{article:pyg2019,article:xu2019,article:hamilton2017,article:velickovic2018}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Implementation}{11}{section.4}\protected@file@percent }
 \newlabel{sec:implementation}{{4}{11}{Implementation}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Software Architecture}{11}{subsection.4.1}\protected@file@percent }
 \newlabel{sec:sw-arch}{{4.1}{11}{Software Architecture}{subsection.4.1}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces System software stack.}}{11}{table.caption.7}\protected@file@percent }
 \newlabel{tab:software-stack}{{3}{11}{System software stack}{table.caption.7}{}}
-\citation{article:pyg2019,article:xu2019,article:hamilton2017,article:velickovic2018}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Neural Koopman Operator -- Implementation Details}{11}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:koopman-impl}{{4.2}{11}{Neural Koopman Operator -- Implementation Details}{subsection.4.2}{}}
+\newlabel{eq:spectral_reg}{{3}{11}{Neural Koopman Operator -- Implementation Details}{equation.3}{}}
 \citation{article:xi2023,article:wang2024survey,article:park2023}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Neural Koopman Operator -- Implementation Details}{12}{subsection.4.2}\protected@file@percent }
-\newlabel{sec:koopman-impl}{{4.2}{12}{Neural Koopman Operator -- Implementation Details}{subsection.4.2}{}}
-\newlabel{eq:spectral_reg}{{3}{12}{Neural Koopman Operator -- Implementation Details}{equation.3}{}}
+\citation{article:rothermel1972}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}PI-GNN -- Implementation Details}{12}{subsection.4.3}\protected@file@percent }
 \newlabel{sec:pignn-impl}{{4.3}{12}{PI-GNN -- Implementation Details}{subsection.4.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}LangGraph Integration}{12}{subsection.4.4}\protected@file@percent }
 \newlabel{sec:langgraph-impl}{{4.4}{12}{LangGraph Integration}{subsection.4.4}{}}
-\citation{article:rothermel1972}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Deployment}{13}{section.5}\protected@file@percent }
-\newlabel{sec:deploy}{{5}{13}{Deployment}{section.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Deployment}{12}{section.5}\protected@file@percent }
+\newlabel{sec:deploy}{{5}{12}{Deployment}{section.5}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {6}Methodology: Mathematical Formulation of the NeKo-PIGNN Framework}{13}{section.6}\protected@file@percent }
 \newlabel{sec:methodology}{{6}{13}{Methodology: Mathematical Formulation of the NeKo-PIGNN Framework}{section.6}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Hybrid Neural Koopman Operator and PI-GNN architecture. Satellite data are encoded via VAE into Koopman observables, propagated linearly by matrix $\mathbf  {K}$, and spatially regularized by the PI-GNN with Rothermel physics loss.}}{13}{figure.3}\protected@file@percent }
 \newlabel{fig:diagrama-koopman}{{3}{13}{Hybrid Neural Koopman Operator and PI-GNN architecture. Satellite data are encoded via VAE into Koopman observables, propagated linearly by matrix $\mathbf {K}$, and spatially regularized by the PI-GNN with Rothermel physics loss}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Koopman Operator Theory for Fire Dynamics}{13}{subsection.6.1}\protected@file@percent }
+\newlabel{sec:koopman}{{6.1}{13}{Koopman Operator Theory for Fire Dynamics}{subsection.6.1}{}}
 \citation{article:lusch2018,article:takeishi2017}
 \citation{article:williams2015}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Koopman Operator Theory for Fire Dynamics}{14}{subsection.6.1}\protected@file@percent }
-\newlabel{sec:koopman}{{6.1}{14}{Koopman Operator Theory for Fire Dynamics}{subsection.6.1}{}}
 \newlabel{eq:koopman_def}{{4}{14}{Koopman Operator Theory for Fire Dynamics}{equation.4}{}}
 \newlabel{eq:koopman_linear}{{5}{14}{Koopman Operator Theory for Fire Dynamics}{equation.5}{}}
 \newlabel{eq:koopman_finite}{{6}{14}{Koopman Operator Theory for Fire Dynamics}{equation.6}{}}
@@ -162,10 +162,10 @@
 \newlabel{eq:vae_posterior}{{8}{14}{Variational Autoencoder for Koopman Observables}{equation.8}{}}
 \newlabel{eq:reparam}{{9}{14}{Variational Autoencoder for Koopman Observables}{equation.9}{}}
 \newlabel{eq:kl_div}{{10}{14}{Variational Autoencoder for Koopman Observables}{equation.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Extended Dynamic Mode Decomposition (EDMD)}{14}{subsection.6.3}\protected@file@percent }
+\newlabel{sec:edmd}{{6.3}{14}{Extended Dynamic Mode Decomposition (EDMD)}{subsection.6.3}{}}
+\newlabel{eq:edmd_obj}{{11}{14}{Extended Dynamic Mode Decomposition (EDMD)}{equation.11}{}}
 \citation{article:bengio2009curriculum}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Extended Dynamic Mode Decomposition (EDMD)}{15}{subsection.6.3}\protected@file@percent }
-\newlabel{sec:edmd}{{6.3}{15}{Extended Dynamic Mode Decomposition (EDMD)}{subsection.6.3}{}}
-\newlabel{eq:edmd_obj}{{11}{15}{Extended Dynamic Mode Decomposition (EDMD)}{equation.11}{}}
 \newlabel{eq:edmd_solve}{{12}{15}{Extended Dynamic Mode Decomposition (EDMD)}{equation.12}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Perda Total do KoopmanVAE}{15}{subsection.6.4}\protected@file@percent }
 \newlabel{sec:koopman-loss}{{6.4}{15}{Perda Total do KoopmanVAE}{subsection.6.4}{}}
@@ -173,9 +173,9 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Curriculum Learning Temporal}{15}{subsection.6.5}\protected@file@percent }
 \newlabel{sec:curriculum}{{6.5}{15}{Curriculum Learning Temporal}{subsection.6.5}{}}
 \newlabel{eq:curriculum}{{14}{15}{Curriculum Learning Temporal}{equation.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Physics-Informed Graph Neural Network (PI-GNN)}{15}{subsection.6.6}\protected@file@percent }
+\newlabel{sec:pignn}{{6.6}{15}{Physics-Informed Graph Neural Network (PI-GNN)}{subsection.6.6}{}}
 \citation{article:rothermel1972}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.6}Physics-Informed Graph Neural Network (PI-GNN)}{16}{subsection.6.6}\protected@file@percent }
-\newlabel{sec:pignn}{{6.6}{16}{Physics-Informed Graph Neural Network (PI-GNN)}{subsection.6.6}{}}
 \newlabel{eq:message}{{15}{16}{Physics-Informed Graph Neural Network (PI-GNN)}{equation.15}{}}
 \newlabel{eq:update}{{16}{16}{Physics-Informed Graph Neural Network (PI-GNN)}{equation.16}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.7}Regularização Física via PDE de Rothermel}{16}{subsection.6.7}\protected@file@percent }
@@ -202,160 +202,216 @@
 \newlabel{sec:exp-protocol}{{7.1}{18}{Experimental Design and Protocol}{subsection.7.1}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Reference Datasets and Descriptive Statistics}{19}{subsection.7.2}\protected@file@percent }
 \newlabel{sec:hotspot-stats}{{7.2}{19}{Reference Datasets and Descriptive Statistics}{subsection.7.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces INPE hotspot descriptive statistics for Cear\'{a} (Jan/2024--Jun/2026).}}{19}{table.caption.9}\protected@file@percent }
-\newlabel{tab:inpe-stats}{{4}{19}{INPE hotspot descriptive statistics for Cear\'{a} (Jan/2024--Jun/2026)}{table.caption.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Monthly evolution of wildfire hotspots in Cear\'{a}, comparing 2024 and 2025 (synthetic data based on real trends).}}{20}{figure.5}\protected@file@percent }
-\newlabel{fig:evolucao}{{5}{20}{Monthly evolution of wildfire hotspots in Cear\'{a}, comparing 2024 and 2025 (synthetic data based on real trends)}{figure.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces INPE hotspot descriptive statistics for Cear\'{a}, computed from the released dataset (Jan/2024--Jun/2026; 111{,}639 records).}}{19}{table.caption.9}\protected@file@percent }
+\newlabel{tab:inpe-stats}{{4}{19}{INPE hotspot descriptive statistics for Cear\'{a}, computed from the released dataset (Jan/2024--Jun/2026; 111{,}639 records)}{table.caption.9}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Wildfire hotspot temporal patterns in Ceará (INPE BDQueimadas, 2024--2025).}}{20}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:evolucao-combined}{{5}{20}{Wildfire hotspot temporal patterns in Ceará (INPE BDQueimadas, 2024--2025)}{figure.caption.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Exp-B real-data subset: detections by sensor and model features.}}{20}{table.caption.11}\protected@file@percent }
+\newlabel{tab:sensor-breakdown}{{5}{20}{Exp-B real-data subset: detections by sensor and model features}{table.caption.11}{}}
+\newlabel{tab:features}{{5}{20}{Exp-B real-data subset: detections by sensor and model features}{table.caption.11}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {7.3}GOES-16 Unsupervised Detection Benchmark}{20}{subsection.7.3}\protected@file@percent }
 \newlabel{sec:goes16-validation}{{7.3}{20}{GOES-16 Unsupervised Detection Benchmark}{subsection.7.3}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces GOES-16 vs.\ INPE validation (2024-10-31, dilated truth, 284 positive cells).}}{20}{table.caption.10}\protected@file@percent }
-\newlabel{tab:goes-validation}{{5}{20}{GOES-16 vs.\ INPE validation (2024-10-31, dilated truth, 284 positive cells)}{table.caption.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Three-Level Operational Alert System}{21}{subsection.7.4}\protected@file@percent }
-\newlabel{sec:three-level}{{7.4}{21}{Three-Level Operational Alert System}{subsection.7.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Three-level alert system mapped to model classes (28-day test period, Mar--Jun/2026).}}{21}{table.caption.11}\protected@file@percent }
-\newlabel{tab:alert-levels}{{6}{21}{Three-level alert system mapped to model classes (28-day test period, Mar--Jun/2026)}{table.caption.11}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces TASK-083 iteration history: precision--recall trade-off resolution.}}{21}{table.caption.12}\protected@file@percent }
-\newlabel{tab:task083-evolution}{{7}{21}{TASK-083 iteration history: precision--recall trade-off resolution}{table.caption.12}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Operational Pipeline Performance}{21}{subsection.7.5}\protected@file@percent }
-\newlabel{sec:operational-pipeline}{{7.5}{21}{Operational Pipeline Performance}{subsection.7.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}}{22}{figure.6}\protected@file@percent }
-\newlabel{fig:resultados}{{6}{22}{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage}{figure.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Operational hotspot detection metrics (NASA FIRMS, Cear\'{a} bounding box).}}{22}{table.caption.13}\protected@file@percent }
-\newlabel{tab:detection}{{8}{22}{Operational hotspot detection metrics (NASA FIRMS, Cear\'{a} bounding box)}{table.caption.13}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Contribution by NASA FIRMS sensor (540 collections).}}{22}{table.caption.14}\protected@file@percent }
-\newlabel{tab:sources}{{9}{22}{Contribution by NASA FIRMS sensor (540 collections)}{table.caption.14}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Agent and RAG Evaluation}{23}{subsection.7.6}\protected@file@percent }
-\newlabel{sec:agent-rag}{{7.6}{23}{Agent and RAG Evaluation}{subsection.7.6}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces AI agent and RAG performance metrics.}}{23}{table.caption.15}\protected@file@percent }
-\newlabel{tab:agent-perf}{{10}{23}{AI agent and RAG performance metrics}{table.caption.15}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.7}Classifier Sensitivity Analysis}{23}{subsection.7.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.8}Predictive Model Validation: NeKo-PIGNN vs.\ Baselines}{23}{subsection.7.8}\protected@file@percent }
-\newlabel{sec:model_validation}{{7.8}{23}{Predictive Model Validation: NeKo-PIGNN vs.\ Baselines}{subsection.7.8}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.8.1}Regression Task: Next-Day Prediction}{23}{subsubsection.7.8.1}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Next-day prediction on synthetic data (500 steps, 30 nodes). Best in \textbf  {bold}.}}{23}{table.caption.16}\protected@file@percent }
-\newlabel{tab:regression_synthetic}{{11}{23}{Next-day prediction on synthetic data (500 steps, 30 nodes). Best in \textbf {bold}}{table.caption.16}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Model comparison on real wildfire data from Cear\'a (NASA FIRMS + INPE + Open-Meteo). 15 municipalities, 97 days of climate data, 377 fire detections.}}{24}{table.caption.17}\protected@file@percent }
-\newlabel{tab:real_data}{{12}{24}{Model comparison on real wildfire data from Cear\'a (NASA FIRMS + INPE + Open-Meteo). 15 municipalities, 97 days of climate data, 377 fire detections}{table.caption.17}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.8.2}Detection Task: Three-Class Fire Alert System}{24}{subsubsection.7.8.2}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Three-class detection: precision of the YES class (alerts) at $P(\text  {YES})$ thresholds.}}{24}{table.caption.18}\protected@file@percent }
-\newlabel{tab:three_class}{{13}{24}{Three-class detection: precision of the YES class (alerts) at $P(\text {YES})$ thresholds}{table.caption.18}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.8.3}Comparison with State of the Art}{24}{subsubsection.7.8.3}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Comparison with published wildfire detection systems.}}{24}{table.caption.19}\protected@file@percent }
-\newlabel{tab:sota}{{14}{24}{Comparison with published wildfire detection systems}{table.caption.19}{}}
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.8.4}Estudo de Ablação}{24}{subsubsection.7.8.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Real wildfire detections in Cear\'{a} (Mar--Jun/2026): NASA FIRMS + INPE + Open-Meteo.}}{21}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:real-data-panel}{{6}{21}{Real wildfire detections in Cear\'{a} (Mar--Jun/2026): NASA FIRMS + INPE + Open-Meteo}{figure.caption.12}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces GOES-16 vs.\ INPE validation (2024-10-31). Grid: dilated truth (284 cells); pixel: 15~km focal matching.}}{21}{table.caption.13}\protected@file@percent }
+\newlabel{tab:goes-validation}{{6}{21}{GOES-16 vs.\ INPE validation (2024-10-31). Grid: dilated truth (284 cells); pixel: 15~km focal matching}{table.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Risk Index Calibration (Track~D)}{22}{subsection.7.4}\protected@file@percent }
+\newlabel{sec:risk-calibration-exp}{{7.4}{22}{Risk Index Calibration (Track~D)}{subsection.7.4}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Risk index calibration on the INPE BDQueimadas snapshot (111{,}054 records, 12/Jun/2026). Precision is 1.000 by construction (see text); recall and F1 are the informative metrics.}}{22}{table.caption.14}\protected@file@percent }
+\newlabel{tab:risk-calibration}{{7}{22}{Risk index calibration on the INPE BDQueimadas snapshot (111{,}054 records, 12/Jun/2026). Precision is 1.000 by construction (see text); recall and F1 are the informative metrics}{table.caption.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.5}Exp-B Iteration History: Synthetic and Real Data}{22}{subsection.7.5}\protected@file@percent }
+\newlabel{sec:exp-b-synthetic}{{7.5}{22}{Exp-B Iteration History: Synthetic and Real Data}{subsection.7.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Exp-B v2: next-day prediction on synthetic data (500 steps, 30 nodes). Best in \textbf  {bold}.}}{22}{table.caption.15}\protected@file@percent }
+\newlabel{tab:regression_synthetic}{{8}{22}{Exp-B v2: next-day prediction on synthetic data (500 steps, 30 nodes). Best in \textbf {bold}}{table.caption.15}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.6}Exp-B Real-Data Regression (v3--v4)}{23}{subsection.7.6}\protected@file@percent }
+\newlabel{sec:exp-b-real-regression}{{7.6}{23}{Exp-B Real-Data Regression (v3--v4)}{subsection.7.6}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Real-data regression (v3) and synthetic-to-real R\textsuperscript  {2} drop (v2$\rightarrow $v3).}}{23}{table.caption.16}\protected@file@percent }
+\newlabel{tab:real-regression-combined}{{9}{23}{Real-data regression (v3) and synthetic-to-real R\textsuperscript {2} drop (v2$\rightarrow $v3)}{table.caption.16}{}}
+\newlabel{tab:real_data}{{9}{23}{Real-data regression (v3) and synthetic-to-real R\textsuperscript {2} drop (v2$\rightarrow $v3)}{table.caption.16}{}}
+\newlabel{tab:synthetic-real-gap}{{9}{23}{Real-data regression (v3) and synthetic-to-real R\textsuperscript {2} drop (v2$\rightarrow $v3)}{table.caption.16}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.7}Exp-B Rare-Event Detection and Three-Class Alerts (v5--v9)}{23}{subsection.7.7}\protected@file@percent }
+\newlabel{sec:exp-b-binary}{{7.7}{23}{Exp-B Rare-Event Detection and Three-Class Alerts (v5--v9)}{subsection.7.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.8}Three-Level Operational Alert System (v8--v9)}{23}{subsection.7.8}\protected@file@percent }
+\newlabel{sec:three-level}{{7.8}{23}{Three-Level Operational Alert System (v8--v9)}{subsection.7.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Three-class alert mapping and YES-class precision at operational thresholds (20-day holdout).}}{24}{table.caption.17}\protected@file@percent }
+\newlabel{tab:alerts-combined}{{10}{24}{Three-class alert mapping and YES-class precision at operational thresholds (20-day holdout)}{table.caption.17}{}}
+\newlabel{tab:alert-levels}{{10}{24}{Three-class alert mapping and YES-class precision at operational thresholds (20-day holdout)}{table.caption.17}{}}
+\newlabel{tab:three_class}{{10}{24}{Three-class alert mapping and YES-class precision at operational thresholds (20-day holdout)}{table.caption.17}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Exp-B iteration history (v3--v9): precision--recall trade-off resolution.}}{24}{table.caption.18}\protected@file@percent }
+\newlabel{tab:task083-evolution}{{11}{24}{Exp-B iteration history (v3--v9): precision--recall trade-off resolution}{table.caption.18}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.9}Statistical Robustness (Exp-ROBUST-001)}{24}{subsection.7.9}\protected@file@percent }
+\newlabel{sec:statistical-robustness}{{7.9}{24}{Statistical Robustness (Exp-ROBUST-001)}{subsection.7.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Bootstrap 95\% CI and paired significance tests (Exp-ROBUST-001).}}{24}{table.caption.19}\protected@file@percent }
+\newlabel{tab:robustness-combined}{{12}{24}{Bootstrap 95\% CI and paired significance tests (Exp-ROBUST-001)}{table.caption.19}{}}
+\newlabel{tab:bootstrap-combined}{{12}{24}{Bootstrap 95\% CI and paired significance tests (Exp-ROBUST-001)}{table.caption.19}{}}
+\newlabel{tab:paired-tests}{{12}{24}{Bootstrap 95\% CI and paired significance tests (Exp-ROBUST-001)}{table.caption.19}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.10}Operational and Temporal Validation (Exp-ROBUST-003/006)}{25}{subsection.7.10}\protected@file@percent }
+\newlabel{sec:operational-baseline}{{7.10}{25}{Operational and Temporal Validation (Exp-ROBUST-003/006)}{subsection.7.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Operational baselines and extended temporal validation (XGBoost 3-class, YES at $P\geq 0.30$).}}{25}{table.caption.20}\protected@file@percent }
+\newlabel{tab:operational-validation}{{13}{25}{Operational baselines and extended temporal validation (XGBoost 3-class, YES at $P\geq 0.30$)}{table.caption.20}{}}
+\newlabel{tab:operational-baseline}{{13}{25}{Operational baselines and extended temporal validation (XGBoost 3-class, YES at $P\geq 0.30$)}{table.caption.20}{}}
+\newlabel{tab:extended-temporal}{{13}{25}{Operational baselines and extended temporal validation (XGBoost 3-class, YES at $P\geq 0.30$)}{table.caption.20}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.11}External-State Generalization (Exp-ROBUST-005)}{25}{subsection.7.11}\protected@file@percent }
+\newlabel{sec:external-states}{{7.11}{25}{External-State Generalization (Exp-ROBUST-005)}{subsection.7.11}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces External-state validation: XGBoost 3-class YES alert at $P\geq 0.30$ (dry season Jul--Dec/2025).}}{25}{table.caption.21}\protected@file@percent }
+\newlabel{tab:external-states}{{14}{25}{External-state validation: XGBoost 3-class YES alert at $P\geq 0.30$ (dry season Jul--Dec/2025)}{table.caption.21}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Dry-season 2025 alert precision and recall: Ceará vs.\ Maranhão and Piauí (INPE BDQueimadas).}}{26}{figure.7}\protected@file@percent }
+\newlabel{fig:external-states}{{7}{26}{Dry-season 2025 alert precision and recall: Ceará vs.\ Maranhão and Piauí (INPE BDQueimadas)}{figure.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.12}Comparison with Published Systems}{26}{subsection.7.12}\protected@file@percent }
+\newlabel{sec:sota-comparison}{{7.12}{26}{Comparison with Published Systems}{subsection.7.12}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Operational platforms and published wildfire detection baselines.}}{26}{table.caption.22}\protected@file@percent }
+\newlabel{tab:systems-comparison}{{15}{26}{Operational platforms and published wildfire detection baselines}{table.caption.22}{}}
+\newlabel{tab:operational-systems}{{15}{26}{Operational platforms and published wildfire detection baselines}{table.caption.22}{}}
+\newlabel{tab:sota}{{15}{26}{Operational platforms and published wildfire detection baselines}{table.caption.22}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.13}Operational Pipeline Performance}{26}{subsection.7.13}\protected@file@percent }
+\newlabel{sec:operational-pipeline}{{7.13}{26}{Operational Pipeline Performance}{subsection.7.13}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}}{27}{figure.8}\protected@file@percent }
+\newlabel{fig:resultados}{{8}{27}{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage}{figure.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces Operational hotspot detection metrics (NASA FIRMS, Cear\'{a} bounding box).}}{27}{table.caption.23}\protected@file@percent }
+\newlabel{tab:detection}{{16}{27}{Operational hotspot detection metrics (NASA FIRMS, Cear\'{a} bounding box)}{table.caption.23}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {17}{\ignorespaces Contribution by NASA FIRMS sensor (540 collections).}}{27}{table.caption.24}\protected@file@percent }
+\newlabel{tab:sources}{{17}{27}{Contribution by NASA FIRMS sensor (540 collections)}{table.caption.24}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.14}Agent and RAG Evaluation}{28}{subsection.7.14}\protected@file@percent }
+\newlabel{sec:agent-rag}{{7.14}{28}{Agent and RAG Evaluation}{subsection.7.14}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {18}{\ignorespaces AI agent and RAG performance metrics.}}{28}{table.caption.25}\protected@file@percent }
+\newlabel{tab:agent-perf}{{18}{28}{AI agent and RAG performance metrics}{table.caption.25}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.15}Classifier Sensitivity Analysis}{28}{subsection.7.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.16}Predictive Model Validation: NeKo-PIGNN vs.\ Baselines}{28}{subsection.7.16}\protected@file@percent }
+\newlabel{sec:model_validation}{{7.16}{28}{Predictive Model Validation: NeKo-PIGNN vs.\ Baselines}{subsection.7.16}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.16.1}Regression Task: Next-Day Prediction}{28}{subsubsection.7.16.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {19}{\ignorespaces Next-day prediction on synthetic data (500 steps, 30 nodes). Best in \textbf  {bold}.}}{28}{table.caption.26}\protected@file@percent }
+\newlabel{tab:regression_synthetic}{{19}{28}{Next-day prediction on synthetic data (500 steps, 30 nodes). Best in \textbf {bold}}{table.caption.26}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {20}{\ignorespaces Model comparison on real wildfire data (Cear\'a; 15 municipalities, 97 days, 377 detections).}}{29}{table.caption.27}\protected@file@percent }
+\newlabel{tab:real_data}{{20}{29}{Model comparison on real wildfire data (Cear\'a; 15 municipalities, 97 days, 377 detections)}{table.caption.27}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.16.2}Detection Task: Three-Class Fire Alert System}{29}{subsubsection.7.16.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {21}{\ignorespaces Three-class detection: precision of the YES class (alerts) at $P(\text  {YES})$ thresholds.}}{29}{table.caption.28}\protected@file@percent }
+\newlabel{tab:three_class}{{21}{29}{Three-class detection: precision of the YES class (alerts) at $P(\text {YES})$ thresholds}{table.caption.28}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.16.3}Comparison with State of the Art}{29}{subsubsection.7.16.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {22}{\ignorespaces Comparison with published wildfire detection systems.}}{29}{table.caption.29}\protected@file@percent }
+\newlabel{tab:sota}{{22}{29}{Comparison with published wildfire detection systems}{table.caption.29}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {7.16.4}Estudo de Ablação}{29}{subsubsection.7.16.4}\protected@file@percent }
 \citation{article:mccarty2024,article:alves2023,article:arruda2025}
-\@writefile{lot}{\contentsline {table}{\numberline {15}{\ignorespaces Ablation: incremental precision gains (TASK-083 iterations).}}{25}{table.caption.20}\protected@file@percent }
-\newlabel{tab:ablation}{{15}{25}{Ablation: incremental precision gains (TASK-083 iterations)}{table.caption.20}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {16}{\ignorespaces NeKo-PIGNN component ablation on synthetic Rothermel propagation data.}}{25}{table.caption.21}\protected@file@percent }
-\newlabel{tab:ablation-neko}{{16}{25}{NeKo-PIGNN component ablation on synthetic Rothermel propagation data}{table.caption.21}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {7.9}Operational Deployment Metrics}{25}{subsection.7.9}\protected@file@percent }
-\newlabel{sec:operational-perf}{{7.9}{25}{Operational Deployment Metrics}{subsection.7.9}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {17}{\ignorespaces Operational deployment metrics (Jul/2024--Jun/2026).}}{25}{table.caption.22}\protected@file@percent }
-\newlabel{tab:operational}{{17}{25}{Operational deployment metrics (Jul/2024--Jun/2026)}{table.caption.22}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Discussion}{25}{section.8}\protected@file@percent }
-\newlabel{sec:discussion}{{8}{25}{Discussion}{section.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {23}{\ignorespaces Ablation: incremental precision gains (TASK-083 iterations).}}{30}{table.caption.30}\protected@file@percent }
+\newlabel{tab:ablation}{{23}{30}{Ablation: incremental precision gains (TASK-083 iterations)}{table.caption.30}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {24}{\ignorespaces NeKo-PIGNN component ablation on synthetic Rothermel propagation data.}}{30}{table.caption.31}\protected@file@percent }
+\newlabel{tab:ablation-neko}{{24}{30}{NeKo-PIGNN component ablation on synthetic Rothermel propagation data}{table.caption.31}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.17}Operational Deployment Metrics}{30}{subsection.7.17}\protected@file@percent }
+\newlabel{sec:operational-perf}{{7.17}{30}{Operational Deployment Metrics}{subsection.7.17}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {25}{\ignorespaces Operational deployment metrics (Jul/2024--Jun/2026).}}{30}{table.caption.32}\protected@file@percent }
+\newlabel{tab:operational}{{25}{30}{Operational deployment metrics (Jul/2024--Jun/2026)}{table.caption.32}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Discussion}{30}{section.8}\protected@file@percent }
+\newlabel{sec:discussion}{{8}{30}{Discussion}{section.8}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Open Data Sources}{30}{subsection.8.1}\protected@file@percent }
 \citation{manual:firms2024}
 \citation{article:morsali2026}
 \citation{article:webb2026}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Open Data Sources}{26}{subsection.8.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Agent Auditability}{26}{subsection.8.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Comparison with Existing Systems}{26}{subsection.8.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Data Coverage and Reliability}{26}{subsection.8.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.5}Limitations}{27}{subsection.8.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9}Conclusion and Future Work}{27}{section.9}\protected@file@percent }
-\newlabel{sec:conclusion}{{9}{27}{Conclusion and Future Work}{section.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Agent Auditability}{31}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Comparison with Existing Systems}{31}{subsection.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.4}Data Coverage and Reliability}{31}{subsection.8.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.5}Limitations}{32}{subsection.8.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Conclusion and Future Work}{32}{section.9}\protected@file@percent }
+\newlabel{sec:conclusion}{{9}{32}{Conclusion and Future Work}{section.9}{}}
+\newlabel{sec:credit}{{9}{33}{CRediT authorship contribution statement}{section*.35}{}}
+\@writefile{toc}{\let\numberline\tmptocnumberline}
 \bibcite{article:alencar2020}{{1}{}{{}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {Appendix~A}Supplementary Exp-B Tables}{34}{appendix.A}\protected@file@percent }
+\newlabel{app:exp-b}{{Appendix~A}{34}{Supplementary Exp-B Tables}{appendix.A}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {A.9}{\ignorespaces Hotspots per monitored municipality (Exp-B real-data subset, Mar--Jun/2026).}}{34}{figure.caption.38}\protected@file@percent }
+\newlabel{fig:municipios-appendix}{{A.9}{34}{Hotspots per monitored municipality (Exp-B real-data subset, Mar--Jun/2026)}{figure.caption.38}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {A.26}{\ignorespaces Exp-B v1: synthetic regression (200 steps, 20 nodes).}}{34}{table.caption.39}\protected@file@percent }
+\newlabel{tab:exp-v1}{{A.26}{34}{Exp-B v1: synthetic regression (200 steps, 20 nodes)}{table.caption.39}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {A.27}{\ignorespaces Exp-B v4: real-data regression with feature-engineering variants.}}{35}{table.caption.40}\protected@file@percent }
+\newlabel{tab:exp-v4}{{A.27}{35}{Exp-B v4: real-data regression with feature-engineering variants}{table.caption.40}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {A.28}{\ignorespaces Exp-B v5: rare-event detection --- Average Precision and threshold metrics.}}{35}{table.caption.41}\protected@file@percent }
+\newlabel{tab:exp-v5}{{A.28}{35}{Exp-B v5: rare-event detection --- Average Precision and threshold metrics}{table.caption.41}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {A.29}{\ignorespaces Exp-B v6: precision--recall operating modes.}}{35}{table.caption.42}\protected@file@percent }
+\newlabel{tab:exp-v6}{{A.29}{35}{Exp-B v6: precision--recall operating modes}{table.caption.42}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {A.30}{\ignorespaces Exp-B v7: persistence prior combined with ML ensemble.}}{35}{table.caption.43}\protected@file@percent }
+\newlabel{tab:exp-v7}{{A.30}{35}{Exp-B v7: persistence prior combined with ML ensemble}{table.caption.43}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {A.31}{\ignorespaces Full three-class classification report (Exp-B v9, XGBoost, 420 samples).}}{35}{table.caption.44}\protected@file@percent }
+\newlabel{tab:three-class-full}{{A.31}{35}{Full three-class classification report (Exp-B v9, XGBoost, 420 samples)}{table.caption.44}{}}
 \bibcite{master:silva2021}{{2}{}{{}}{{}}}
 \bibcite{techreport:funceme2024}{{3}{}{{}}{{}}}
 \bibcite{manual:firms2024}{{4}{}{{}}{{}}}
-\newlabel{sec:credit}{{9}{28}{CRediT authorship contribution statement}{section*.25}{}}
 \bibcite{article:react2023}{{5}{}{{}}{{}}}
 \bibcite{manual:langgraph2024}{{6}{}{{}}{{}}}
 \bibcite{article:inpe2023}{{7}{}{{}}{{}}}
 \bibcite{techreport:goes2022}{{8}{}{{}}{{}}}
-\bibcite{article:wildfire2020}{{9}{}{{}}{{}}}
-\bibcite{techreport:canada2019}{{10}{}{{}}{{}}}
-\bibcite{website:gfw2023}{{11}{}{{}}{{}}}
-\bibcite{article:cnnsmoke2023}{{12}{}{{}}{{}}}
-\bibcite{article:burnseg2024}{{13}{}{{}}{{}}}
-\bibcite{article:llmrisk2024}{{14}{}{{}}{{}}}
-\bibcite{article:faiss2017}{{15}{}{{}}{{}}}
-\bibcite{model:bge2024}{{16}{}{{}}{{}}}
-\bibcite{article:koopman1931}{{17}{}{{}}{{}}}
-\bibcite{article:rothermel1972}{{18}{}{{}}{{}}}
-\bibcite{article:pyg2019}{{19}{}{{}}{{}}}
-\bibcite{article:williams2022}{{20}{}{{}}{{}}}
-\bibcite{article:albini1976}{{21}{}{{}}{{}}}
-\bibcite{article:andrews2014}{{22}{}{{}}{{}}}
-\bibcite{article:scott2001}{{23}{}{{}}{{}}}
-\bibcite{article:finney2011}{{24}{}{{}}{{}}}
-\bibcite{article:raissi2019}{{25}{}{{}}{{}}}
-\bibcite{article:brunton2021}{{26}{}{{}}{{}}}
-\bibcite{article:williams2015}{{27}{}{{}}{{}}}
-\bibcite{article:schmid2010}{{28}{}{{}}{{}}}
-\bibcite{article:kutz2016}{{29}{}{{}}{{}}}
-\bibcite{article:gigante2025}{{30}{}{{}}{{}}}
-\bibcite{article:gao2023}{{31}{}{{}}{{}}}
-\bibcite{article:li2025}{{32}{}{{}}{{}}}
-\bibcite{article:hodzic2024}{{33}{}{{}}{{}}}
-\bibcite{article:gargiulo2023}{{34}{}{{}}{{}}}
-\bibcite{article:giglio2016}{{35}{}{{}}{{}}}
-\bibcite{article:schroeder2014}{{36}{}{{}}{{}}}
-\bibcite{article:wooster2021}{{37}{}{{}}{{}}}
-\bibcite{article:mccarty2024}{{38}{}{{}}{{}}}
-\bibcite{article:alves2023}{{39}{}{{}}{{}}}
-\bibcite{article:arruda2025}{{40}{}{{}}{{}}}
-\bibcite{article:vaswani2017}{{41}{}{{}}{{}}}
-\bibcite{article:brown2020}{{42}{}{{}}{{}}}
-\bibcite{article:wei2022}{{43}{}{{}}{{}}}
-\bibcite{article:lewis2020}{{44}{}{{}}{{}}}
-\bibcite{article:izacard2022}{{45}{}{{}}{{}}}
-\bibcite{article:xu2019}{{46}{}{{}}{{}}}
-\bibcite{article:hamilton2017}{{47}{}{{}}{{}}}
-\bibcite{article:velickovic2018}{{48}{}{{}}{{}}}
-\bibcite{article:deepseek2025}{{49}{}{{}}{{}}}
-\bibcite{article:grieves2014}{{50}{}{{}}{{}}}
-\bibcite{article:tao2019}{{51}{}{{}}{{}}}
-\bibcite{article:barricelli2019}{{52}{}{{}}{{}}}
-\bibcite{article:rasheed2020}{{53}{}{{}}{{}}}
-\bibcite{article:fuller2020}{{54}{}{{}}{{}}}
-\bibcite{article:jones2020}{{55}{}{{}}{{}}}
-\bibcite{article:bauer2021nature}{{56}{}{{}}{{}}}
-\bibcite{article:voosen2020}{{57}{}{{}}{{}}}
-\bibcite{article:nativi2021}{{58}{}{{}}{{}}}
-\bibcite{article:bauer2023natrev}{{59}{}{{}}{{}}}
-\bibcite{article:mezic2013}{{60}{}{{}}{{}}}
-\bibcite{article:rowley2009}{{61}{}{{}}{{}}}
-\bibcite{article:brunton2016sindy}{{62}{}{{}}{{}}}
-\bibcite{article:lusch2018}{{63}{}{{}}{{}}}
-\bibcite{article:takeishi2017}{{64}{}{{}}{{}}}
-\bibcite{article:proctor2016}{{65}{}{{}}{{}}}
-\bibcite{article:baddoo2023}{{66}{}{{}}{{}}}
-\bibcite{article:morton2019}{{67}{}{{}}{{}}}
-\bibcite{article:karniadakis2021}{{68}{}{{}}{{}}}
-\bibcite{article:lu2021deepxde}{{69}{}{{}}{{}}}
-\bibcite{article:cuomo2022}{{70}{}{{}}{{}}}
-\bibcite{article:wang2021gradient}{{71}{}{{}}{{}}}
-\bibcite{article:wang2023expert}{{72}{}{{}}{{}}}
-\bibcite{article:krishnapriyan2021}{{73}{}{{}}{{}}}
-\bibcite{article:mao2024pinn}{{74}{}{{}}{{}}}
-\bibcite{article:markidis2021}{{75}{}{{}}{{}}}
-\bibcite{article:xi2023}{{76}{}{{}}{{}}}
-\bibcite{article:wang2024survey}{{77}{}{{}}{{}}}
-\bibcite{article:park2023}{{78}{}{{}}{{}}}
-\bibcite{article:shinn2023}{{79}{}{{}}{{}}}
-\bibcite{article:schick2023}{{80}{}{{}}{{}}}
-\bibcite{article:patil2023}{{81}{}{{}}{{}}}
-\bibcite{article:gao2024rag}{{82}{}{{}}{{}}}
-\bibcite{article:morsali2026}{{83}{}{{}}{{}}}
-\bibcite{article:webb2026}{{84}{}{{}}{{}}}
-\bibcite{article:raha2025}{{85}{}{{}}{{}}}
-\bibcite{article:esparza2025}{{86}{}{{}}{{}}}
-\bibcite{article:michail2025}{{87}{}{{}}{{}}}
-\bibcite{article:vogiatzoglou2024}{{88}{}{{}}{{}}}
-\bibcite{article:aimnet2025}{{89}{}{{}}{{}}}
-\bibcite{article:hrdt2025}{{90}{}{{}}{{}}}
-\bibcite{website:mapbiomas}{{91}{}{{}}{{}}}
-\bibcite{article:prapas2023}{{92}{}{{}}{{}}}
+\bibcite{article:faiss2017}{{9}{}{{}}{{}}}
+\bibcite{model:bge2024}{{10}{}{{}}{{}}}
+\bibcite{article:koopman1931}{{11}{}{{}}{{}}}
+\bibcite{article:rothermel1972}{{12}{}{{}}{{}}}
+\bibcite{article:pyg2019}{{13}{}{{}}{{}}}
+\@writefile{lot}{\contentsline {table}{\numberline {A.32}{\ignorespaces NeKo-PIGNN component ablation on synthetic Rothermel propagation data.}}{36}{table.caption.45}\protected@file@percent }
+\newlabel{tab:ablation-neko}{{A.32}{36}{NeKo-PIGNN component ablation on synthetic Rothermel propagation data}{table.caption.45}{}}
+\bibcite{article:albini1976}{{14}{}{{}}{{}}}
+\bibcite{article:andrews2014}{{15}{}{{}}{{}}}
+\bibcite{article:scott2001}{{16}{}{{}}{{}}}
+\bibcite{article:finney2011}{{17}{}{{}}{{}}}
+\bibcite{article:raissi2019}{{18}{}{{}}{{}}}
+\bibcite{article:brunton2021}{{19}{}{{}}{{}}}
+\bibcite{article:williams2015}{{20}{}{{}}{{}}}
+\bibcite{article:schmid2010}{{21}{}{{}}{{}}}
+\bibcite{article:kutz2016}{{22}{}{{}}{{}}}
+\bibcite{article:gigante2025}{{23}{}{{}}{{}}}
+\bibcite{article:gao2023}{{24}{}{{}}{{}}}
+\bibcite{article:li2025}{{25}{}{{}}{{}}}
+\bibcite{article:hodzic2024}{{26}{}{{}}{{}}}
+\bibcite{article:gargiulo2023}{{27}{}{{}}{{}}}
+\bibcite{article:giglio2016}{{28}{}{{}}{{}}}
+\bibcite{article:schroeder2014}{{29}{}{{}}{{}}}
+\bibcite{article:wooster2021}{{30}{}{{}}{{}}}
+\bibcite{article:mccarty2024}{{31}{}{{}}{{}}}
+\bibcite{article:alves2023}{{32}{}{{}}{{}}}
+\bibcite{article:arruda2025}{{33}{}{{}}{{}}}
+\bibcite{article:vaswani2017}{{34}{}{{}}{{}}}
+\bibcite{article:brown2020}{{35}{}{{}}{{}}}
+\bibcite{article:wei2022}{{36}{}{{}}{{}}}
+\bibcite{article:lewis2020}{{37}{}{{}}{{}}}
+\bibcite{article:izacard2022}{{38}{}{{}}{{}}}
+\bibcite{article:xu2019}{{39}{}{{}}{{}}}
+\bibcite{article:hamilton2017}{{40}{}{{}}{{}}}
+\bibcite{article:velickovic2018}{{41}{}{{}}{{}}}
+\bibcite{article:deepseek2025}{{42}{}{{}}{{}}}
+\bibcite{article:grieves2014}{{43}{}{{}}{{}}}
+\bibcite{article:tao2019}{{44}{}{{}}{{}}}
+\bibcite{article:barricelli2019}{{45}{}{{}}{{}}}
+\bibcite{article:rasheed2020}{{46}{}{{}}{{}}}
+\bibcite{article:fuller2020}{{47}{}{{}}{{}}}
+\bibcite{article:jones2020}{{48}{}{{}}{{}}}
+\bibcite{article:bauer2021nature}{{49}{}{{}}{{}}}
+\bibcite{article:voosen2020}{{50}{}{{}}{{}}}
+\bibcite{article:nativi2021}{{51}{}{{}}{{}}}
+\bibcite{article:bauer2023natrev}{{52}{}{{}}{{}}}
+\bibcite{article:mezic2013}{{53}{}{{}}{{}}}
+\bibcite{article:rowley2009}{{54}{}{{}}{{}}}
+\bibcite{article:brunton2016sindy}{{55}{}{{}}{{}}}
+\bibcite{article:lusch2018}{{56}{}{{}}{{}}}
+\bibcite{article:bengio2009curriculum}{{57}{}{{}}{{}}}
+\bibcite{article:takeishi2017}{{58}{}{{}}{{}}}
+\bibcite{article:proctor2016}{{59}{}{{}}{{}}}
+\bibcite{article:baddoo2023}{{60}{}{{}}{{}}}
+\bibcite{article:morton2019}{{61}{}{{}}{{}}}
+\bibcite{article:karniadakis2021}{{62}{}{{}}{{}}}
+\bibcite{article:lu2021deepxde}{{63}{}{{}}{{}}}
+\bibcite{article:cuomo2022}{{64}{}{{}}{{}}}
+\bibcite{article:mao2024pinn}{{65}{}{{}}{{}}}
+\bibcite{article:xi2023}{{66}{}{{}}{{}}}
+\bibcite{article:wang2024survey}{{67}{}{{}}{{}}}
+\bibcite{article:park2023}{{68}{}{{}}{{}}}
+\bibcite{article:shinn2023}{{69}{}{{}}{{}}}
+\bibcite{article:schick2023}{{70}{}{{}}{{}}}
+\bibcite{article:patil2023}{{71}{}{{}}{{}}}
+\bibcite{article:gao2024rag}{{72}{}{{}}{{}}}
+\bibcite{article:morsali2026}{{73}{}{{}}{{}}}
+\bibcite{article:webb2026}{{74}{}{{}}{{}}}
+\bibcite{article:raha2025}{{75}{}{{}}{{}}}
+\bibcite{article:esparza2025}{{76}{}{{}}{{}}}
+\bibcite{article:michail2025}{{77}{}{{}}{{}}}
+\bibcite{article:vogiatzoglou2024}{{78}{}{{}}{{}}}
+\bibcite{article:aimnet2025}{{79}{}{{}}{{}}}
+\bibcite{article:hrdt2025}{{80}{}{{}}{{}}}
+\bibcite{website:mapbiomas}{{81}{}{{}}{{}}}
+\bibcite{article:prapas2023}{{82}{}{{}}{{}}}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\gdef \@abspage@last{34}
+\gdef \@abspage@last{41}

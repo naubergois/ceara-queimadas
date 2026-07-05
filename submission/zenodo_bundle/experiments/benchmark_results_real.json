@@ -1,0 +1,102 @@
+{
+  "experiment": "TASK-083 v3 \u2014 Real Data Validation",
+  "date": "2026-06-08",
+  "data_sources": {
+    "nasa_firms": "128 focos (7 days, VIIRS+MODIS)",
+    "inpe": "249 focos (30 days)",
+    "open_meteo": "15 munic\u00edpios \u00d7 97 days"
+  },
+  "config": {
+    "num_municipalities": 15,
+    "num_days": 97,
+    "input_dim": 6,
+    "features": [
+      "temp_max",
+      "temp_min",
+      "humidity",
+      "wind_max",
+      "precipitation",
+      "fire_count"
+    ],
+    "train_days": 67,
+    "test_days": 20
+  },
+  "results": [
+    {
+      "model": "MLP",
+      "rmse": 0.1377,
+      "mae": 0.0993,
+      "r2": 0.7986,
+      "f1_score": 0.9407,
+      "precision": 0.9197,
+      "recall": 0.9628,
+      "inference_ms": 0.010214353862561677
+    },
+    {
+      "model": "LSTM",
+      "rmse": 0.1631,
+      "mae": 0.1268,
+      "r2": 0.7182,
+      "f1_score": 0.9431,
+      "precision": 0.9282,
+      "recall": 0.9586,
+      "inference_ms": 0.3869374593098958
+    },
+    {
+      "model": "XGBoost",
+      "rmse": 0.1485,
+      "mae": 0.1115,
+      "r2": 0.766,
+      "f1_score": 0.9311,
+      "precision": 0.8909,
+      "recall": 0.9752,
+      "inference_ms": 5.56009526838336
+    },
+    {
+      "model": "Koopman-Det (ours)",
+      "rmse": 0.1569,
+      "mae": 0.1148,
+      "r2": 0.7388,
+      "f1_score": 0.9243,
+      "precision": 0.8793,
+      "recall": 0.9742,
+      "inference_ms": 0.08811448749743009
+    },
+    {
+      "model": "NeKo-PIGNN v2 (ours)",
+      "rmse": 0.1516,
+      "mae": 0.1099,
+      "r2": 0.7561,
+      "f1_score": 0.9257,
+      "precision": 0.8906,
+      "recall": 0.9637,
+      "inference_ms": 0.27416881762052836
+    }
+  ],
+  "feature_stats": {
+    "0": {
+      "min": 21.8,
+      "max": 33.9
+    },
+    "1": {
+      "min": 17.6,
+      "max": 25.3
+    },
+    "2": {
+      "min": 57.0,
+      "max": 94.0
+    },
+    "3": {
+      "min": 3.3,
+      "max": 27.3
+    },
+    "4": {
+      "min": 0.0,
+      "max": 30.5
+    },
+    "5": {
+      "min": 0.0,
+      "max": 18.0
+    }
+  }
+}

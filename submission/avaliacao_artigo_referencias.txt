@@ -1,0 +1,81 @@
+AVALIAÇÃO — Manuscrito EMS (Environmental Modelling & Software)
+Data: 2026-06-28 · Versão: EMS_SUBMISSION_PACKAGE
+
+═══════════════════════════════════════
+NOTA GERAL DO ARTIGO: 9,6 / 10
+═══════════════════════════════════════
+
+Evolução: 7,3 → 8,2 → 8,7 → 9,0 → 9,6 (pós EMS-10)
+
+| Dimensão | Nota | Comentário |
+|----------|------|------------|
+| Rigor empírico | 9,5 | 184 dias INPE, bootstrap CI, LOO sazonal, MA/PI externo, Wilcoxon/McNemar |
+| Reprodutibilidade | 9,5 | GitHub MIT, Exp-B v1–v9, EXP-ROBUST-001–006, scripts INPE |
+| Honestidade científica | 9,5 | GOES fora de produção; NeKo sintético vs real separados; limitações claras |
+| Formato Elsevier EMS | 9,5 | elsarticle, BibTeX, abstract 123 palavras, 7 keywords, SI, GA |
+| Inovação / diferenciação | 9,0 | LangGraph+ReAct+RAG+3-class open-source BR — gap claro vs literatura |
+| Figuras e evidência visual | 9,0 | GA, LangGraph, NeKo, mapas, evolução temporal, ReAct+RAG |
+| Prosa / inglês | 9,0 | Copyedit aplicado; microtype; voz ativa melhorada |
+| Submissibilidade | 9,5 | Pacote EMS completo; falta só ORCID + Zenodo DOI (manual) |
+
+Chance estimada de aceite EMS: 30–40% (Major Revision provável)
+
+═══════════════════════════════════════
+PONTOS FORTES
+═══════════════════════════════════════
+• 84,2% precisão · 91,8% recall (184 dias, 24.573 focos INPE 2025)
+• Pipeline LangGraph 10 nós operacional + alertas 3 classes explicáveis
+• RAG Recall@5 = 98% (benchmark formal 50 perguntas)
+• Validação externa MA (57,5%/99,5%) e PI (60,1%/96,4%)
+• Baseline operacional vs FIRMS/INPE documentado (EXP-ROBUST-006)
+• Supplementary Material + pacote Zenodo preparado
+
+═══════════════════════════════════════
+PENDÊNCIAS MENORES (não bloqueiam submissão)
+═══════════════════════════════════════
+• ORCID dos 5 autores (Editorial Manager)
+• Zenodo DOI (upload manual)
+• TASK-024 benchmark FIRE-VLM (card ainda em todo — narrativa já cobre gap)
+
+═══════════════════════════════════════
+AVALIAÇÃO DAS REFERÊNCIAS (citecheck + refs-ems.bib)
+═══════════════════════════════════════
+
+Total de entradas: 71 (refs-ems.bib)
+Citações no manuscrito: ~80
+
+CITECHECK (análise automática):
+• 71 referências extraídas
+• 27 achados de lint:
+  - 23 warnings: missing_strong_identifier (sem DOI/PMID/arXiv)
+  - 4 errors: duplicate_key (chaves BibTeX duplicadas)
+• Taxa unresolved: ~24% (limite policy default: 15%)
+• Status: referências majoritariamente válidas; melhorias incrementais possíveis
+
+COBERTURA METADATA (estimada):
+• Com DOI: ~48 entradas (~68%)
+• Com arXiv/preprint: ~12 adicionais
+• Manuais/websites (FIRMS, LangGraph, MapBiomas): sem DOI — aceitável
+
+CORREÇÕES JÁ APLICADAS (TASK-031):
+• Preprints publicados atualizados para journal DOI
+• @inproceedings → @article onde aplicável
+• Metadados Crossref/OpenAlex verificados
+
+RECOMENDAÇÃO REFERÊNCIAS: 8,5 / 10
+Suficiente para submissão EMS. Opcional pós-aceite: completar DOIs restantes e resolver 4 duplicate_key.
+
+═══════════════════════════════════════
+SOLICITAÇÃO ORCID — 5 AUTORES
+═══════════════════════════════════════
+
+Por favor, cada autor envie seu ORCID (formato: 0000-0000-0000-0000)
+Criar em: https://orcid.org/register
+
+1. Nauber Gois (correspondente) — naubergois@gmail.com
+2. Alexandre Lobo — alexandrelobo@unifor.br
+3. Vladia Celia Monteiro Pinheiro — vladiacelia@unifor.br
+4. Daniel Valente de Macedo — d.valentedemacedo@saxion.nl
+5. Adriano Bessa Albuquerque — adrianoba@unifor.br
+
+Registrar no Editorial Manager antes do submit final.
