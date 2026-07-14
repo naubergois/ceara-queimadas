@@ -1,9 +1,16 @@
 # EXP-ROBUST-001 — Bootstrap CI & Multi-Seed Regression
 
-**Date:** 2026-06-28T14:02:34.908257+00:00
-**Runtime:** 3.44s
+**Date:** 2026-07-14T22:10:33.294679+00:00
+**Runtime:** 4.58s
 
-## YES-class alert metrics (XGBoost 3-class, P≥0.30)
+> **Provenance:** the manuscript alert-precision CIs come from the
+> *published v9* section below (binomial bootstrap on TASK-083_FINAL
+> contingency tables, TP=23/FP=5). The YES-alert table immediately
+> below uses a simplified in-script re-derivation (97-day archived
+> dataset) that supports the paired tests only; its low TP count is
+> expected and is not comparable to the published v9 pipeline.
+
+## YES-class alert metrics (simplified in-script model, P≥0.30)
 
 | Metric | Point | Bootstrap 95% CI |
 |--------|-------|------------------|

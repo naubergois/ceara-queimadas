@@ -1,6 +1,7 @@
 {
   "experiment": "EXP-ROBUST-001",
-  "timestamp": "2026-06-28T14:02:34.908257+00:00",
+  "provenance_note": "'published_v9_bootstrap' resamples the published TASK-083 v9 contingency tables (TP=23/FP=5, TP=11/FP=1) and is the source of the manuscript alert-precision CIs. 'yes_alert_point' and 'paired_tests' come from a simplified in-script re-derivation on the archived 97-day dataset; its low YES TP count is expected and does not reproduce (nor contradict) the published v9 pipeline.",
+  "timestamp": "2026-07-14T22:10:33.294679+00:00",
   "config": {
     "n_bootstrap": 2000,
     "yes_threshold": 0.3,
@@ -200,7 +201,7 @@
       "significant_005": false
     }
   },
-  "runtime_sec": 3.44,
+  "runtime_sec": 4.58,
   "published_v9_bootstrap": {
     "xgb_precision": {
       "point": 0.8214285714285714,

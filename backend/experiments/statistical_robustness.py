@@ -1,6 +1,28 @@
 """
 Exp-B robustness: bootstrap 95% CI, multi-seed regression, paired model comparison.
 
+PROVENANCE (important for reproducibility)
+------------------------------------------
+This script mixes two data sources, and their metrics must not be conflated:
+
+1. PUBLISHED v9 contingency tables (``published_v9_bootstrap`` in the JSON):
+   TP=23 / FP=5 (XGBoost YES) and TP=11 / FP=1 (NeKo YES) are taken verbatim
+   from the Exp-B v9 run (TASK-083_FINAL.md), which used the full TASK-083
+   feature pipeline. This script only performs a binomial bootstrap on those
+   counts; it does NOT retrain that pipeline. These are the alert-precision
+   CIs reported in the manuscript (82.1% CI [67.9%, 96.4%], etc.).
+
+2. IN-SCRIPT simplified re-derivation (``yes_alert_point``,
+   ``yes_alert_bootstrap``, ``paired_tests``): a compact XGBoost 3-class
+   model retrained here on the archived 97-day / 15-municipality daily
+   dataset (data/climate_ceara_90d.json + hotspot archives). Its YES
+   operating point is much more conservative (typically 1 TP at P>=0.30)
+   because the feature engineering and data volume differ from TASK-083 v9.
+   It exists to support the paired significance tests (Wilcoxon/McNemar) and
+   the multi-seed regression CIs, NOT to reproduce the published alert
+   precision. A low TP here is expected and is not a discrepancy with the
+   manuscript.
+
 Outputs:
   results/EXP-ROBUST-001_bootstrap.json  (includes paired_tests)
   results/EXP-ROBUST-001_bootstrap.md
@@ -574,6 +596,14 @@ def main() -> None:
 
     payload = {
         "experiment": "EXP-ROBUST-001",
+        "provenance_note": (
+            "'published_v9_bootstrap' resamples the published TASK-083 v9 "
+            "contingency tables (TP=23/FP=5, TP=11/FP=1) and is the source of "
+            "the manuscript alert-precision CIs. 'yes_alert_point' and "
+            "'paired_tests' come from a simplified in-script re-derivation on "
+            "the archived 97-day dataset; its low YES TP count is expected and "
+            "does not reproduce (nor contradict) the published v9 pipeline."
+        ),
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "config": {
             "n_bootstrap": N_BOOT,
@@ -601,7 +631,14 @@ def main() -> None:
         f"**Date:** {payload['timestamp']}",
         f"**Runtime:** {payload['runtime_sec']}s",
         "",
-        "## YES-class alert metrics (XGBoost 3-class, P≥0.30)",
+        "> **Provenance:** the manuscript alert-precision CIs come from the",
+        "> *published v9* section below (binomial bootstrap on TASK-083_FINAL",
+        "> contingency tables, TP=23/FP=5). The YES-alert table immediately",
+        "> below uses a simplified in-script re-derivation (97-day archived",
+        "> dataset) that supports the paired tests only; its low TP count is",
+        "> expected and is not comparable to the published v9 pipeline.",
+        "",
+        "## YES-class alert metrics (simplified in-script model, P≥0.30)",
         "",
         "| Metric | Point | Bootstrap 95% CI |",
         "|--------|-------|------------------|",

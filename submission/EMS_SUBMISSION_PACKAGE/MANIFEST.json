@@ -2,16 +2,15 @@
   "journal": "Environmental Modelling & Software (Elsevier)",
   "portal": "https://www.editorialmanager.com/envsoft/",
   "article_type": "Research Article",
-  "title": "Ceará Digital Twin for Wildfires: An Open-Source Agentic AI Platform Integrating Near Real-Time Satellite Data and LangGraph Orchestration",
-  "date_built": "2026-07-04",
-  "abstract_words": 123,
-  "keywords_count": 7,
+  "title": "Ceará Wildfire Digital Twin: An Open-Source Agentic AI Platform with LangGraph",
+  "date_built": "2026-07-14",
+  "abstract_words": 152,
+  "keywords_count": 6,
   "keywords": [
     "Digital Twin",
     "Wildfires",
     "Physics-Informed GNN",
     "Koopman Operator",
-    "Three-Class Detection",
     "LangGraph",
     "NASA FIRMS"
   ],
@@ -64,10 +63,11 @@
       "role": "Upload guide"
     }
   ],
-  "github_release": "https://github.com/naubergois/ceara-queimadas/releases/tag/v1.0.0-ems-submission",
+  "github": "https://github.com/naubergois/ceara-queimadas",
   "pending_manual": [
-    "Upload files 01-06 to Editorial Manager (https://www.editorialmanager.com/envsoft/)",
-    "Confirm ORCID for all 5 authors in Editorial Manager",
-    "Optional: mint Zenodo DOI with ZENODO_ACCESS_TOKEN + scripts/publish_zenodo_deposit.sh"
+    "Register ORCID for all 5 authors in Editorial Manager",
+    "Mint Zenodo DOI and add to Data Availability section",
+    "Upload files 01-06 to Editorial Manager",
+    "Suggest reviewers listed in cover letter"
   ]
 }

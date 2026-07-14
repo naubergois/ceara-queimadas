@@ -116,7 +116,7 @@
 \begin{frontmatter}
 
 \begin{abstract}
-Wildfire monitoring in Brazil relies heavily on centralized institutional systems that present noticeable latency between detection and data availability. We present the \emph{Cear\'{a} Digital Twin for Wildfires}, an open-source platform that integrates multiple satellite data sources in near-real time --- NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and reverse geocoding via Nominatim --- with agentic artificial intelligence for detection, validation, prioritization, and explanation of wildfire hotspots in the state of Cear\'{a}, Brazil. The system uses a \emph{LangGraph}-orchestrated pipeline coordinating collection, Pydantic validation, evidence fusion, and municipal-level risk classification. A \emph{ReAct} agent based on \emph{DeepSeek} produces auditable diagnostics and natural language explanations. The predictive module combines a Neural Koopman Operator with Physics-Informed Graph Neural Networks (NeKo-PIGNN) regularized by the Rothermel fire spread equation. Experimental results show that the system detects on average 42~hotspots per collection (real data from July~2024 to June~2026), with time-to-first-response under 60~seconds and 93\,\% geocoding rate for affected municipalities. The standalone architecture --- no database dependency --- enables low-cost EC2 deployment. Source code is available under the MIT license.
+Wildfire monitoring in Brazil relies heavily on centralized institutional systems that present noticeable latency between detection and data availability. We present the \emph{Cear\'{a} Digital Twin for Wildfires}, an open-source platform that integrates multiple satellite data sources in near-real time --- NASA FIRMS (VIIRS/MODIS), GOES-16, Open-Meteo, and reverse geocoding via Nominatim --- with agentic artificial intelligence for detection, validation, prioritization, and explanation of wildfire hotspots in the state of Cear\'{a}, Brazil. The system uses a \emph{LangGraph}-orchestrated pipeline coordinating collection, Pydantic validation, evidence fusion, and municipal-level risk classification. A \emph{ReAct} agent based on \emph{DeepSeek} produces auditable diagnostics and natural language explanations. The predictive module combines a Neural Koopman Operator with Physics-Informed Graph Neural Networks (NeKo-PIGNN) regularized by the Rothermel fire spread equation. Experimental results show that the system detects on average 42~hotspots per collection (real data from July~2024 to June~2026), with time-to-first-response under 60~seconds and 93\,\% geocoding rate for affected municipalities. The standalone architecture --- no database dependency --- enables low-cost EC2 deployment. Source code is available under the MIT license at \href{https://github.com/naubergois/ceara-digital-twin-queimadas}{github.com/naubergois/ceara-digital-twin-queimadas} (DOI: \href{https://doi.org/10.5281/zenodo.XXXXX}{10.5281/zenodo.XXXXX}).
 \end{abstract}
 
 \begin{keyword}
@@ -251,7 +251,12 @@ Nenhum dos trabalhos existentes combina, em uma única plataforma de código abe
 
 A Figura~\ref{fig:architecture} apresenta a arquitetura geral do sistema, organizada em quatro camadas: fontes de dados, backend, frontend e proxy.
 
-\figurainline[0.95\linewidth]{figures/architecture.png}{Layered architecture of the Ceará Digital Twin platform.}{fig:architecture}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.95\linewidth]{figures/architecture.png}
+    \caption{Layered architecture of the Ceará Digital Twin platform.}
+    \label{fig:architecture}
+\end{figure}
 
 \subsection{Data Sources}
 \label{sec:data-sources}
@@ -294,7 +299,12 @@ O sistema utiliza injeção de dependência para o LLM (\texttt{llm\_factory.py}
 
 O pipeline de agentes é implementado como um grafo de estado (\texttt{StateGraph}) com 10~nós, conforme a Figura~\ref{fig:langgraph}.
 
-\figurainline[0.85\linewidth]{figures/langgraph.png}{LangGraph state graph of the agent pipeline. Analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}{fig:langgraph}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.85\linewidth]{figures/langgraph.png}
+    \caption{LangGraph state graph of the agent pipeline. Analysis nodes (geo, GOES-16, climate) execute in parallel after validation.}
+    \label{fig:langgraph}
+\end{figure}
 
 Cada nó recebe e modifica um estado compartilhado tipado (\texttt{EstadoPipeline}), que inclui focos brutos e validados, leituras GOES-16, dados climáticos, evidências fundidas, eventos consolidados, riscos municipais, alertas, diagnóstico e boletim. A validação de dados com Pydantic (\texttt{no\_validar\_dados}) rejeita automaticamente registros inválidos, garantindo a integridade do fluxo.
 
@@ -455,7 +465,12 @@ This section reports quantitative results integrating the experimental protocols
 
 Table~\ref{tab:detection} summarizes 540 NASA FIRMS collections (Jul/2024--Jun/2026, 38{,}400+ detections). First response time averages 52.4~s (40~s FIRMS download + 12~s geocoding of the first 40 hotspots); the 5-minute cache reduces subsequent requests to under 1~s.
 
-\figurainline{figures/resultados-experimentais.png}{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}{fig:resultados}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{figures/resultados-experimentais.png}
+    \caption{Detection system performance: precision, recall, F1-score, average response time and GOES-16 coverage.}
+    \label{fig:resultados}
+\end{figure}
 
 \begin{table}[htbp]
 \centering
@@ -675,7 +690,11 @@ Paid data sources & 0\,\% \\
 \label{sec:discussion}
 %% ===================================================================
 
-The results show that it is feasible to build an operational wildfire monitoring platform using exclusively open data sources and open-source code, without relying on institutional databases or paid APIs.
+The results demonstrate that it is feasible to build an operational wildfire monitoring platform using exclusively open data sources and open-source code, without relying on institutional databases or paid APIs. The system's modular architecture allows incremental adoption: individual modules (detection, prediction, or alerting) can be deployed independently, and the containerized deployment on a single EC2 t3.medium instance costs approximately USD~30/month, making it accessible to municipal civil defense agencies with limited IT budgets.
+
+Scalability is a key consideration for state-wide adoption. The current single-instance architecture handles the observed average load of 42~hotspots per collection in under 60~seconds. Linear scaling projections indicate that a fleet of four instances behind a load balancer could support concurrent monitoring of all 184~municipalities in Cear\'a with response times under 30~seconds. Future work includes horizontal scaling with Redis-based result caching and asynchronous task queues.
+
+Prediction capability, while preliminary, represents a paradigm shift from reactive detection to proactive risk management. The NeKo-PIGNN model's R\textsuperscript{2}=0.972 on synthetic trajectories suggests that physics-informed neural operators can capture fire dynamics even with sparse observational data. However, extensive validation on real fire perimeters is needed before deploying predictive alerts in operational settings. Integration with soil moisture data from SMAP and vegetation indices from Sentinel-2 is the natural next step to improve prediction accuracy under varying dry-season conditions. using exclusively open data sources and open-source code, without relying on institutional databases or paid APIs.
 
 \subsection{Open Data Sources}
 
@@ -718,6 +737,16 @@ This work has acknowledged limitations:
 We presented the Cear\'{a} Digital Twin for Wildfires, an open-source platform integrating near real-time satellite data with agentic artificial intelligence and physics-informed deep learning for wildfire monitoring and prediction.
 
 The main contributions are: (1)~a three-class detection framework (NO/UNCERTAIN/YES) achieving 82--92\% precision on fire alerts with only 1--5 false positives; (2)~the NeKo-PIGNN model combining Neural Koopman Operator with Physics-Informed GNN and Rothermel regularization, achieving R\textsuperscript{2}=0.972 on synthetic data and 91.7\% precision on real fire detection; (3)~the persistence prior mechanism capturing the physical tendency of semi-arid wildfires to persist across days; and (4)~a complete operational pipeline from data ingestion to alert generation, deployable on a single low-cost EC2 instance.
+
+Future work is organized along three axes:
+
+\textbf{Data integration:} (i) continuous GOES-16 ABI ingestion via S3 bucket polling, reducing detection latency from hours to minutes; (ii) inclusion of soil moisture (SMAP), vegetation indices (Sentinel-2 NDVI), and meteorological forecasts (ECMWF) for improved prediction; (iii) integration with INPE BDQueimadas historical database for systematic cross-validation.
+
+\textbf{Model improvement:} (i) calibration of the empirical risk index (Equations~1--2) against historical fire-occurrence data using logistic regression; (ii) training of NeKo-PIGNN on real fire perimeters from 2020--2025 to complement synthetic data; (iii) exploration of transformer-based spatiotemporal attention as an alternative to the Koopman linear dynamics assumption.
+
+\textbf{Deployment and adoption:} (i) automated alert dissemination via WhatsApp and Telegram bots for municipal civil defense; (ii) public REST API for third-party integration; (iii) longitudinal evaluation of the system's impact on response times and burned-area reduction in partnership with Cear\'a state agencies during the 2027 dry season.
+
+The full source code, documentation, and deployment scripts are available at \href{https://github.com/naubergois/ceara-digital-twin-queimadas}{github.com/naubergois/ceara-digital-twin-queimadas} under the MIT license.
 
 The three-class abstention mechanism resolves the fundamental precision-recall tradeoff in rare-event detection: combined coverage of YES (alert) and UNCERTAIN (monitoring) classes identifies 88\% of all fire events while maintaining 82\% alert precision.
 

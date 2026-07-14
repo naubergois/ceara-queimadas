@@ -68,7 +68,7 @@ manifest = {
     "journal": "Environmental Modelling & Software (Elsevier)",
     "portal": "https://www.editorialmanager.com/envsoft/",
     "article_type": "Research Article",
-    "title": "Ceará Digital Twin for Wildfires: An Open-Source Agentic AI Platform Integrating Near Real-Time Satellite Data and LangGraph Orchestration",
+    "title": "Ceará Wildfire Digital Twin: An Open-Source Agentic AI Platform with LangGraph",
     "date_built": str(date.today()),
     "abstract_words": len(plain.split()),
     "keywords_count": len(keywords),

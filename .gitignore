@@ -57,3 +57,16 @@ secrets/
 data/inpe_focos_ce/focos_ce_INPE_2024_2026.csv
 data/inpe_focos_ce/anos/focos_ce_INPE_2025.csv
 backend/experiments/data/inpe_monthly_br/*.csv
+
+# Large state CSVs inside the Zenodo bundle folder (shipped via the bundle zip)
+submission/zenodo_bundle/data/focos_ma_dry_2025.csv
+submission/zenodo_bundle/data/focos_pi_dry_2025.csv
+
+# Local backups and duplicated bundles
+*.bak
+*.bak2
+*.bak-*
+*.bak.*
+docs-backup-*.zip
+.mplconfig/
+submission/zenodo_bundle_v1.0.0-ems-submission 2/

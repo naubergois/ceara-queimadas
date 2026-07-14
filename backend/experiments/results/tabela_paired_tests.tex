@@ -1,16 +1,15 @@
-\begin{table}[!htbp]
+\begin{table}[htbp]
 \centering
-\caption{Paired significance tests: Wilcoxon (regression RMSE) and McNemar (classification).}
+\caption{Paired significance tests: Wilcoxon signed-rank (regression RMSE) and exact McNemar (classification).}
 \label{tab:paired-tests}
-\footnotesize
-\tblfit{%
-\begin{tabular}{@{}p{3.6cm}rrrl@{}}
+\small
+\begin{tabular}{@{}lrrrr@{}}
 \toprule
-\textbf{Test} & \textbf{Stat.} & \textbf{$p$} & \textbf{Sig.} & \textbf{Notes} \\
+\textbf{Test} & \textbf{Statistic} & \textbf{$p$-value} & \textbf{Sig.\ @0.05} & \textbf{Notes} \\
 \midrule
-Wilcoxon: MLP vs XGB RMSE & 0.00 & 0.0625 & No & $\Delta$=-0.0099 \\
-McNemar: 3-class vs persist. & 15 & 0.1418 & No & acc 73.2\% vs 67.9\% \\
-McNemar: YES alert vs persist. & 2 & 0.8714 & No & prec 100\% vs 53.8\% \\
+Wilcoxon: MLP vs XGB RMSE & 0.00 & 0.0625 & No & mean $\Delta$=-0.0099 \\
+McNemar: 3-class XGB vs persistence & 15 & 0.1418 & No & acc 73.2% vs 67.9% \\
+McNemar: YES alert XGB vs persistence & 2 & 0.8714 & No & prec 100.0% vs 53.8% \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
 \end{table}
