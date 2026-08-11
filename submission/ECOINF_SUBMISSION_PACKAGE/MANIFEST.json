@@ -1,0 +1,75 @@
+{
+  "journal": "Ecological Informatics (Elsevier)",
+  "portal": "https://submit.elsevier.com/ECOINF",
+  "article_type": "Research Article",
+  "title": "Ceará Wildfire Digital Twin: An Open-Source Agentic AI Platform with LangGraph",
+  "date_built": "2026-08-10",
+  "abstract_words": 145,
+  "pdf_words_approx": 9724,
+  "keywords_count": 7,
+  "keywords": [
+    "wildfire monitoring",
+    "Caatinga",
+    "computational ecology",
+    "ecological data science",
+    "physics-informed GNN",
+    "LangGraph",
+    "NASA FIRMS"
+  ],
+  "highlights": [
+    "Open ecological monitoring platform for Caatinga wildfires with LangGraph agents",
+    "Dry season 2025: 84.2% precision and 91.8% recall on 184 days of INPE data",
+    "Three-class alerts fuse NASA FIRMS and Open-Meteo for ecosystem management",
+    "NeKo-PIGNN synthetic R²=0.972; GOES-16 kept as research-only benchmark",
+    "MIT-licensed deployment on a single low-cost EC2 instance"
+  ],
+  "files": [
+    {
+      "name": "01_Manuscript.pdf",
+      "role": "Main manuscript PDF"
+    },
+    {
+      "name": "02_LaTeX_Source.zip",
+      "role": "LaTeX source + figures + BibTeX"
+    },
+    {
+      "name": "03_Cover_Letter.pdf",
+      "role": "Cover letter to editor"
+    },
+    {
+      "name": "04_Highlights.txt",
+      "role": "Highlights (3-5 bullets, upload separately)"
+    },
+    {
+      "name": "05_Graphical_Abstract.png",
+      "role": "Graphical abstract"
+    },
+    {
+      "name": "06_Supplementary_Information.pdf",
+      "role": "Supplementary material"
+    },
+    {
+      "name": "07_Zenodo_Reproducibility_Bundle.zip",
+      "role": "Optional: upload to Zenodo for DOI"
+    },
+    {
+      "name": "ORCID_AUTHORS.md",
+      "role": "Register ORCID in Editorial Manager"
+    },
+    {
+      "name": "ZENODO.md",
+      "role": "Zenodo DOI instructions"
+    },
+    {
+      "name": "README_SUBMISSION.txt",
+      "role": "Upload guide"
+    }
+  ],
+  "github": "https://github.com/naubergois/ceara-queimadas",
+  "pending_manual": [
+    "Register ORCID for all 5 authors in Editorial Manager",
+    "Confirm APC / institutional OA waiver if applicable",
+    "Upload files 01-06 to Editorial Manager (ECOINF)",
+    "Suggest reviewers listed in cover letter"
+  ]
+}

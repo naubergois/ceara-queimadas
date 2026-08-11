@@ -4,53 +4,48 @@ The top-level auxiliary file: artigo-queimadas-gemeo-digital-en.aux
 The style file: elsarticle-num.bst
 Database file #1: submission/refs-ems.bib
 Warning--empty pages in article:react2023
-Warning--empty pages in article:takeishi2017
-Warning--empty pages in article:morton2019
-Warning--empty pages in article:shinn2023
-Warning--empty pages in article:schick2023
-Warning--empty pages in article:patil2023
-Warning--empty pages in article:park2023
 Warning--empty pages in article:lewis2020
+Warning--empty pages in article:takeishi2017
 Warning--empty pages in article:pyg2019
-You've used 71 entries,
+You've used 48 entries,
             2952 wiz_defined-function locations,
-            1108 strings with 20801 characters,
-and the built_in function-call counts, 22767 in all, are:
-= -- 2122
-> -- 959
-< -- 10
-+ -- 367
-- -- 296
-* -- 1869
-:= -- 3236
-add.period$ -- 123
-call.type$ -- 71
-change.case$ -- 71
+            969 strings with 15513 characters,
+and the built_in function-call counts, 14996 in all, are:
+= -- 1431
+> -- 591
+< -- 5
++ -- 229
+- -- 181
+* -- 1188
+:= -- 2135
+add.period$ -- 81
+call.type$ -- 48
+change.case$ -- 49
 chr.to.int$ -- 0
-cite$ -- 80
-duplicate$ -- 629
-empty$ -- 2448
-format.name$ -- 351
-if$ -- 5758
+cite$ -- 52
+duplicate$ -- 423
+empty$ -- 1622
+format.name$ -- 215
+if$ -- 3813
 int.to.chr$ -- 0
-int.to.str$ -- 71
-missing$ -- 60
-newline$ -- 289
-num.names$ -- 71
-pop$ -- 407
+int.to.str$ -- 48
+missing$ -- 37
+newline$ -- 197
+num.names$ -- 48
+pop$ -- 274
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 1411
+skip$ -- 939
 stack$ -- 0
-substring$ -- 921
-swap$ -- 205
-text.length$ -- 10
+substring$ -- 617
+swap$ -- 139
+text.length$ -- 5
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
-warning$ -- 9
-while$ -- 143
-width$ -- 73
-write$ -- 706
-(There were 9 warnings)
+warning$ -- 4
+while$ -- 99
+width$ -- 50
+write$ -- 475
+(There were 4 warnings)

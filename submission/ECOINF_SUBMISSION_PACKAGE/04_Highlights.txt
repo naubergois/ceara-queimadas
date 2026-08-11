@@ -1,0 +1,5 @@
+Open ecological monitoring platform for Caatinga wildfires with LangGraph agents
+Dry season 2025: 84.2% precision and 91.8% recall on 184 days of INPE data
+Three-class alerts fuse NASA FIRMS and Open-Meteo for ecosystem management
+NeKo-PIGNN synthetic R²=0.972; GOES-16 kept as research-only benchmark
+MIT-licensed deployment on a single low-cost EC2 instance

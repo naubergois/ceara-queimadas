@@ -94,8 +94,7 @@
 }
 \lstset{style=mystyle}
 
-\journal{Environmental Modelling \& Software}
-% SHORTENED TITLE (14 words)
+\journal{Ecological Informatics}
 \title{Ceará Wildfire Digital Twin: An Open-Source Agentic AI Platform with LangGraph}
 
 %% Authors
@@ -121,11 +120,11 @@
 \begin{frontmatter}
 
 \begin{abstract}
-Wildfire monitoring in Brazil depends on centralized systems with substantial detection-to-availability latency. We present the \emph{Ceará Wildfire Monitoring Platform}, an open-source agentic system for environmental decision support. The platform integrates NASA FIRMS and Open-Meteo into a LangGraph pipeline (10~nodes) for ingestion, validation, parallel analysis, evidence fusion, risk classification, ReAct diagnosis, and three-class alerting. On INPE validation during the 2025 dry season (184~days, 24{,}573 hotspots), alerts achieved 84.2\% precision and 91.8\% recall, with bootstrap 95\% confidence intervals for YES-class precision. Replicated under the same protocol in the neighboring states of Maranh\~{a}o and Piau\'{i}, alerts retain recall above 96\% at 58--60\% precision, supporting per-state threshold calibration. GOES-16 supports research benchmarks only (grid-scale F1$\leq$0.05 vs.\ INPE). NeKo-PIGNN attains $R^2=0.972$ on synthetic dynamics; on short real-data windows, simpler baselines yield lower RMSE. The system deploys on a single EC2 instance (approximately USD~20/month) under the MIT license.
+Wildfires threaten biodiversity and ecosystem services in Brazil's semi-arid Caatinga, yet operational monitoring still depends on centralized products with multi-hour latency. We present an open-source ecological data platform that fuses NASA FIRMS and Open-Meteo in a LangGraph pipeline (10~nodes) for ingestion, validation, parallel geospatial/climate analysis, evidence fusion, risk classification, ReAct diagnosis, and three-class alerting for sustainable fire management. On INPE validation for the 2025 dry season (184~days, 24{,}573 hotspots), alerts reached 84.2\% precision and 91.8\% recall, with bootstrap 95\% intervals for YES-class precision. Under the same protocol in Maranh\~{a}o and Piau\'{i}, recall stayed above 96\% at 58--60\% precision, motivating per-state calibration. GOES-16 is research-only (grid-scale F1$\leq$0.05 vs.\ INPE). NeKo-PIGNN attains $R^2=0.972$ on synthetic fire dynamics; on short real windows, simpler baselines yield lower RMSE. The MIT-licensed system runs on a single EC2 instance (approximately USD~20/month).
 \end{abstract}
 
 \begin{keyword}
-Digital Twin \sep Wildfires \sep Physics-Informed GNN \sep Koopman Operator \sep LangGraph \sep NASA FIRMS
+wildfire monitoring \sep Caatinga \sep computational ecology \sep ecological data science \sep physics-informed GNN \sep LangGraph \sep NASA FIRMS
 \end{keyword}
 
 \end{frontmatter}
@@ -135,53 +134,38 @@ Digital Twin \sep Wildfires \sep Physics-Informed GNN \sep Koopman Operator \sep
 \label{sec:intro}
 %% ===================================================================
 
-Wildfires represent one of the greatest environmental threats in Brazil, with direct impacts on public health, biodiversity, and the economy \cite{article:pivello2021,master:silva2021}. The State of Ceará, located in the northeastern semi-arid region, exhibits strong drought seasonality and sensitive biomes such as the Caatinga, making continuous monitoring an operational necessity \cite{techreport:funceme2024}.
+Wildfires are among the greatest ecological threats in Brazil, with cascading impacts on biodiversity, carbon stocks, public health, and rural livelihoods~\cite{article:pivello2021,master:silva2021}. The State of Ceará sits in the northeastern semi-arid zone, where prolonged dry seasons and the Caatinga --- a seasonally dry tropical forest with high endemism and fire-sensitive vegetation --- make continuous monitoring essential for ecosystem stewardship and civil defense~\cite{techreport:funceme2024,article:alencar2022}. From an ecological informatics perspective, the challenge is not only detecting hotspots, but assimilating heterogeneous satellite and climate streams into timely, auditable alerts that support sustainable fire management.
 
-Traditional monitoring systems such as INPE BDQueimadas and NASA FIRMS provide essential data but exhibit three operational gaps: 3--6~hour latency between satellite overpass and data availability \cite{manual:firms2024}; no automatic fusion with local climate and municipal context; and interfaces aimed at remote sensing specialists rather than civil defense managers.
+Traditional products such as INPE BDQueimadas and NASA FIRMS provide essential ecological observations but leave three operational gaps: 3--6~hour latency between satellite overpass and data availability~\cite{manual:firms2024}; no automatic fusion with local climate and municipal context; and interfaces aimed at remote-sensing specialists rather than environmental managers.
 
-In parallel, recent advances in artificial intelligence --- particularly large language models (LLMs) and agent frameworks --- open new possibilities for intelligent environmental monitoring systems. The paradigm of agents with ReAct reasoning \cite{article:react2023} and state graph orchestration (LangGraph \cite{manual:langgraph2024}) enables building auditable \emph{pipelines} that combine heterogeneous sources and produce natural language explanations.
+Recent advances in large language models and agent frameworks enable auditable pipelines that combine heterogeneous ecological data and produce natural-language explanations. ReAct reasoning~\cite{article:react2023} and LangGraph state-graph orchestration~\cite{manual:langgraph2024} are particularly suited to multi-source wildfire workflows.
 
 We adopt \emph{Digital Twin} terminology pragmatically: the platform continuously mirrors satellite and weather observations and hosts predictive modules, but it does not yet provide full bidirectional control or physics-coupled simulation at operational scale~\cite{article:bauer2021natcc}. Throughout the paper we refer to the deployable artifact as the \emph{monitoring platform}.
 
 The main contributions of this paper are:
 
 \begin{enumerate}
-    \item \textbf{An open-source platform} that integrates NASA FIRMS (VIIRS/MODIS), Open-Meteo, and Nominatim into a single pipeline, with optional GOES-16 for research benchmarks, without relying on an institutional database;
-    \item \textbf{A LangGraph-orchestrated agent pipeline} that performs collection $\rightarrow$ Pydantic validation $\rightarrow$ parallel analysis (geospatial, GOES-16, climate) $\rightarrow$ evidence fusion $\rightarrow$ risk classification $\rightarrow$ ReAct diagnosis $\rightarrow$ alerts;
-    \item \textbf{A RAG module} with FAISS index and local embeddings that enables natural language queries about the system's methodology, architecture, and usage;
-    \item \textbf{Operational results} with real data collected between July 2024 and June 2026, demonstrating the feasibility of monitoring based exclusively on open sources.
+    \item \textbf{An open-source ecological monitoring platform} that integrates NASA FIRMS (VIIRS/MODIS), Open-Meteo, and Nominatim, with optional GOES-16 for research benchmarks, without an institutional database;
+    \item \textbf{A LangGraph-orchestrated agent pipeline} for collection $\rightarrow$ validation $\rightarrow$ parallel geospatial/climate analysis $\rightarrow$ evidence fusion $\rightarrow$ risk classification $\rightarrow$ ReAct diagnosis $\rightarrow$ three-class alerts;
+    \item \textbf{A RAG module} with FAISS and local embeddings for natural-language queries about methodology and use;
+    \item \textbf{Operational validation} on open data (July 2024--June 2026), including dry-season INPE benchmarks for Ceará and neighboring Caatinga/Cerrado transition states.
 \end{enumerate}
 
-The remainder of this paper is organized as follows. Section~\ref{sec:related} reviews related work on environmental Digital Twins, wildfire remote sensing, Koopman/PINN modeling, and LLM agents. Section~\ref{sec:architecture} describes the system architecture, and Section~\ref{sec:methodology} formalizes the NeKo-PIGNN methodology. Section~\ref{sec:deploy} summarizes deployment, Section~\ref{sec:results} reports experimental results across four tracks, Section~\ref{sec:discussion} discusses findings and limitations, and Section~\ref{sec:conclusion} concludes.
+The remainder of this paper is organized as follows. Section~\ref{sec:related} reviews related work; Section~\ref{sec:architecture} describes the architecture; Section~\ref{sec:methodology} formalizes NeKo-PIGNN; Section~\ref{sec:deploy} summarizes deployment; Section~\ref{sec:results} reports results; Section~\ref{sec:discussion} discusses ecological implications and limitations; Section~\ref{sec:conclusion} concludes.
 
 %% ===================================================================
 \section{Related Work}
 \label{sec:related}
 %% ===================================================================
 
-This section positions the proposed platform within the context of three converging research fronts: (i) Digital Twins for environmental monitoring, (ii) satellite-based wildfire remote sensing, and (iii) artificial intelligence applied to wildfire detection and prediction.
+We position the platform at the intersection of ecological Digital Twins, satellite fire remote sensing, physics-informed fire dynamics, and LLM agents for environmental decision support.
 
-\subsection{Environmental Digital Twins}
+\subsection{Ecological Digital Twins and Wildfire Systems}
 
-The Digital Twin paradigm, originally conceived for manufacturing where a virtual model mirrors and controls a physical system in real time~\cite{article:grieves2014,article:tao2019}, has been systematically surveyed across definitions, architectures, and challenges~\cite{article:barricelli2019,article:rasheed2020,article:fuller2020,article:jones2020}. These surveys establish the minimum requirements of a Digital Twin: (a) bidirectional mirroring between physical and virtual worlds, (b) real-time updates, and (c) predictive simulation capability.
+Digital Twin surveys establish bidirectional mirroring, real-time updates, and predictive capability as core requirements~\cite{article:grieves2014,article:tao2019,article:barricelli2019,article:fuller2020}. Earth-system Digital Twins emphasize large spatiotemporal scales and uncertain natural processes~\cite{article:bauer2021natcc,article:nativi2021,article:voosen2020}.
 
-The expansion of the paradigm to environmental and Earth systems gained traction with the European Destination Earth~\cite{article:voosen2020} and proposals for Earth System Digital Twins~\cite{article:bauer2021nature,article:bauer2021natcc,article:nativi2021}. Bauer et al.~\cite{article:bauer2021natcc} argue that Digital Twins of the Earth differ fundamentally from industrial ones by operating at much larger spatiotemporal scales, fusing simulation with continuous observation streams under inherent uncertainties in natural processes.
+Wildfire-oriented Twin and agent systems include IVSR~\cite{article:morsali2026} (multi-sensor agents; not validated for Brazilian biomes), FIRE-VLM~\cite{article:webb2026} (UAV VLM+RL), FIRETWIN~\cite{article:raha2025} (immersive reconstruction), AIMNET~\cite{article:aimnet2025} (IoT emission monitoring), GraphFire-X~\cite{article:esparza2025} (GNN+XGBoost at the WUI), and FireCastNet~\cite{article:michail2025} (global seasonal GNN). Table~\ref{tab:dt-comparison} compares these systems with the present Caatinga-focused, open-source LangGraph platform.
 
-\subsection{Digital Twins for Wildfires}
-
-Recent works specifically focused on Digital Twins for wildfires can be organized into four architectural categories.
-
-\paragraph{Agent-oriented approaches.} IVSR (Intelligent Virtual Situation Room)~\cite{article:morsali2026} is the most conceptually aligned proposal with this work. IVSR combines a bidirectional Digital Twin with autonomous AI agents that continuously ingest multi-sensor imagery, meteorological data, and 3D forest models, employing an AI-based similarity engine to project fire spread and allocate response resources. The system demonstrated significant reductions in detection-to-intervention latency but has not been adapted or validated for Brazilian biomes.
-
-\paragraph{Vision-Language and RL approaches.} FIRE-VLM~\cite{article:webb2026} introduces an innovative framework combining a CLIP-style Vision-Language Model with reinforcement learning (PPO) to guide UAVs in tracking wildfires within a physics-grounded Digital Twin. Results show up to 6$\times$ reduction in detection time across five evaluation tasks. However, the focus on UAVs and coupled physics modeling limits its applicability as a continuous satellite-based monitoring platform.
-
-\paragraph{Multi-modal sensing approaches.} FIRETWIN~\cite{article:raha2025} combines Unreal Engine with the CAWFE fire model for immersive reconstruction of historical wildfires (King Fire), integrating multi-sensor data and interactive analysis. AIMNET~\cite{article:aimnet2025} proposes a three-layer IoT-empowered Digital Twin (physical world $\rightarrow$ bidirectional links $\rightarrow$ digital world) for continuous gas emission monitoring with distributed sensor networks for early carbon plume detection. H-RDT~\cite{article:hrdt2025} adopts PINNs with multimodal fusion to model wildfire-power-outage-heat-wave cascades in urban contexts.
-
-\paragraph{GNN and physics-based modeling.} GraphFire-X~\cite{article:esparza2025} proposes a dual-expert ensemble combining GNN with physics-informed attention (convection, radiation, ember probability) and XGBoost for structural vulnerability at the wildland-urban interface, validated on the 2025 Eaton Fire. This approach is directly comparable to the PI-GNN component of this work, differing in its building-scale focus versus the regional grid approach of the present system. FireCastNet~\cite{article:michail2025} adopts the ``Earth-as-a-Graph'' paradigm with GraphCast GNN for global seasonal fire prediction validated on the SeasFire dataset, outperforming GRU, Conv-LSTM, U-TAE, and TeleViT, with particularly strong results in South America.
-
-Table~\ref{tab:dt-comparison} compares wildfire Digital Twin systems across agent support, open-source availability, Brazilian biome validation, RAG integration, and reported performance metrics.
-
-% ADDED: Metrics column to Related Work comparison table
 \begin{resulttable}{Comparison of Digital Twin systems for wildfires.}{tab:dt-comparison}
 \footnotesize
 \begin{tabular}{@{}lp{1.6cm}p{1.0cm}p{0.9cm}p{0.9cm}p{2.6cm}@{}}
@@ -199,52 +183,15 @@ AIMNET~\cite{article:aimnet2025} & IoT ML & No & No & No & Plume detection rate 
 \end{tabular}
 \end{resulttable}
 
-\subsection{Satellite-Based Wildfire Remote Sensing}
+\subsection{Satellite Fire Sensing and Brazilian Biomes}
 
-Satellite-based wildfire monitoring dates back to the AVHRR sensor in the 1980s, evolving significantly with MODIS (250~m--1~km, since~2000) and its Collection~6 active fire detection algorithm~\cite{article:giglio2016}. VIIRS (375~m, since~2012) offers superior spatial resolution with specific detection algorithms~\cite{article:schroeder2014}, forming the backbone of NASA FIRMS~\cite{manual:firms2024} and INPE BDQueimadas~\cite{article:inpe2023}. Wooster et al.~\cite{article:wooster2021} present a comprehensive survey of the state of the art in satellite-based active fire remote sensing, covering physical fundamentals (spectral signature of burned pixels in SWIR~3.9~$\mu$m and MWIR bands) through applications and future requirements.
+MODIS Collection~6~\cite{article:giglio2016} and VIIRS~\cite{article:schroeder2014} underpin NASA FIRMS~\cite{manual:firms2024} and INPE BDQueimadas~\cite{article:inpe2023}; Wooster et al.~\cite{article:wooster2021} survey active-fire remote sensing. GOES-16 adds 1--10~min geostationary refresh at $\sim$2~km~\cite{techreport:goes2022}. In Brazil, MapBiomas Fogo maps burned area at 30~m~\cite{website:mapbiomas}; biome studies cover fire drivers~\cite{article:barlow2019,article:pivello2021}, ML for management~\cite{article:jain2020}, and Landsat burned-area mapping including Caatinga~\cite{article:alencar2022}. These products remain largely reactive and rarely couple multi-sensor detection with agent reasoning or predictive modules for regional ecological decision support.
 
-GOES-16 represents a significant advance by providing geostationary data with temporal resolution from 1 minute (mesoscale mode) to 10 minutes (full-disk mode), though with 2~km spatial resolution at nadir~\cite{techreport:goes2022}. Its ability to detect rapid changes in fire intensity between consecutive scans is particularly valuable for regions with fast-spreading fires, such as the northeastern semi-arid region.
+\subsection{Koopman Operators, PINNs, and Agentic Pipelines}
 
-In the Brazilian context, INPE has operated BDQueimadas since~1998, integrating data from AQUA, TERRA, NPP, and NOAA-20 satellites~\cite{article:inpe2023}. MapBiomas Fogo maps burned areas annually at 30~m resolution using Landsat imagery~\cite{website:mapbiomas}. Brazil-specific studies document the drivers and policy dimensions of the country's fire crises~\cite{article:barlow2019,article:pivello2021}, machine learning applications across wildfire science and management~\cite{article:jain2020}, and deep learning for burned-area mapping across the Brazilian biomes---including the Caatinga---using Landsat~\cite{article:alencar2022}. Multi-source satellite data fusion for fire event identification~\cite{article:chen2026} and reviews of ML-based wildfire spread prediction~\cite{article:andrianarivony2024} complete the landscape. However, these systems remain essentially reactive (detected-focus alerting) without predictive capability or integration with physical propagation models. Taken together, the surveyed systems trade off spatial resolution (Landsat/Sentinel), revisit frequency (GOES-16), and detection latency (VIIRS/MODIS) in complementary ways; none of them, however, couples multi-sensor detection with agent-based reasoning or predictive modules --- the combination pursued in this work.
+Koopman theory and DMD variants~\cite{article:koopman1931,article:mezic2013,article:schmid2010,article:brunton2021} and deep autoencoder Koopman models~\cite{article:lusch2018} enable linear multi-step prediction of nonlinear dynamics; PINNs~\cite{article:raissi2019,article:karniadakis2021} and Rothermel-based spread models~\cite{article:rothermel1972,article:scott2001} encode fire physics. Hybrid NeKo-PIGNN combines both for interpretability and physical consistency. ReAct agents~\cite{article:react2023}, LangGraph orchestration~\cite{manual:langgraph2024}, and RAG~\cite{article:lewis2020,article:faiss2017} provide auditable tool use and documentation search; to our knowledge, LangGraph has not previously been applied to operational wildfire monitoring.
 
-\subsection{Koopman Operator and PINNs for Fire Dynamics}
-
-The Koopman operator, introduced by Koopman~\cite{article:koopman1931} and formalized for fluid dynamics by Rowley et al.~\cite{article:rowley2009} and Mezić~\cite{article:mezic2013}, provides a mathematical framework for linearizing nonlinear dynamical systems through observation functions. The modern approach combines Dynamic Mode Decomposition (DMD)~\cite{article:schmid2010} with extensions for controlled systems (DMDc)~\cite{article:proctor2016}, sparse identification of nonlinear dynamics (SINDy)~\cite{article:brunton2016sindy}, and physics-informed versions (PiDMD)~\cite{article:baddoo2023}. Brunton et al.~\cite{article:brunton2021} provide a unified treatment of modern Koopman theory, while Kutz et al.~\cite{article:kutz2016} consolidate the DMD framework.
-
-The connection between the Koopman operator and deep learning was established through works learning Koopman-invariant subspaces via autoencoders~\cite{article:lusch2018,article:takeishi2017} and deep neural modeling for fluid dynamics~\cite{article:morton2019}. Despite these advances, the application of the Koopman operator to wildfire spread dynamics remains a gap in the literature --- to the best of our knowledge, no published work uses Koopman operators for fire modeling, positioning the NeKo-PIGNN approach as a novel contribution.
-
-Physics-Informed Neural Networks (PINNs), introduced by Raissi et al.~\cite{article:raissi2019} and consolidated by Karniadakis et al.~\cite{article:karniadakis2021}, provide the physical regularization counterpart necessary for neural fire propagation models to respect thermodynamic and fluid mechanics laws. The Rothermel model~\cite{article:rothermel1972} is the USDA Forest Service standard for surface fire spread, parameterized by fuel classes~\cite{article:scott2001} and used in BehavePlus~\cite{article:andrews2014} and ensemble simulation systems~\cite{article:finney2011}, with physical foundations established by Albini~\cite{article:albini1976}. PINN applications to fire propagation~\cite{article:vogiatzoglou2024,article:dabrowski2023} demonstrate the viability of this approach, while applied deep-learning spread models~\cite{article:jiang2023} establish the state of the art that the present work extends. These two families exhibit complementary trade-offs: data-driven Koopman models offer linear interpretability and cheap multi-step prediction but no physical guarantees, whereas PINN-based propagation models encode fire physics but scale poorly to regional grids; the hybrid NeKo-PIGNN design combines both to balance interpretability, physical consistency, and computational cost.
-
-\subsection{Autonomous Agents and LangGraph}
-
-The paradigm of LLM-based autonomous agents advanced significantly with the ReAct framework~\cite{article:react2023}, which synergizes reasoning and action in language models through Thought \(\rightarrow\) Action \(\rightarrow\) Observation cycles. Comprehensive surveys~\cite{article:xi2023,article:wang2024survey} map the LLM agent ecosystem, from reflective memory architectures (Reflexion)~\cite{article:shinn2023} to tool-use frameworks such as Toolformer~\cite{article:schick2023} and Gorilla~\cite{article:patil2023}, including interactive social simulation environments~\cite{article:park2023}.
-
-LangGraph~\cite{manual:langgraph2024} extends the LangChain ecosystem with state-graph-based orchestration, enabling agent pipelines with cycles, parallelism, and persistent state between nodes. In the environmental context, to the best of our knowledge, this is the first application of LangGraph to wildfire monitoring orchestration.
-
-Retrieval-Augmented Generation (RAG)~\cite{article:lewis2020}, implemented with FAISS indices~\cite{article:faiss2017} and local embedding models~\cite{model:bge2024}, enables the system to answer natural language queries about its own documentation. Recent surveys~\cite{article:gao2024rag} consolidate RAG best practices --- from strategic chunking to hierarchical retrieval and multi-source fusion --- techniques adopted in the research module of the present system.
-
-\subsection{Gap Analysis}
-
-Table~\ref{tab:gap-analysis} synthesizes the gaps that this work fills relative to existing systems. The central differentiator lies in the unprecedented combination of (a) near real-time satellite data, (b) LangGraph agents with ReAct reasoning, (c) RAG for document queries, (d) focus on Brazilian biomes, and (e) standalone architecture without a database --- all in an open-source platform.
-
-\begin{resulttable}{Gap analysis: existing systems vs.\ proposed platform.}{tab:gap-analysis}
-\footnotesize
-\begin{tabular}{@{}lp{2.0cm}p{1.6cm}p{1.6cm}@{}}
-\toprule
-\textbf{Feature} & \textbf{NASA FIRMS} & \textbf{Fire DTs} & \textbf{This Work} \\
-\midrule
-Real-time satellite data & Yes & Partial & Yes \\
-AI agent pipeline & No & Yes & Yes \\
-Open source (MIT) & No & Partial & Yes \\
-Brazilian biome focus & Partial & No & Yes \\
-RAG for queries & No & No & Yes \\
-Standalone (no DB) & N/A & No & Yes \\
-Auditable architecture & No & Yes & Yes \\
-\bottomrule
-\end{tabular}
-\end{resulttable}
-
-None of the existing works combine, in a single open-source platform, (i) near real-time satellite data, (ii) a LangGraph-orchestrated agent pipeline, (iii) RAG with vector index for document queries, and (iv) standalone deployment without a database. This combination is the gap that this work fills.
+None of the surveyed systems combine, in one open-source stack, near-real-time open satellite data, a LangGraph/ReAct pipeline, RAG, and Caatinga-focused validation without an institutional database --- the gap addressed here.
 
 %% ===================================================================
 \section{System Architecture}
@@ -704,76 +651,30 @@ Paid data sources & 0\,\% \\
 \label{sec:discussion}
 %% ===================================================================
 
-The results demonstrate that it is feasible to build an operational wildfire monitoring platform using exclusively open data sources and open-source code, without relying on institutional databases or paid APIs. Relative to direct FIRMS consumption (3--6~h latency, 15.7\% INPE spatial recall on the bundled sample), the LangGraph pipeline trades a modest infrastructure cost (\$20/month) for sub-minute cold-start response and higher dry-season alert recall (91.8\%, Table~\ref{tab:operational-baseline}).
+The results show that open satellite and climate streams can support timely ecological fire monitoring in the Caatinga without institutional databases or paid APIs. Relative to raw FIRMS (3--6~h latency; 15.7\% INPE spatial recall on the bundled sample), the LangGraph stack trades modest cost (\$20/month) for sub-minute cold starts and 91.8\% dry-season alert recall (Table~\ref{tab:operational-baseline}). For ecosystem managers, three-class alerts (YES/UNCERTAIN/NO) reduce false alarms while preserving coverage of fire-prone municipalities --- a practical bridge between remote sensing and sustainable fire management under climate-driven drought.
 
-\subsection{NeKo-PIGNN as an Offline Research Module}
+\subsection{Ecological Implications for the Semi-Arid Northeast}
 
-NeKo-PIGNN is positioned as an \emph{offline batch} predictor rather than the production alert headline. Under 67-day real-data windows, MLP and XGBoost achieve lower RMSE than NeKo-PIGNN; NeKo-PIGNN instead contributes (i)~synthetic-dynamics validation ($R^2=0.972$), (ii)~high YES-class precision (91.7\%, 1~FP) when used conservatively, and (iii)~physics-regularized spatial propagation for future integration. The three-class LangGraph alert stack---not NeKo RMSE---is the primary operational contribution.
+Ceará's fire regime is tightly coupled to rainfall deficit, fuel curing, and land-use pressure in a biodiversity hotspot with limited fire-suppression infrastructure. High dry-season precision/recall (84.2\%/91.8\%) indicates that open VIIRS/MODIS products, when fused with Open-Meteo drought indicators, can prioritize municipal attention during the peak ecological risk window. Lower precision in wetter or mixed seasons (Table~\ref{tab:extended-temporal}) and in high-volume neighboring states (Section~\ref{sec:external-states}) underscores that ecological transferability requires per-biome threshold calibration rather than a single national cutoff.
 
-\subsection{Open Data Sources}
+\subsection{NeKo-PIGNN and Operational Scope}
 
-NASA FIRMS, even without an API key, provides sufficient VIIRS and MODIS data for daily coverage of Ceará. The combination of three sensors (VIIRS SNPP, VIIRS NOAA-20, and MODIS) ensures multiple passes per day, reducing the blind window. The use of public CSVs without authentication --- although convenient --- has limitations: during load peaks, the FIRMS server may return temporary 503 errors (observed in 4 out of 540 samples, 0.74\,\%).
+NeKo-PIGNN remains an \emph{offline} research module: under 67-day real windows, MLP/XGBoost achieve lower RMSE, while NeKo contributes synthetic validation ($R^2=0.972$), conservative YES precision (91.7\%, 1~FP), and physics-regularized spatial propagation for future ecological forecasting. Production alerts rely on the three-class LangGraph stack, not NeKo RMSE.
 
-\subsection{Agent Auditability}
+\subsection{Auditability, Coverage, and Limitations}
 
-The preservation of the ReAct chain (Thought $\rightarrow$ Action $\rightarrow$ Observation) in each diagnostic agent response ensures that civil defense managers can audit the reasoning behind each alert. This is particularly important in emergency scenarios, where AI-based decisions need to be justifiable.
-
-\subsection{Limitations}
-
-This work has acknowledged limitations:
-
-\begin{itemize}
-    \item GOES-16 ingestion exists in the pipeline but is not in continuous production; operational alerts rely on NASA FIRMS. Standalone GOES-16 vs.\ INPE benchmarks showed F1$\leq$0.05 (Section~\ref{sec:goes16-validation});
-    \item Systematic programmatic validation against INPE BDQueimadas was limited when API access was discontinued during the study period;
-    \item Real-data NeKo-PIGNN experiments used only 67~training days; the YES class achieves high precision (91.7\%) but low recall (12.7\%), reflecting the precision-first alert design;
-    \item The RAG formal benchmark (50 questions) reaches recall@5 = 98\% with a bilingual glossary index; monolingual English queries without cross-lingual chunks scored 74\% under the same protocol;
-    \item Alert precision varies by season: 84.2\% in the 2025 dry season vs.\ 31.6\% over mixed 12-month windows (Table~\ref{tab:extended-temporal});
-    \item External-state validation (Maranhão, Piauí) shows lower precision at higher fire volumes (Section~\ref{sec:external-states});
-    \item A formal civil-defense usability study (task completion time, SUS score) is planned but not yet conducted; dashboard design follows iterative feedback from project stakeholders only.
-\end{itemize}
-
-\subsection{Pilot Usability and Stakeholder Feedback}
-
-Informal demonstrations to civil-defense stakeholders indicated faster situational awareness than manual INPE portal checks (median subjective rating: ``faster than BDQueimadas'' in 4 of 5 sessions, $n=5$ managers, unpublished pilot). This is not a controlled usability trial; a structured SUS-based study with pre-registered tasks remains future work.
-
-\subsection{Risk Index Calibration}
-
-As detailed in Section~\ref{sec:risk-calibration-exp}, the heuristic risk index calibrated against INPE BDQueimadas (111{,}054-record snapshot of 12/Jun/2026) achieved F1=0.936 versus a 0.833 baseline, indicating that the operational classifier aligns well with official hotspot records when INPE data are available. Precision is 1.000 by construction in this protocol (Section~\ref{sec:risk-calibration-exp}); the calibration gain is therefore driven by recall.
-
-\subsection{Comparison with Existing Systems}
-
-Table~\ref{tab:sota} positions the proposed system against relevant operational and academic systems. The main competitive advantage is the unique combination of: (i) response time under 60~seconds, (ii) auditable AI agent pipeline with ReAct reasoning, (iii) RAG module for natural-language documentation queries, and (iv) MIT licensing enabling adoption without legal barriers.
-
-No existing system --- institutional (INPE, NASA FIRMS) or academic (IVSR, FIRE-VLM) --- offers this integrated capability set. INPE BDQueimadas and NASA FIRMS provide essential data but without automated diagnosis, explanation, or civil-defense-oriented interfaces. Academic systems such as IVSR~\cite{article:morsali2026} and FIRE-VLM~\cite{article:webb2026} incorporate AI but are not open source and lack RAG modules or hierarchical alerts.
-
-\subsection{Data Coverage and Reliability}
-
-Multisensor coverage (VIIRS SNPP + NOAA-20 + MODIS) provides on average 6--8 daily passes over Cear\'{a}, with spatial resolution from 375~m (VIIRS) to 1~km (MODIS). Table~\ref{tab:detection} shows VIIRS SNPP contributing 48\,\% of detections, followed by VIIRS NOAA-20 (36\,\%) and MODIS (16\,\%). This diversity reduces dependence on a single sensor.
-
-However, polar-orbiting satellite coverage has fundamental limitations. During the rainy season (January--June), cloud cover over Cear\'{a} can obscure optical sensors for consecutive days. GOES-16 ABI thermal infrared detection (bands~7 and~14) partially mitigates this, but 2~km nadir resolution reduces sensitivity to low-intensity hotspots. Temporal fusion of multiple sources, proposed as future work, is essential for continuous monitoring regardless of atmospheric conditions.
+ReAct traces make each alert auditable for environmental agencies. Multisensor VIIRS/MODIS coverage (6--8 daily passes) reduces single-sensor blind spots, but wet-season cloud cover and optional GOES-16 (F1$\leq$0.05 vs.\ INPE at grid scale) remain constraints. Additional limitations: discontinuous INPE API access during parts of the study; NeKo real-data scarcity (67~days; YES recall 12.7\%); RAG recall@5 = 98\% bilingual vs.\ 74\% English-only; no formal SUS usability trial yet (informal stakeholder feedback only). Risk-index calibration against an INPE snapshot reached F1=0.936 (Section~\ref{sec:risk-calibration-exp}). No institutional or academic system surveyed here simultaneously offers sub-60~s open-source response, ReAct audit trails, RAG, and Caatinga dry-season validation.
 
 %% ===================================================================
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
 %% ===================================================================
 
-We presented the Ceará Wildfire Monitoring Platform, an open-source system inspired by Digital Twin principles, integrating near real-time satellite data with agentic artificial intelligence and physics-informed deep learning for wildfire monitoring and risk assessment.
+We presented an open-source ecological monitoring platform for wildfires in Ceará's Caatinga, integrating open satellite and climate data with agentic AI and a physics-informed research module for risk-aware decision support.
 
-The main contributions are: (1)~a three-class detection framework achieving 82--92\% precision on short-window alerts, validated at \textbf{84.2\% precision and 91.8\% recall} over the 2025 dry season (184~days, 24{,}573 INPE hotspots); (2)~NeKo-PIGNN with R\textsuperscript{2}=0.972 on synthetic benchmarks and competitive real-data performance under data-scarce regimes; (3)~bootstrap 95\% confidence intervals and multi-seed regression confirming statistical robustness; and (4)~a complete open-source pipeline deployable on a single low-cost EC2 instance.
+The main contributions are: (1)~a three-class alert framework with \textbf{84.2\% precision and 91.8\% recall} over the 2025 dry season (184~days, 24{,}573 INPE hotspots); (2)~NeKo-PIGNN with $R^2=0.972$ on synthetic dynamics and transparent real-data limits; (3)~bootstrap confidence intervals and multi-seed checks; and (4)~an MIT-licensed pipeline on a low-cost EC2 instance.
 
-The three-class abstention mechanism addresses the precision-recall tradeoff in rare-event detection: combined coverage of YES (alert) and UNCERTAIN (monitoring) identifies 88\% of fire events while maintaining 82\% alert precision. Synthetic and real results are reported separately to avoid overclaiming predictive performance before large-scale GOES-16 production integration.
-
-Future work includes:
-
-\begin{enumerate}
-    \item Full GOES-16 integration in production to improve near real-time detection;
-    \item Cross-validation with MapBiomas Fogo and additional INPE datasets for expanded geographic scope;
-    \item Expansion to other states in the Brazilian Northeast (Maranhão, Piauí, Bahia), with per-state threshold calibration (Section~\ref{sec:external-states});
-    \item Sequence-based predictive risk models (LSTM, Transformer, and Neural ODE + Koopman extensions of NeKo-PIGNN);
-    \item Push notifications via WhatsApp and Telegram for municipal civil defense agencies;
-    \item A ReAct explainer agent for causal ``what-if'' diagnosis based on the trained NeKo-PIGNN model;
-    \item A structured, SUS-based usability study with civil-defense managers.
-\end{enumerate}
+Three-class abstention identifies 88\% of fire events at 82\% YES precision on short windows. Future work includes production GOES-16 fusion, MapBiomas cross-validation, Northeast expansion with per-state calibration, sequence predictors, messaging for municipal agencies, and a formal SUS usability study.
 
 \section*{Acknowledgments}
 
@@ -804,7 +705,7 @@ All experiment scripts, logs, and result JSON files are included in the reposito
     \item PR operating-point map (Fig.~\ref{fig:pr-operating-points}): \path{backend/experiments/pr_curve_figure.py}
     \item INPE CSVs: \path{scripts/reproduce_inpe_data.sh} $\rightarrow$ \path{data/inpe_focos_ce/}
     \item Supplementary tables: \path{submission/supplementary.tex}
-    \item Reproducibility archive: GitHub release \path{v1.0.0-ems-submission} at \url{https://github.com/naubergois/ceara-queimadas/releases} (Zenodo DOI to be minted at upload --- see \path{submission/ZENODO.md})
+    \item Reproducibility archive: GitHub release \path{v1.0.0-ems-submission} at \url{https://github.com/naubergois/ceara-queimadas/releases} (Zenodo DOI optional --- see \path{submission/ZENODO.md})
 \end{itemize}
 
 %% ===================================================================
@@ -834,7 +735,7 @@ Detailed iteration tables for Exp-B v1, v4--v7, the full three-class sklearn rep
 \input{figures/experimentos-appendix.tex}
 
 %% ===================================================================
-%% References (Elsevier BibTeX — Environmental Modelling \& Software)
+%% References (Elsevier BibTeX — Ecological Informatics)
 %% ===================================================================
 \bibliographystyle{elsarticle-num}
 \bibliography{submission/refs-ems}

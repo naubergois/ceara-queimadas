@@ -1,5 +1,5 @@
-Open-source agentic wildfire platform with LangGraph and three-class alerts
-Dry season 2025: 84% precision and 92% recall on 184 days of INPE data
-NASA FIRMS pipeline with ReAct agent and RAG on a single EC2 instance
-NeKo-PIGNN synthetic R²=0.972; optional GOES-16 for research benchmarks
-MIT-licensed deployment integrating FIRMS, INPE, and Open-Meteo
+Open ecological monitoring platform for Caatinga wildfires with LangGraph agents
+Dry season 2025: 84.2% precision and 91.8% recall on 184 days of INPE data
+Three-class alerts fuse NASA FIRMS and Open-Meteo for ecosystem management
+NeKo-PIGNN synthetic R²=0.972; GOES-16 kept as research-only benchmark
+MIT-licensed deployment on a single low-cost EC2 instance

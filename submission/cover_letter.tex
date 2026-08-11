@@ -1,6 +1,6 @@
 % ============================================================
-% Cover Letter — Environmental Modelling & Software
-% Manuscript: Ceará Digital Twin for Wildfires (EN)
+% Cover Letter — Ecological Informatics
+% Manuscript: Ceará Wildfire Digital Twin (EN)
 % ============================================================
 \documentclass[a4paper,12pt]{letter}
 
@@ -22,7 +22,7 @@
 
 \begin{letter}{%
   Editorial Office\\
-  \textit{Environmental Modelling \& Software}\\
+  \textit{Ecological Informatics}\\
   Elsevier
 }
 
@@ -35,26 +35,30 @@ We submit the manuscript entitled:
 with LangGraph}
 \end{quote}
 
-for consideration as a research article in \textit{Environmental Modelling \& Software}.
+for consideration as a research article in \textit{Ecological Informatics}.
 
 \medskip
-\textbf{Summary.}\ 
-Wildfire monitoring in Brazil still depends largely on centralized systems with multi-hour latency between satellite overpass and public data availability. We present an open-source, agentic wildfire monitoring platform for Ceará that integrates NASA FIRMS, optional GOES-16, INPE BDQueimadas, and Open-Meteo within a ten-node LangGraph production pipeline (ingestion, validation, parallel geospatial/climate/GOES analysis, evidence fusion, risk classification, ReAct diagnosis, and three-class alerts).
+\textbf{Summary.}\
+Wildfires threaten biodiversity and ecosystem services in Brazil's semi-arid Caatinga, yet operational monitoring still relies on centralized satellite products with multi-hour latency. We present an open-source ecological data platform that assimilates NASA FIRMS and Open-Meteo within a ten-node LangGraph pipeline (ingestion, validation, parallel geospatial/climate analysis, evidence fusion, risk classification, ReAct diagnosis, and three-class alerts) for sustainable fire management.
 
-The manuscript combines (i)~operational software engineering for environmental modelling workflows, (ii)~a three-class alert framework (NO/UNCERTAIN/YES) with explicit precision--recall trade-offs, and (iii)~NeKo-PIGNN (Neural Koopman Operator + Physics-Informed GNN) as an offline research module for physics-regularized prediction benchmarks.
+The manuscript combines (i)~computational ecology tools for multi-source ecological observation streams, (ii)~a three-class alert framework (NO/UNCERTAIN/YES) with explicit precision--recall trade-offs validated against INPE, and (iii)~NeKo-PIGNN (Neural Koopman Operator + Physics-Informed GNN) as an offline research module for physics-regularized prediction benchmarks.
 
 \medskip
 \textbf{Key Results.}
 \begin{itemize}
-  \item \textbf{Operational alerts:} 82--92\% YES precision on a 20-day holdout; bootstrap 95\% CI [68\%, 96\%] for XGBoost YES precision.
-  \item \textbf{Extended INPE validation:} 84.2\% precision and 91.8\% recall over the 2025 dry season (184 days, 24{,}573 hotspots).
-  \item \textbf{NeKo-PIGNN:} $R^2=0.972$ on synthetic benchmarks; real-data results are reported separately from operational alert metrics to avoid conflation.
-  \item \textbf{Reproducibility:} MIT-licensed code, experiment scripts (Exp-B v1--v9 and EXP-ROBUST-001--004), and pinned result tables on GitHub (\url{https://github.com/naubergois/ceara-queimadas}).
+  \item \textbf{Dry-season ecological alerts:} 84.2\% precision and 91.8\% recall over the 2025 dry season (184 days, 24{,}573 INPE hotspots); bootstrap 95\% CI for YES precision.
+  \item \textbf{Transferability:} under the same protocol in Maranhão and Piauí, recall $>96\%$ at 58--60\% precision, motivating per-state calibration.
+  \item \textbf{NeKo-PIGNN:} $R^2=0.972$ on synthetic dynamics; real-data limits reported separately from operational alerts.
+  \item \textbf{Reproducibility:} MIT-licensed code and experiment scripts on GitHub (\url{https://github.com/naubergois/ceara-queimadas}).
 \end{itemize}
 
 \medskip
 \textbf{Fit with the Journal.}\
-This work addresses software for environmental modelling and decision support: modular agent orchestration, reproducible experiment pipelines, integration of heterogeneous geospatial/climate data streams, and transparent reporting of limitations (GOES-16 not yet in continuous production; seasonal precision variation). We believe it will interest readers working on wildfire monitoring systems, operational AI for civil defense, and open environmental software.
+\textit{Ecological Informatics} publishes computational ecology and ecological data science for ecosystem analysis and sustainable management. Our contribution targets novel tools for monitoring and synthesizing fire-related ecological data in a biodiversity-sensitive dry forest biome, with machine-learning and agentic pipelines that support management decisions under climate-driven drought. We believe the Caatinga case study will interest readers working on ecological remote sensing, fire regimes, and open ecological software.
+
+\medskip
+\textbf{Prior submission.}\
+A related version was previously submitted to \textit{Environmental Modelling \& Software} (manuscript ENVSOFT-D-26-02266) and was not accepted for that venue. The present manuscript has been revised for Ecological Informatics scope (ecological framing, length, and journal metadata) and is not under consideration elsewhere.
 
 \medskip
 \textbf{Suggested Reviewers.}
@@ -66,7 +70,7 @@ This work addresses software for environmental modelling and decision support: m
 
 \medskip
 \textbf{Declarations.}\
-All five authors (Nauber Gois, Alexandre Lobo, Vladia Celia Monteiro Pinheiro, Daniel Valente de Macedo, Adriano Bessa Albuquerque) approved the manuscript. We declare no competing interests. The study uses publicly available satellite and meteorological data; no human subjects were involved.
+All five authors (Nauber Gois, Alexandre Lobo, Vladia Celia Monteiro Pinheiro, Daniel Valente de Macedo, Adriano Bessa Albuquerque) approved the manuscript. We declare no competing interests. The study uses publicly available satellite and meteorological data; no human subjects were involved. \textit{Ecological Informatics} is a full open-access journal; we acknowledge the APC policy.
 
 \closing{Sincerely,}
 
